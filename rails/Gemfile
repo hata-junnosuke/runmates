@@ -26,6 +26,15 @@ gem "stimulus-rails"
 # Build JSON APIs with ease [https://github.com/rails/jbuilder]
 gem "jbuilder"
 
+# ユーザー認証を提供する
+gem "devise"
+
+# devise を日本語化する
+gem "devise-i18n"
+
+# ユーザーのトークン認証を提供する
+gem "devise_token_auth", ">= 1.2.0", git: "https://github.com/lynndylanhurley/devise_token_auth"
+
 # Use Redis adapter to run Action Cable in production
 # gem "redis", ">= 4.0.1"
 
@@ -57,6 +66,10 @@ group :development, :test do
   gem "rubocop-faker"
   gem "rubocop-rails"
   gem "rubocop-rspec"
+
+  # 開発環境でメール送信をテストする
+  gem "letter_opener_web"
+
 end
 
 group :development do
