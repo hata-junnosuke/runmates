@@ -1,7 +1,6 @@
 # Rails7以降では、APIモードの際にSessionへのアクセスがあると、ActionDispatch::Request::Session::DisabledSessionErrorが発生します。
 # そのため回避用のモジュールを作成
 
-
 module DeviseHackFakeSession
   extend ActiveSupport::Concern
 
