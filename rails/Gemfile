@@ -41,6 +41,9 @@ gem "active_model_serializers"
 # メッセージを日本語化
 gem "rails-i18n"
 
+# enum を日本語化する
+gem "enum_help"
+
 # Use Redis adapter to run Action Cable in production
 # gem "redis", ">= 4.0.1"
 
