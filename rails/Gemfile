@@ -85,7 +85,6 @@ group :development, :test do
 
   # N+1発生時にアラートを表示する
   gem "bullet"
-
 end
 
 group :development do
