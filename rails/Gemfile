@@ -73,6 +73,10 @@ group :development, :test do
   # 開発環境でメール送信をテストする
   gem "letter_opener_web"
 
+   # テスト用データを作成する
+   gem "factory_bot_rails"
+   gem "faker"
+
 end
 
 group :development do
