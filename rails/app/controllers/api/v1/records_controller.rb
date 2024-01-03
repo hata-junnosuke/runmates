@@ -1,4 +1,4 @@
-class Api::V1::RecordsController < ApplicationController
+class Api::V1::RecordsController < Api::V1::BaseController
   def index
     @records = Record.all.includes(:user)
     render json: @records
@@ -36,7 +36,7 @@ class Api::V1::RecordsController < ApplicationController
 
   private
 
-    def record_params
-      params.require(:record).permit(:distance, :date, :comment)
-    end
+  def record_params
+    params.require(:record).permit(:distance, :date, :comment)
+  end
 end
