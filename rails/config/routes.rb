@@ -9,6 +9,7 @@ Rails.application.routes.draw do
         resource :user, only: [:show]
       end
       resources :records
+      resources :groups
     end
   end
 end
