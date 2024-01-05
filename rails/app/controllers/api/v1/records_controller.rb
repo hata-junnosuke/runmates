@@ -35,7 +35,7 @@ class Api::V1::RecordsController < Api::V1::BaseController
 
   private
 
-  def record_params
-    params.require(:record).permit(:distance, :date, :comment)
-  end
+    def record_params
+      params.require(:record).permit(:distance, :date, :comment)
+    end
 end

@@ -1,6 +1,6 @@
 class Api::V1::GroupsController < Api::V1::BaseController
   # before_action :authenticate_user!
-  before_action :ensure_correct_user, only: [:edit, :update, :destroy]
+  before_action :ensure_correct_user, only: [:update, :destroy]
 
   def index
     @groups = Group.all
@@ -36,14 +36,14 @@ class Api::V1::GroupsController < Api::V1::BaseController
 
   private
 
-  def group_params
-    params.require(:group).permit(:name, :introduction, :image)
-  end
-
-  def ensure_correct_user
-    @group = Group.find(params[:id])
-    unless @group.owner_id == current_user.id
-      render json: {}, status: :forbidden
+    def group_params
+      params.require(:group).permit(:name, :introduction, :image)
     end
-  end
+
+    def ensure_correct_user
+      @group = Group.find(params[:id])
+      unless @group.owner_id == current_user.id
+        render json: {}, status: :forbidden
+      end
+    end
 end
