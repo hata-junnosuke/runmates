@@ -10,8 +10,7 @@ class Api::V1::RecordsController < Api::V1::BaseController
   end
 
   def create
-    @record = Record.new(record_params)
-    @record.user = current_user
+    @record = current_user.records.build(record_params)
     if @record.save
       render json: @record, status: :created
     else
@@ -20,7 +19,7 @@ class Api::V1::RecordsController < Api::V1::BaseController
   end
 
   def update
-    @record = Record.find(params[:id])
+    @record = current_user.records.find(params[:id])
     if @record.update(record_params)
       render json: @record
     else
@@ -29,7 +28,7 @@ class Api::V1::RecordsController < Api::V1::BaseController
   end
 
   def destroy
-    @record = Record.find(params[:id])
+    @record = current_user.records.find(params[:id])
     @record.destroy!
     render json: {}, status: :no_content
   end
