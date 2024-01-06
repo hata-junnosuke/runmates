@@ -44,6 +44,12 @@ gem "rails-i18n"
 # enum を日本語化する
 gem "enum_help"
 
+# cors設定を管理する
+gem "rack-cors"
+
+# 環境毎の設定管理を行う
+gem "config"
+
 # Use Redis adapter to run Action Cable in production
 # gem "redis", ">= 4.0.1"
 
