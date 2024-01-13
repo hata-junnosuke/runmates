@@ -1,0 +1,12 @@
+ja:
+  activerecord:
+    attributes:
+      # article:
+      #   title: タイトル
+      #   content: 本文
+  enums:
+    #  article:
+    #    status:
+    #      unsaved: 未保存
+    #      draft: 下書き
+    #      published: 公開中
