@@ -59,6 +59,9 @@ import 'src/iconify-bundle/icons-bundle-react'
 // ** Global css styles
 import '../../styles/globals.css'
 
+// 以下自作のコンポーネント
+import CurrentUserFetch from 'src/components/CurrentUserFetch'
+
 // ** Extend App Props with Emotion
 type ExtendedAppProps = AppProps & {
   Component: NextPage
@@ -133,6 +136,8 @@ const App = (props: ExtendedAppProps) => {
                 <ThemeComponent settings={settings}>
                   <Guard authGuard={authGuard} guestGuard={guestGuard}>
                     <AclGuard aclAbilities={aclAbilities} guestGuard={guestGuard} authGuard={authGuard}>
+                      {/* 暫定でこの位置に位置に CurrentUserFetch */}
+                      <CurrentUserFetch />
                       {getLayout(<Component {...pageProps} />)}
                     </AclGuard>
                   </Guard>
