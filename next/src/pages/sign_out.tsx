@@ -1,11 +1,12 @@
 import type { NextPage } from 'next'
 import { useRouter } from 'next/router'
 import { useEffect } from 'react'
-import { useUserState } from 'src/hooks/useGlobalState'
+import { useUserState, useSnackbarState } from 'src/hooks/useGlobalState'
 
 const SignOut: NextPage = () => {
   const router = useRouter()
   const [, setUser] = useUserState()
+  const [, setSnackbar] = useSnackbarState()
 
   useEffect(() => {
     localStorage.clear()
@@ -16,8 +17,13 @@ const SignOut: NextPage = () => {
       isSignedIn: false,
       isFetched: true,
     })
+    setSnackbar({
+      message: 'サインアウトしました',
+      severity: 'success',
+      pathname: '/sign_in',
+    })
     router.push('/sign_in')
-  }, [router, setUser])
+  }, [router, setUser, setSnackbar])
 
   return <></>
 }

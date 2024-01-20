@@ -61,6 +61,7 @@ import '../../styles/globals.css'
 
 // 以下自作のコンポーネント
 import CurrentUserFetch from 'src/components/CurrentUserFetch'
+import Snackbar from 'src/components/Snackbar'
 
 // ** Store Imports
 import { store } from 'src/store'
@@ -144,6 +145,7 @@ const App = (props: ExtendedAppProps) => {
                         {/* 暫定でこの位置に位置に CurrentUserFetch */}
                         <CurrentUserFetch />
                         {getLayout(<Component {...pageProps} />)}
+                        <Snackbar />
                       </Provider>
                     </AclGuard>
                   </Guard>
