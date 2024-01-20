@@ -3,8 +3,10 @@ import useSWR from 'swr'
 import { fetcher } from 'src/utils'
 import { useUserState } from 'src/hooks/useGlobalState'
 import Link from 'next/link'
+import { useRequireSignedIn } from 'src/hooks/useRequireSignedIn'
 
 const HealthCheck: NextPage = () => {
+  useRequireSignedIn()
   const [user] = useUserState()
 
   const url = 'http://localhost:3000/api/v1/health_check'
