@@ -62,6 +62,10 @@ import '../../styles/globals.css'
 // 以下自作のコンポーネント
 import CurrentUserFetch from 'src/components/CurrentUserFetch'
 
+// ** Store Imports
+import { store } from 'src/store'
+import { Provider } from 'react-redux'
+
 // ** Extend App Props with Emotion
 type ExtendedAppProps = AppProps & {
   Component: NextPage
@@ -136,9 +140,11 @@ const App = (props: ExtendedAppProps) => {
                 <ThemeComponent settings={settings}>
                   <Guard authGuard={authGuard} guestGuard={guestGuard}>
                     <AclGuard aclAbilities={aclAbilities} guestGuard={guestGuard} authGuard={authGuard}>
-                      {/* 暫定でこの位置に位置に CurrentUserFetch */}
-                      <CurrentUserFetch />
-                      {getLayout(<Component {...pageProps} />)}
+                      <Provider store={store}>
+                        {/* 暫定でこの位置に位置に CurrentUserFetch */}
+                        <CurrentUserFetch />
+                        {getLayout(<Component {...pageProps} />)}
+                      </Provider>
                     </AclGuard>
                   </Guard>
                   <ReactHotToast>
