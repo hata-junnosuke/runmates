@@ -1,38 +1,93 @@
 // ** MUI Imports
-import Card from '@mui/material/Card'
 import Grid from '@mui/material/Grid'
-import Typography from '@mui/material/Typography'
-import CardHeader from '@mui/material/CardHeader'
-import CardContent from '@mui/material/CardContent'
+
+// ** Icon Imports
+// import Icon from 'src/@core/components/icon'
+
+// ** Custom Components Imports
+// import CardStatisticsVerticalComponent from 'src/@core/components/card-statistics/card-stats-vertical'
+
+// ** Styled Component Import
+import ApexChartWrapper from 'src/@core/styles/libs/react-apexcharts'
+
+// ** Demo Components Imports
+import AnalyticsTable from 'src/views/dashboards/analytics/AnalyticsTable'
+
+// import AnalyticsTrophy from 'src/views/dashboards/analytics/AnalyticsTrophy'
+// import AnalyticsSessions from 'src/views/dashboards/analytics/AnalyticsSessions'
+// import AnalyticsTotalProfit from 'src/views/dashboards/analytics/AnalyticsTotalProfit'
+// import AnalyticsPerformance from 'src/views/dashboards/analytics/AnalyticsPerformance'
+// import AnalyticsTotalEarning from 'src/views/dashboards/analytics/AnalyticsTotalEarning'
+import AnalyticsWeeklyOverview from 'src/views/dashboards/analytics/AnalyticsWeeklyOverview'
+
+// import AnalyticsDepositWithdraw from 'src/views/dashboards/analytics/AnalyticsDepositWithdraw'
+// import AnalyticsSalesByCountries from 'src/views/dashboards/analytics/AnalyticsSalesByCountries'
+import AnalyticsTransactionsCard from 'src/views/dashboards/analytics/AnalyticsTransactionsCard'
 
 const Home = () => {
   return (
-    <Grid container spacing={6}>
-      <Grid item xs={12}>
-        <Card>
-          <CardHeader title='Kick start your project 🚀'></CardHeader>
-          <CardContent>
-            <Typography sx={{ mb: 2 }}>All the best for your new project.</Typography>
-            <Typography>
-              Please make sure to read our Template Documentation to understand where to go from here and how to use our
-              template.
-            </Typography>
-          </CardContent>
-        </Card>
+    <ApexChartWrapper>
+      <Grid container spacing={6}>
+        {/* <Grid item xs={12} md={4}>
+          走行距離のランキング
+          <AnalyticsTrophy />
+        </Grid> */}
+        <Grid item xs={12} md={12}>
+          {/* 走行距離と目標 */}
+          <AnalyticsTransactionsCard />
+        </Grid>
+        <Grid item xs={12} md={12} lg={12}>
+          {/* 走行距離のiグラフ */}
+          <AnalyticsWeeklyOverview />
+        </Grid>
+        {/* <Grid item xs={12} md={8} lg={8}>
+          カレンダー
+          <AnalyticsTotalEarning />
+        </Grid> */}
+        {/* <Grid item xs={12} md={6} lg={4}>
+          <Grid container spacing={6}>
+            <Grid item xs={6}>
+              <AnalyticsTotalProfit />
+            </Grid>
+            <Grid item xs={6}>
+              <CardStatisticsVerticalComponent
+                stats='$25.6k'
+                icon={<Icon icon='mdi:poll' />}
+                color='secondary'
+                trendNumber='+42%'
+                title='Total Profit'
+                subtitle='Weekly Profit'
+              />
+            </Grid>
+            <Grid item xs={6}>
+              <CardStatisticsVerticalComponent
+                stats='862'
+                trend='negative'
+                trendNumber='-18%'
+                title='New Project'
+                subtitle='Yearly Project'
+                icon={<Icon icon='mdi:briefcase-variant-outline' />}
+              />
+            </Grid>
+            <Grid item xs={6}>
+              <AnalyticsSessions />
+            </Grid>
+          </Grid>
+        </Grid> */}
+        {/* <Grid item xs={12} md={6} lg={4}>
+          <AnalyticsPerformance />
+        </Grid> */}
+        {/* <Grid item xs={12} md={8}>
+          <AnalyticsDepositWithdraw />
+        </Grid> */}
+        {/* <Grid item xs={12} md={4}>
+          <AnalyticsSalesByCountries />
+        </Grid> */}
+        <Grid item xs={12} md={12} lg={12}>
+          <AnalyticsTable />
+        </Grid>
       </Grid>
-      <Grid item xs={12}>
-        <Card>
-          <CardHeader title='ACL and JWT 🔒'></CardHeader>
-          <CardContent>
-            <Typography sx={{ mb: 2 }}>
-              Access Control (ACL) and Authentication (JWT) are the two main security features of our template and are
-              implemented in the starter-kit as well.
-            </Typography>
-            <Typography>Please read our Authentication and ACL Documentations to get more out of them.</Typography>
-          </CardContent>
-        </Card>
-      </Grid>
-    </Grid>
+    </ApexChartWrapper>
   )
 }
 
