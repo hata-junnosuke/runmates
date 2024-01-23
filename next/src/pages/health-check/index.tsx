@@ -4,6 +4,7 @@ import { fetcher } from 'src/utils'
 import { useUserState } from 'src/hooks/useGlobalState'
 import Link from 'next/link'
 import { useRequireSignedIn } from 'src/hooks/useRequireSignedIn'
+import Spinner from 'src/@core/components/spinner'
 
 const HealthCheck: NextPage = () => {
   useRequireSignedIn()
@@ -13,7 +14,7 @@ const HealthCheck: NextPage = () => {
   const { data, error } = useSWR(url, fetcher)
 
   if (error) return <div>An error has occurred.</div>
-  if (!data) return <div>Loading...</div>
+  if (!data) return <Spinner />
 
   return (
     <>
