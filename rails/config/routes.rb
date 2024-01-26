@@ -8,7 +8,7 @@ Rails.application.routes.draw do
         resource :confirmations, only: [:update]
       end
       namespace :current do
-        resource :user, only: [:show]
+        resource :user, only: [:show, :update]
       end
       resources :records
       resources :groups
