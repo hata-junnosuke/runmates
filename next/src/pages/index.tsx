@@ -1,13 +1,15 @@
 import type { NextPage } from "next"
 import useSWR from "swr"
+import Error from "@/components/Error"
+import Loading from "@/components/Loading"
 import { fetcher } from "@/utils"
 
 const Index: NextPage = () => {
   const url = "http://localhost:3000/api/v1/health_check"
   const { data, error } = useSWR(url, fetcher)
 
-  if (error) return <div>An error has occurred.</div>
-  if (!data) return <div>Loading...</div>
+  if (error) return <Error />
+  if (!data) return <Loading />
 
   return (
     <>
