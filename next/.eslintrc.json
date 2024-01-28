@@ -14,13 +14,14 @@
     "react/react-in-jsx-scope": "off",
     "import/order": [2, { "alphabetize": { "order": "asc" } }],
     "import/no-unresolved": "off",
+    "quotes": ["error", "double"],
     "prettier/prettier": [
       "error",
       {
         "trailingComma": "all",
         "endOfLine": "lf",
         "semi": false,
-        "singleQuote": true,
+        "singleQuote": false,
         "printWidth": 80,
         "tabWidth": 2
       }

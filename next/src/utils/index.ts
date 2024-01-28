@@ -1,4 +1,4 @@
-import axios, { AxiosResponse, AxiosError } from 'axios'
+import axios, { AxiosResponse, AxiosError } from "axios"
 
 export const fetcher = (url: string) =>
   axios

@@ -1,17 +1,17 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import createEmotionServer from '@emotion/server/create-instance'
-import { RenderPageResult } from 'next/dist/shared/lib/utils'
+import createEmotionServer from "@emotion/server/create-instance"
+import { RenderPageResult } from "next/dist/shared/lib/utils"
 import Document, {
   Html,
   Head,
   Main,
   NextScript,
   DocumentInitialProps,
-} from 'next/document'
-import * as React from 'react'
+} from "next/document"
+import * as React from "react"
 
-import createEmotionCache from '@/styles/createEmotionCache'
-import theme from '@/styles/theme'
+import createEmotionCache from "@/styles/createEmotionCache"
+import theme from "@/styles/theme"
 
 export default class MyDocument extends Document {
   render(): JSX.Element {
@@ -80,7 +80,7 @@ MyDocument.getInitialProps = async (ctx): Promise<DocumentInitialProps> => {
   const emotionStyles = extractCriticalToChunks(initialProps.html)
   const emotionStyleTags = emotionStyles.styles.map((style) => (
     <style
-      data-emotion={`${style.key} ${style.ids.join(' ')}`}
+      data-emotion={`${style.key} ${style.ids.join(" ")}`}
       key={style.key}
       // eslint-disable-next-line react/no-danger
       dangerouslySetInnerHTML={{ __html: style.css }}
