@@ -1,3 +1,5 @@
+import { DateCalendar } from "@mui/x-date-pickers/DateCalendar"
+import { DatePicker } from "@mui/x-date-pickers/DatePicker"
 import type { NextPage } from "next"
 import useSWR from "swr"
 import Error from "@/components/Error"
@@ -19,6 +21,8 @@ const Index: NextPage = () => {
   return (
     <>
       <div>あなたの走行距離: {data.current_user_distance}</div>
+      <DatePicker />
+      <DateCalendar />
     </>
   )
 }

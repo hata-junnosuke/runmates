@@ -1,6 +1,8 @@
 import { CacheProvider, EmotionCache } from "@emotion/react"
 import CssBaseline from "@mui/material/CssBaseline"
 import { ThemeProvider } from "@mui/material/styles"
+import { LocalizationProvider } from "@mui/x-date-pickers"
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs"
 import { AppProps } from "next/app"
 import * as React from "react"
 import "@/styles/destyle.css"
@@ -26,9 +28,11 @@ export default function MyApp(props: MyAppProps): JSX.Element {
         {/* CssBaseline kickstart an elegant, consistent, and simple baseline to build upon. */}
         <CssBaseline />
         <CurrentUserFetch />
-        <Header />
-        <Component {...pageProps} />
-        <Snackbar />
+        <LocalizationProvider dateAdapter={AdapterDayjs}>
+          <Header />
+          <Component {...pageProps} />
+          <Snackbar />
+        </LocalizationProvider>
       </ThemeProvider>
     </CacheProvider>
   )
