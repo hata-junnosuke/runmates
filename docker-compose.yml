@@ -24,13 +24,23 @@ services:
     tty: true
     stdin_open: true
   next:
-      build:
-        dockerfile: ./next/Dockerfile
-      tty: true
-      stdin_open: true
-      volumes:
-        - ./next:/app
-      ports:
-        - "8000:3000"
+    build:
+      context: .
+      dockerfile: ./next/Dockerfile
+    ports:
+      - '8000:3000'
+    volumes:
+      - type: bind
+        source: ./next
+        target: /app
+      - type: bind
+        source: ./next/node_modules
+        target: /app/node_modules
+    environment:
+      - WATCHPACK_POLLING=true
+    restart: always
+    tty: true
+    stdin_open: true
 volumes:
   mysql_data:
+  node_modules:
