@@ -10,7 +10,7 @@ const Index: NextPage = () => {
   useRequireSignedIn()
 
   const [user] = useUserState()
-  const url = "http://localhost:3000/api/v1/health_check"
+  const url = "http://localhost:3000/api/v1/records"
   const { data, error } = useSWR(user.isSignedIn && url, fetcher)
 
   if (error) return <Error />
@@ -18,8 +18,7 @@ const Index: NextPage = () => {
 
   return (
     <>
-      <div>Rails疎通確認</div>
-      <div>レスポンスメッセージ: {data.message}</div>
+      <div>あなたの走行距離: {data.current_user_distance}</div>
     </>
   )
 }
