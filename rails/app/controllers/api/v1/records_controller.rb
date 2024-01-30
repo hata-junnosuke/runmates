@@ -3,7 +3,7 @@ class Api::V1::RecordsController < Api::V1::BaseController
     @records = Record.all.includes(:user)
     @current_user_records = @records.where(user_id: current_user.id)
     @currrent_user_distance = @current_user_records.sum(:distance)
-    render json: {records: @records, current_user_records: @current_user_records, current_user_distance: @currrent_user_distance}
+    render json: { records: @records, current_user_records: @current_user_records, current_user_distance: @currrent_user_distance }
   end
 
   def show

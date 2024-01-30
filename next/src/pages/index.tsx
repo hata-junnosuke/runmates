@@ -4,6 +4,7 @@ import type { NextPage } from "next"
 import useSWR from "swr"
 import Error from "@/components/Error"
 import Loading from "@/components/Loading"
+import BasicModal from "@/components/Modal"
 import { useUserState } from "@/hooks/useGlobalState"
 import { useRequireSignedIn } from "@/hooks/useRequireSignedIn"
 import { fetcher } from "@/utils"
@@ -23,6 +24,7 @@ const Index: NextPage = () => {
       <div>あなたの走行距離: {data.current_user_distance}</div>
       <DatePicker />
       <DateCalendar />
+      <BasicModal />
     </>
   )
 }
