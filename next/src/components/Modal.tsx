@@ -34,7 +34,6 @@ const BasicModal = () => {
   const handleOpen = () => setOpen(true)
   const handleClose = () => setOpen(false)
   const [isLoading, setIsLoading] = useState(false)
-  // const [user, setUser] = useUserState()
   const [, setSnackbar] = useSnackbarState()
   extend(duration)
   const today = dayjs().format("YYYY-MM-DD")
@@ -67,6 +66,7 @@ const BasicModal = () => {
           pathname: "/",
         })
         router.push("/")
+        router.reload()
         setOpen(false)
         setIsLoading(false)
       })
