@@ -6,8 +6,7 @@ import { LoadingButton } from "@mui/lab"
 import { Box, TextField, Stack } from "@mui/material"
 import Modal from "@mui/material/Modal"
 import axios, { AxiosError } from "axios"
-import dayjs, { extend } from "dayjs"
-import duration from "dayjs/plugin/duration"
+import dayjs from "dayjs"
 import { useRouter } from "next/router"
 import { useState } from "react"
 import { useForm, SubmitHandler, Controller } from "react-hook-form"
@@ -50,27 +49,27 @@ const eventExample = [
   },
 ]
 
-// const handleDateClick = (arg: { date: Date }) => {
-//   // arg.dateにクリックされた日付が含まれています
-//   console.log("日付がクリックされました:", arg.date)
-// }
-
 const Calendar = () => {
   const router = useRouter()
   const [open, setOpen] = useState<boolean>(false)
+  const [selectedDate, setSelectedDate] = useState(dayjs().format("YYYY-MM-DD"))
   const handleOpen = () => setOpen(true)
   const handleClose = () => setOpen(false)
   const [isLoading, setIsLoading] = useState(false)
   const [, setSnackbar] = useSnackbarState()
-  extend(duration)
-  const today = dayjs().format("YYYY-MM-DD")
-  const { handleSubmit, control } = useForm<RecordFormData>({
+  const { handleSubmit, control, setValue } = useForm<RecordFormData>({
     defaultValues: {
       distance: null,
-      date: today,
+      date: selectedDate,
       comment: null,
     },
   })
+
+  const handleDateClick = (arg: { dateStr: string }) => {
+    setSelectedDate(arg.dateStr)
+    setValue("date", arg.dateStr)
+    handleOpen()
+  }
 
   const onSubmit: SubmitHandler<RecordFormData> = (data) => {
     setIsLoading(true)
@@ -125,7 +124,7 @@ const Calendar = () => {
           end: "today prev,next",
         }}
         contentHeight={"700px"}
-        dateClick={handleOpen} // dateClickイベントを設定
+        dateClick={handleDateClick}
       />
       <Modal
         open={open}
