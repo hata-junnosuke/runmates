@@ -10,7 +10,9 @@ import dayjs from "dayjs"
 import { useRouter } from "next/router"
 import { useState } from "react"
 import { useForm, SubmitHandler, Controller } from "react-hook-form"
+import useSWR from "swr"
 import { useSnackbarState } from "@/hooks/useGlobalState"
+import { fetcher } from "@/utils"
 
 const style = {
   position: "absolute" as const,
@@ -30,25 +32,6 @@ type RecordFormData = {
   comment: string | null
 }
 
-const eventExample = [
-  //背景のカラーもこの中で指定できる
-  {
-    title: "温泉旅行",
-    start: new Date(),
-    end: new Date().setDate(new Date().getDate() + 5),
-    description: "友達と温泉旅行",
-    backgroundColor: "green",
-    borderColor: "green",
-  },
-  {
-    title: "期末テスト",
-    start: new Date().setDate(new Date().getDate() + 5),
-    description: "2年最後の期末テスト",
-    backgroundColor: "blue",
-    borderColor: "blue",
-  },
-]
-
 const Calendar = () => {
   const router = useRouter()
   const [open, setOpen] = useState<boolean>(false)
@@ -57,6 +40,19 @@ const Calendar = () => {
   const handleClose = () => setOpen(false)
   const [isLoading, setIsLoading] = useState(false)
   const [, setSnackbar] = useSnackbarState()
+
+  // TODO: APIの検討、型を指定する、日毎の合計距離を取得する
+  const url = "http://localhost:3000/api/v1/records"
+  const { data } = useSWR(url, fetcher)
+  // eslint-disable-next-line
+  const eventExample = data.records.map((record: any) => ({
+    title: `距離:${record.distance}`,
+    start: record.date,
+    backgroundColor: "green",
+    borderColor: "green",
+    display: "background",
+  }))
+
   const { handleSubmit, control, setValue } = useForm<RecordFormData>({
     defaultValues: {
       distance: null,
