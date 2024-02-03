@@ -1,7 +1,7 @@
-import { Stack } from "@mui/material"
-import { DateCalendar } from "@mui/x-date-pickers/DateCalendar"
+import { Stack, Container } from "@mui/material"
 import type { NextPage } from "next"
 import useSWR from "swr"
+import Calendar from "@/components/Calendar"
 import Error from "@/components/Error"
 import Loading from "@/components/Loading"
 import BasicModal from "@/components/Modal"
@@ -21,16 +21,18 @@ const Index: NextPage = () => {
 
   return (
     <>
-      <Stack
-        display="column"
-        justifyContent="center"
-        alignItems="center"
-        spacing={4}
-      >
-        <div>あなたの走行距離: {data.current_user_distance}</div>
-        <DateCalendar />
-        <BasicModal />
-      </Stack>
+      <Container maxWidth="sm">
+        <Stack
+          display="column"
+          justifyContent="center"
+          alignItems="center"
+          spacing={4}
+        >
+          <div>あなたの走行距離: {data.current_user_distance}</div>
+          <BasicModal />
+        </Stack>
+        <Calendar />
+      </Container>
     </>
   )
 }
