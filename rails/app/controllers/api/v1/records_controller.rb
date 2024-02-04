@@ -2,8 +2,9 @@ class Api::V1::RecordsController < Api::V1::BaseController
   def index
     @records = Record.all.includes(:user)
     @current_user_records = @records.where(user_id: current_user.id)
+    @date_records = @current_user_records.group(:date).sum(:distance).map {|date, distance| { date:, distance: } }
     @currrent_user_distance = @current_user_records.sum(:distance)
-    render json: { records: @records, current_user_records: @current_user_records, current_user_distance: @currrent_user_distance }
+    render json: { records: @records, current_user_records: @current_user_records, date_records: @date_records, current_user_distance: @currrent_user_distance }
   end
 
   def show

@@ -11,6 +11,8 @@ import { useRouter } from "next/router"
 import { useState } from "react"
 import { useForm, SubmitHandler, Controller } from "react-hook-form"
 import useSWR from "swr"
+import Error from "@/components/Error"
+import Loading from "@/components/Loading"
 import { useSnackbarState } from "@/hooks/useGlobalState"
 import { fetcher } from "@/utils"
 
@@ -41,15 +43,20 @@ const Calendar = () => {
   const [isLoading, setIsLoading] = useState(false)
   const [, setSnackbar] = useSnackbarState()
 
-  // TODO: APIの検討、型を指定する、日毎の合計距離を取得する
+  // TODO: APIの検討、型を指定する
   const url = "http://localhost:3000/api/v1/records"
-  const { data } = useSWR(url, fetcher)
+  const { data, error } = useSWR(url, fetcher)
   // eslint-disable-next-line
-  const eventExample = data.records.map((record: any) => ({
-    title: `距離:${record.distance}`,
-    start: record.date,
-    backgroundColor: "green",
-    borderColor: "green",
+  const eventExample = data.date_records.map((dateRecord: any) => ({
+    title: `距離:${dateRecord.distance}km`,
+    start: dateRecord.date,
+    backgroundColor: dateRecord.distance >= 10 ? "darkgreen" : "green",
+    borderColor: dateRecord.distance >= 10 ? "darkgreen" : "green",
+  }))
+  // eslint-disable-next-line
+  const backgroundEvents = data.date_records.map((dateRecord: any) => ({
+    start: dateRecord.date,
+    backgroundColor: dateRecord.distance >= 10 ? "darkgreen" : "green",
     display: "background",
   }))
 
@@ -107,13 +114,16 @@ const Calendar = () => {
       })
   }
 
+  if (error) return <Error />
+  if (!data) return <Loading />
+
   return (
     <>
       <FullCalendar
         plugins={[dayGridPlugin, interactionPlugin]}
         locale={jaLocale}
         initialView="dayGridMonth"
-        events={eventExample}
+        events={[...eventExample, ...backgroundEvents]}
         headerToolbar={{
           start: "prevYear,nextYear",
           center: "title",
