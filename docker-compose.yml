@@ -15,7 +15,7 @@ services:
   rails:
     build:
       context: ./rails
-    command:  bash -c "tail -f log/development.log"
+    command:  bash -c "bundle exec rails s -b '0.0.0.0'"
     volumes:
       - ./rails:/myapp
     ports:
@@ -27,6 +27,7 @@ services:
   next:
     build:
       dockerfile: ./next/Dockerfile  # DockerイメージをビルドするためのDockerfileの場所を指定します。
+    command:  bash -c "npm run dev"
     tty: true  # コンテナがフォアグラウンドで走り続けるようにTTYを割り当てます。
     stdin_open: true  # コンテナの標準入力をオープンにします。これにより、コンテナ内での対話型シェルが可能になります。
     volumes:
