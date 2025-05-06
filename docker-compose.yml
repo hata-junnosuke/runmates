@@ -32,10 +32,9 @@ services:
     stdin_open: true  # コンテナの標準入力をオープンにします。これにより、コンテナ内での対話型シェルが可能になります。
     volumes:
       - ./next:/app  # ホストマシンのカレントディレクトリ下の `next` フォルダをコンテナ内の `/app` にマウントします。
-      - node_modules:/app/node_modules  # 名前付きボリューム `node_modules` をコンテナ内の `/app/node_modules` にマウントします。
+      - ./next/node_modules:/app/node_modules  # 名前付きボリューム `node_modules` をコンテナ内の `/app/node_modules` にマウントします。
     ports:
       - "8000:3000"  # ホストのポート8000をコンテナのポート3000にフォワードします。Next.jsのデフォルトポート3000が外部の8000ポートでアクセス可能になります。
 
 volumes:
   mysql_data:
-  node_modules:  # `node_modules` という名前付きボリュームを定義しています。これは、依存関係がOS固有の問題を引き起こさないように、コンテナ固有のものとして隔離されます。
