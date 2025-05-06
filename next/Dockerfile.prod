@@ -24,7 +24,7 @@
   WORKDIR /app
   
   # Copy the build output from the previous stage
-  COPY --from=builder /app/next.config.js ./next.config.js
+  COPY --from=builder /app/next.config.ts ./next.config.ts
   COPY --from=builder /app/.next ./.next
   # COPY --from=builder /app/.env.production ./.env.production
   COPY --from=builder /app/public ./public
