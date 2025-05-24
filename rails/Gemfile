@@ -58,6 +58,9 @@ group :development, :test do
   gem "pry-rails"
 
   gem "rspec-rails"
+  # テスト用データを作成する
+  gem "factory_bot_rails"
+  gem "faker"
 
   # rubocop を使えるようにする。
   gem "rubocop-faker"
