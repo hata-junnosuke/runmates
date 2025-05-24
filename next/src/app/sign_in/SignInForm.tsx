@@ -45,7 +45,7 @@ export default function SignInForm() {
         </label>
         <input
           type="email"
-          className="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-indigo-400"
+          className="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-green-400"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required
@@ -57,7 +57,7 @@ export default function SignInForm() {
         </label>
         <input
           type="password"
-          className="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-indigo-400"
+          className="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-green-400"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           required
@@ -66,13 +66,13 @@ export default function SignInForm() {
       {error && <div className="text-red-500 text-sm text-center">{error}</div>}
       <button
         type="submit"
-        className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 rounded transition disabled:opacity-50"
+        className="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-2 rounded transition disabled:opacity-50"
         disabled={loading}
       >
         {loading ? "送信中..." : "サインイン"}
       </button>
       <div className="text-center mt-2">
-        <a href="/sign_up" className="text-indigo-500 hover:underline text-sm">
+        <a href="/sign_up" className="text-green-500 hover:underline text-sm">
           アカウントをお持ちでない方はこちら
         </a>
       </div>
