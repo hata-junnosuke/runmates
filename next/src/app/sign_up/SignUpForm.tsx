@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import axios from "axios";
+import { signUp } from "@/lib/client-auth";
 
 export default function SignUpForm() {
   const router = useRouter();
@@ -17,31 +17,24 @@ export default function SignUpForm() {
     setLoading(true);
     setError("");
     setSuccess("");
+
     if (password !== passwordConfirmation) {
       setError("パスワードが一致しません");
       setLoading(false);
       return;
     }
-    try {
-      await axios.post("http://localhost:3000/api/v1/auth", {
-        email,
-        password,
-        password_confirmation: passwordConfirmation,
-        confirm_success_url: "http://localhost:8000",
-      });
-      setSuccess("登録が完了しました。メールを確認してください。");
+
+    const result = await signUp(email, password, passwordConfirmation);
+
+    if (result.success) {
+      setSuccess(
+        result.message || "登録が完了しました。メールを確認してください。"
+      );
       setTimeout(() => router.push("/sign_in"), 2000);
-    } catch (e) {
-      if (axios.isAxiosError(e)) {
-        setError(
-          e.response?.data?.errors?.full_messages?.[0] || "登録に失敗しました"
-        );
-      } else {
-        setError("登録に失敗しました");
-      }
-    } finally {
-      setLoading(false);
+    } else {
+      setError(result.error || "登録に失敗しました");
     }
+    setLoading(false);
   };
 
   return (
@@ -56,6 +49,7 @@ export default function SignUpForm() {
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required
+          disabled={loading}
         />
       </div>
       <div>
@@ -68,6 +62,7 @@ export default function SignUpForm() {
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           required
+          disabled={loading}
         />
       </div>
       <div>
@@ -80,6 +75,7 @@ export default function SignUpForm() {
           value={passwordConfirmation}
           onChange={(e) => setPasswordConfirmation(e.target.value)}
           required
+          disabled={loading}
         />
       </div>
       {error && <div className="text-red-500 text-sm text-center">{error}</div>}

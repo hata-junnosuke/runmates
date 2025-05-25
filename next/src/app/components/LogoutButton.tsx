@@ -1,39 +1,18 @@
 "use client";
 import { useState } from "react";
-import axios from "axios";
+import { signOut } from "@/lib/client-auth";
 
-interface LogoutButtonProps {
-  onLogoutSuccess: () => void;
-}
-
-export default function LogoutButton({ onLogoutSuccess }: LogoutButtonProps) {
+export default function LogoutButton() {
   const [loading, setLoading] = useState(false);
 
   const handleLogout = async () => {
     setLoading(true);
     try {
-      const token = localStorage.getItem("access-token");
-      const client = localStorage.getItem("client");
-      const uid = localStorage.getItem("uid");
-
-      if (token && client && uid) {
-        await axios.delete("http://localhost:3000/api/v1/auth/sign_out", {
-          headers: {
-            "access-token": token,
-            client: client,
-            uid: uid,
-          },
-        });
-      }
+      await signOut();
     } catch (error) {
       console.error("ログアウトエラー:", error);
     } finally {
-      // ローカルストレージをクリア
-      localStorage.removeItem("access-token");
-      localStorage.removeItem("client");
-      localStorage.removeItem("uid");
       setLoading(false);
-      onLogoutSuccess();
     }
   };
 

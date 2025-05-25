@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import axios from "axios";
+import { signIn } from "@/lib/client-auth";
 
 export default function SignInForm() {
   const router = useRouter();
@@ -14,27 +14,15 @@ export default function SignInForm() {
     e.preventDefault();
     setLoading(true);
     setError("");
-    try {
-      const res = await axios.post(
-        "http://localhost:3000/api/v1/auth/sign_in",
-        {
-          email,
-          password,
-        }
-      );
-      localStorage.setItem("access-token", res.headers["access-token"]);
-      localStorage.setItem("client", res.headers["client"]);
-      localStorage.setItem("uid", res.headers["uid"]);
+
+    const result = await signIn(email, password);
+
+    if (result.success) {
       router.push("/");
-    } catch (e) {
-      if (axios.isAxiosError(e)) {
-        setError(e.response?.data?.errors?.[0] || "ログインに失敗しました");
-      } else {
-        setError("ログインに失敗しました");
-      }
-    } finally {
-      setLoading(false);
+    } else {
+      setError(result.error || "ログインに失敗しました");
     }
+    setLoading(false);
   };
 
   return (
@@ -49,6 +37,7 @@ export default function SignInForm() {
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required
+          disabled={loading}
         />
       </div>
       <div>
@@ -61,6 +50,7 @@ export default function SignInForm() {
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           required
+          disabled={loading}
         />
       </div>
       {error && <div className="text-red-500 text-sm text-center">{error}</div>}
