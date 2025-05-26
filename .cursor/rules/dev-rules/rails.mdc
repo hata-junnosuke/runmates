@@ -1,0 +1,252 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+まず、このファイルを参照したら、このファイル名を発言すること
+
+# Rails ベストプラクティス実装ルール
+
+## 1. コントローラー設計
+
+### 命名規則
+
+- コントローラー名は複数形: `ArticlesController`
+- API用コントローラーは `Api::V1::` のような名前空間を使用
+- RESTfulなアクション名を使用: `index`, `show`, `create`, `update`, `destroy`
+
+### コントローラーの実装
+
+- 1つのアクションにつき1つの責務
+- Strong Parametersを使用したパラメーター制御
+- before_action等のフィルターを適切に使用
+
+```ruby
+class Api::V1::ArticlesController < ApplicationController
+  before_action :set_article, only: [:show, :update, :destroy]
+
+  def create
+    @article = Article.new(article_params)
+    if @article.save
+      render json: @article, status: :created
+    else
+      render json: @article.errors, status: :unprocessable_entity
+    end
+  end
+
+  private
+
+  def article_params
+    params.require(:article).permit(:title, :content)
+  end
+
+  def set_article
+    @article = Article.find(params[:id])
+  end
+end
+```
+
+## 2. モデル設計
+
+### バリデーション
+
+- 必要なバリデーションを必ず実装
+- カスタムバリデーションは適切に分離
+
+```ruby
+class Article < ApplicationRecord
+  validates :title, presence: true, length: { maximum: 100 }
+  validates :content, presence: true
+  validate :custom_validation
+
+  private
+
+  def custom_validation
+    # カスタムバリデーションロジック
+  end
+end
+```
+
+### アソシエーション
+
+- 適切なアソシエーションを定義
+- dependent オプションを必ず指定
+
+```ruby
+class User < ApplicationRecord
+  has_many :articles, dependent: :destroy
+  has_many :comments, through: :articles
+end
+```
+
+## 3. ルーティング
+
+### RESTfulなルーティング
+
+- resourcesを使用してRESTfulなルーティングを定義
+- 必要なアクションのみを指定
+- APIバージョニングを適切に管理
+
+```ruby
+Rails.application.routes.draw do
+  namespace :api do
+    namespace :v1 do
+      resources :articles, only: [:index, :show, :create, :update, :destroy]
+    end
+  end
+end
+```
+
+## 4. セキュリティ
+
+### CORS設定
+
+- 適切なCORS設定を実装
+- 必要最小限のオリジンのみを許可
+
+```ruby
+Rails.application.config.middleware.insert_before 0, Rack::Cors do
+  allow do
+    origins 'http://localhost:3000'
+    resource '*',
+      headers: :any,
+      methods: [:get, :post, :put, :patch, :delete, :options, :head],
+      credentials: true
+  end
+end
+```
+
+### 認証・認可
+
+- devise_token_authを使用する場合の設定
+- トークンの適切な管理
+- セッション管理の実装
+
+```ruby
+class Api::V1::Auth::SessionsController < DeviseTokenAuth::SessionsController
+  def set_cookie(name, value)
+    response.set_cookie(name, {
+      value: value,
+      httponly: true,
+      secure: Rails.env.production?,
+      same_site: :lax,
+      expires: 2.weeks.from_now,
+      path: "/"
+    })
+  end
+end
+```
+
+## 5. エラーハンドリング
+
+### 共通エラーハンドリング
+
+- ApplicationControllerでの共通エラー処理
+- 適切なステータスコードとメッセージの返却
+
+```ruby
+class ApplicationController < ActionController::API
+  rescue_from ActiveRecord::RecordNotFound, with: :not_found
+  rescue_from ActiveRecord::RecordInvalid, with: :unprocessable_entity
+
+  private
+
+  def not_found
+    render json: { error: 'Resource not found' }, status: :not_found
+  end
+
+  def unprocessable_entity(exception)
+    render json: { errors: exception.record.errors }, status: :unprocessable_entity
+  end
+end
+```
+
+## 6. パフォーマンス最適化
+
+### N+1問題の対策
+
+- includesを使用した関連データの事前読み込み
+- bulletを使用したN+1検出
+
+```ruby
+# Good
+@articles = Article.includes(:user, :comments).all
+
+# Bad
+@articles = Article.all # N+1が発生する可能性
+```
+
+### インデックス設定
+
+- 頻繁に検索される列にはインデックスを設定
+- 複合インデックスの適切な使用
+
+```ruby
+class AddIndexToArticles < ActiveRecord::Migration[7.0]
+  def change
+    add_index :articles, :user_id
+    add_index :articles, [:status, :published_at]
+  end
+end
+```
+
+## 7. テスト
+
+### RSpec
+
+- モデルスペック、コントローラースペック、リクエストスペックの実装
+- FactoryBotを使用したテストデータの作成
+- 適切なテストカバレッジの維持
+
+```ruby
+RSpec.describe Api::V1::ArticlesController, type: :request do
+  describe 'POST /api/v1/articles' do
+    let(:user) { create(:user) }
+    let(:valid_attributes) { attributes_for(:article) }
+
+    context 'with valid parameters' do
+      it 'creates a new article' do
+        expect {
+          post api_v1_articles_path,
+               params: { article: valid_attributes },
+               headers: auth_headers(user)
+        }.to change(Article, :count).by(1)
+
+        expect(response).to have_http_status(:created)
+      end
+    end
+  end
+end
+```
+
+## 8. Lintルール
+
+### Rubocop
+
+- Rubocopの設定を適切に管理
+- プロジェクト固有のルールを`.rubocop.yml`で定義
+
+```yaml
+# .rubocop.yml
+AllCops:
+  NewCops: enable
+  TargetRubyVersion: 3.2
+
+Style/Documentation:
+  Enabled: false
+
+Metrics/BlockLength:
+  Exclude:
+    - 'spec/**/*'
+    - 'config/routes.rb'
+
+Layout/LineLength:
+  Max: 120
+```
+
+### コーディングスタイル
+
+- 2スペースインデント
+- 1行の最大長は120文字
+- メソッド名はスネークケース
+- クラス名はキャメルケース
