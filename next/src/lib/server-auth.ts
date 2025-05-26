@@ -17,3 +17,4 @@ export async function getAuthTokens() {
     uid: cookieStore.get("uid")?.value,
   };
 }
+ 
