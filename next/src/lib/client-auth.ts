@@ -40,7 +40,7 @@ export async function signUp(
   passwordConfirmation: string
 ) {
   try {
-    const res = await fetch(process.env.NEXT_PUBLIC_API_URL + "/auth", {
+    const res = await fetch(process.env.NEXT_PUBLIC_API_BASE_URL + "/auth", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -79,7 +79,7 @@ export async function signUp(
 
 export async function signOut() {
   try {
-    await fetch(process.env.NEXT_PUBLIC_API_URL + "/auth/sign_out", {
+    await fetch(process.env.NEXT_PUBLIC_API_BASE_URL + "/auth/sign_out", {
       method: "DELETE",
       credentials: "include", // クッキーを送受信
     });
