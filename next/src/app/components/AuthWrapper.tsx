@@ -1,10 +1,8 @@
 "use client";
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
 import LogoutButton from "./LogoutButton";
 
 export default function AuthWrapper() {
-  const router = useRouter();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [loading, setLoading] = useState(true);
 
@@ -19,11 +17,6 @@ export default function AuthWrapper() {
     }
     setLoading(false);
   }, []);
-
-  const handleLogoutSuccess = () => {
-    setIsLoggedIn(false);
-    router.push("/sign_in");
-  };
 
   if (loading) {
     return (
@@ -59,7 +52,7 @@ export default function AuthWrapper() {
     <div>
       <div className="flex justify-between items-center mb-6">
         <div className="flex-1"></div>
-        <LogoutButton onLogoutSuccess={handleLogoutSuccess} />
+        <LogoutButton />
       </div>
       <div className="text-center">
         <p className="text-gray-600 text-lg">ログイン中です！</p>
