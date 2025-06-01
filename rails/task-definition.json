@@ -1,0 +1,111 @@
+{
+  "family": "runmates-task-definition-backend",
+  "containerDefinitions": [
+      {
+          "name": "rails",
+          "image": "905418297788.dkr.ecr.ap-northeast-1.amazonaws.com/runmates-rails",
+          "cpu": 0,
+          "portMappings": [
+              {
+                  "name": "rails-3000-tcp",
+                  "containerPort": 3000,
+                  "hostPort": 3000,
+                  "protocol": "tcp",
+                  "appProtocol": "http"
+              }
+          ],
+          "essential": true,
+          "environment": [
+              {
+                  "name": "RAILS_MASTER_KEY",
+                  "value": "5a6ef726140f6c4880c6a2613725d6c7"
+              },
+              {
+                  "name": "RAILS_LOG_TO_STDOUT",
+                  "value": "true"
+              }
+          ],
+          "environmentFiles": [],
+          "mountPoints": [],
+          "volumesFrom": [],
+          "ulimits": [],
+          "logConfiguration": {
+              "logDriver": "awslogs",
+              "options": {
+                  "awslogs-group": "/ecs/runmates-task-definition-backend",
+                  "mode": "non-blocking",
+                  "awslogs-create-group": "true",
+                  "max-buffer-size": "25m",
+                  "awslogs-region": "ap-northeast-1",
+                  "awslogs-stream-prefix": "ecs"
+              },
+              "secretOptions": []
+          },
+          "healthCheck": {
+              "command": [
+                  "CMD-SHELL",
+                  "curl --unix-socket /myapp/tmp/sockets/puma.sock localhost/health_check || exit 1"
+              ],
+              "interval": 30,
+              "timeout": 5,
+              "retries": 3
+          },
+          "systemControls": []
+      },
+      {
+          "name": "nginx",
+          "image": "905418297788.dkr.ecr.ap-northeast-1.amazonaws.com/runmates-nginx",
+          "cpu": 0,
+          "portMappings": [
+              {
+                  "name": "nginx-80-tcp",
+                  "containerPort": 80,
+                  "hostPort": 80,
+                  "protocol": "tcp",
+                  "appProtocol": "http"
+              }
+          ],
+          "essential": true,
+          "environment": [],
+          "environmentFiles": [],
+          "mountPoints": [],
+          "volumesFrom": [
+              {
+                  "sourceContainer": "rails",
+                  "readOnly": false
+              }
+          ],
+          "dependsOn": [
+              {
+                  "containerName": "rails",
+                  "condition": "HEALTHY"
+              }
+          ],
+          "healthCheck": {
+              "command": [
+                  "CMD-SHELL",
+                  "curl -f http://localhost/health_check || exit 1"
+              ],
+              "interval": 30,
+              "timeout": 5,
+              "retries": 3
+          },
+          "systemControls": []
+      }
+  ],
+  "taskRoleArn": "arn:aws:iam::905418297788:role/ecsTaskExecutionRole",
+  "executionRoleArn": "arn:aws:iam::905418297788:role/ecsTaskExecutionRole",
+  "networkMode": "awsvpc",
+  "volumes": [],
+  "placementConstraints": [],
+  "requiresCompatibilities": [
+      "FARGATE"
+  ],
+  "cpu": "256",
+  "memory": "512",
+  "runtimePlatform": {
+      "cpuArchitecture": "X86_64",
+      "operatingSystemFamily": "LINUX"
+  },
+  "enableFaultInjection": false
+}
