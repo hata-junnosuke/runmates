@@ -13,7 +13,7 @@ env:
   AWS_REGION: ap-northeast-1
   ECS_CLUSTER: runmates-cluster
   ECS_SERVICE_BACKEND: runmates-task-definition-backend-service-6cr3oc8g
-  ECS_SERVICE_FRONTEND: rrunmates-task-definition-frontend-service-e9tkg5ne
+  ECS_SERVICE_FRONTEND: runmates-task-definition-frontend-service-e9tkg5ne
   ECS_TASK_DEFINITION_BACKEND: ./rails/task-definition.json
   ECS_TASK_DEFINITION_FRONTEND: ./next/task-definition.json
   ECR_REPOSITORY_RAILS: runmates-rails
