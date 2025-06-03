@@ -44,7 +44,7 @@
           "healthCheck": {
               "command": [
                   "CMD-SHELL",
-                  "curl --unix-socket /myapp/tmp/sockets/puma.sock localhost/health_check || exit 1"
+                  "curl --unix-socket /myapp/tmp/sockets/puma.sock localhost/api/v1/health_check || exit 1"
               ],
               "interval": 30,
               "timeout": 5,
@@ -84,7 +84,7 @@
           "healthCheck": {
               "command": [
                   "CMD-SHELL",
-                  "curl -f http://localhost/health_check || exit 1"
+                  "curl -f http://localhost/api/v1/health_check || exit 1"
               ],
               "interval": 30,
               "timeout": 5,
