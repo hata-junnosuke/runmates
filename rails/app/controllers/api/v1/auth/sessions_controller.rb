@@ -36,8 +36,9 @@ class Api::V1::Auth::SessionsController < DeviseTokenAuth::SessionsController
         value: value, # ここで値を設定
         httponly: true, # クライアントからのアクセスを防ぐ
         secure: Rails.env.production?, # 本番環境ではSSLを使用しないとCookieが送信されない
-        same_site: :none, # クロスサイトでもCookieを送信
-        domain: :all, # すべてのドメインでCookieを送信
+        # same_site: :none, # クロスサイトでもCookieを送信
+        # domain: :all, # すべてのドメインでCookieを送信
+        same_site: :lax,
         expires: expires, # 有効期限
         path: "/", # パス
       })
