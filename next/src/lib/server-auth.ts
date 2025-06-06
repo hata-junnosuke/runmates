@@ -5,11 +5,6 @@ export async function getAuthStatus() {
   const token = cookieStore.get("access_token")?.value;
   const client = cookieStore.get("client")?.value;
   const uid = cookieStore.get("uid")?.value;
-  console.log("本番クッキー:", {
-    access_token: cookieStore.get("access_token")?.value,
-    client: cookieStore.get("client")?.value,
-    uid: cookieStore.get("uid")?.value,
-  });
   return !!(token && client && uid);
 }
 
@@ -21,4 +16,3 @@ export async function getAuthTokens() {
     uid: cookieStore.get("uid")?.value,
   };
 }
- 
