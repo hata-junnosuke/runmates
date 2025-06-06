@@ -33,14 +33,13 @@ class Api::V1::Auth::SessionsController < DeviseTokenAuth::SessionsController
 
     def set_cookie(name, value, expires: 2.weeks.from_now)
       response.set_cookie(name, {
-        value: value, # ここで値を設定
-        httponly: true, # クライアントからのアクセスを防ぐ
-        secure: Rails.env.production?, # 本番環境ではSSLを使用しないとCookieが送信されない
-        # same_site: :none, # クロスサイトでもCookieを送信
-        # domain: :all, # すべてのドメインでCookieを送信
-        same_site: :lax,
-        expires: expires, # 有効期限
-        path: "/", # パス
+        value: value,
+        httponly: true,
+        secure: Rails.env.production?,
+        same_site: Rails.env.production? ? :none : :lax,
+        domain: Rails.env.production? ? ".runmates.net" : nil,
+        expires: expires,
+        path: "/",
       })
     end
 end
