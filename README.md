@@ -19,4 +19,6 @@
 ※-b '0.0.0.0'とは
 https://qiita.com/Masato338/items/f162394fbc37fc490dfb
 ## トラブルシューティング
-docker logs <<CONTAINER ID>>
+docker logs <<CONTAINER ID>> 
+
+Bugbotテスト
