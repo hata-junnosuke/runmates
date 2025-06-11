@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git checkout:*)",
+      "Bash(docker compose exec:*)",
+      "Bash(docker compose:*)",
+      "Bash(git push:*)",
+      "Bash(npm run lint)",
+      "Bash(brew install:*)",
+      "Bash(git add:*)",
+      "Bash(gh auth:*)"
+    ],
+    "deny": []
+  }
+}
