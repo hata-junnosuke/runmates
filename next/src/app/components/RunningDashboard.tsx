@@ -36,30 +36,34 @@ export default function RunningDashboard() {
 
   // 初期データ（本来はAPIから取得）
   useEffect(() => {
+    const currentDate = new Date();
+    const currentYear = currentDate.getFullYear();
+    const currentMonth = currentDate.getMonth();
+    
     const sampleRecords: RunRecord[] = [
       {
         id: "1",
-        date: "2024-12-10",
+        date: `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}-${String(currentDate.getDate() - 2).padStart(2, '0')}`,
         distance: 5.2,
       },
       {
         id: "2", 
-        date: "2024-12-08",
+        date: `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}-${String(currentDate.getDate() - 4).padStart(2, '0')}`,
         distance: 3.1,
       },
       {
         id: "3",
-        date: "2024-11-05",
+        date: `${currentYear}-${String(currentMonth).padStart(2, '0')}-15`,
         distance: 7.5,
       },
       {
         id: "4",
-        date: "2024-10-15",
+        date: `${currentYear}-${String(currentMonth).padStart(2, '0')}-05`,
         distance: 4.8,
       },
       {
         id: "5",
-        date: "2023-12-20",
+        date: `${currentYear - 1}-12-20`,
         distance: 6.2,
       },
     ];
@@ -68,10 +72,8 @@ export default function RunningDashboard() {
 
   // 今年の走行距離を計算（リアルタイム更新対応）
   const thisYearDistance = useMemo(() => {
-    console.log("🗓️ Calculating thisYearDistance, records:", records);
     try {
       if (!records || !Array.isArray(records) || records.length === 0) {
-        console.log("📊 No records, returning 0");
         return 0;
       }
       
@@ -80,36 +82,28 @@ export default function RunningDashboard() {
         try {
           const recordDate = new Date(record.date);
           const now = new Date();
-          const isThisYear = !isNaN(recordDate.getTime()) && recordDate.getFullYear() === now.getFullYear();
-          console.log(`📅 Record ${record.date}: ${isThisYear ? 'THIS YEAR' : 'NOT THIS YEAR'}`);
-          return isThisYear;
+          return !isNaN(recordDate.getTime()) && recordDate.getFullYear() === now.getFullYear();
         } catch {
           return false;
         }
       });
       
-      console.log("🎯 Filtered this year records:", filtered);
-      
       const total = filtered.reduce((sum, record) => {
         const distance = typeof record.distance === 'number' ? record.distance : 0;
-        console.log(`➕ Adding distance: ${distance}km`);
         return sum + distance;
       }, 0);
       
-      console.log("📊 Total this year distance:", total);
       return typeof total === 'number' && !isNaN(total) ? total : 0;
     } catch (error) {
-      console.error("❌ Error calculating thisYearDistance:", error);
+      console.error("Error calculating thisYearDistance:", error);
       return 0;
     }
   }, [records]);
 
   // 今月の走行距離（リアルタイム更新対応）
   const thisMonthDistance = useMemo(() => {
-    console.log("🗓️ Calculating thisMonthDistance, records:", records);
     try {
       if (!records || !Array.isArray(records) || records.length === 0) {
-        console.log("📊 No records for month, returning 0");
         return 0;
       }
       
@@ -118,28 +112,22 @@ export default function RunningDashboard() {
         if (!record || !record.date) return false;
         try {
           const recordDate = new Date(record.date);
-          const isThisMonth = !isNaN(recordDate.getTime()) && 
+          return !isNaN(recordDate.getTime()) && 
                  recordDate.getMonth() === now.getMonth() && 
                  recordDate.getFullYear() === now.getFullYear();
-          console.log(`📅 Record ${record.date}: ${isThisMonth ? 'THIS MONTH' : 'NOT THIS MONTH'} (${recordDate.getMonth()} vs ${now.getMonth()})`);
-          return isThisMonth;
         } catch {
           return false;
         }
       });
       
-      console.log("🎯 Filtered this month records:", filtered);
-      
       const total = filtered.reduce((sum, record) => {
         const distance = typeof record.distance === 'number' ? record.distance : 0;
-        console.log(`➕ Adding month distance: ${distance}km`);
         return sum + distance;
       }, 0);
       
-      console.log("📊 Total this month distance:", total);
       return typeof total === 'number' && !isNaN(total) ? total : 0;
     } catch (error) {
-      console.error("❌ Error calculating thisMonthDistance:", error);
+      console.error("Error calculating thisMonthDistance:", error);
       return 0;
     }
   }, [records]);
@@ -151,9 +139,6 @@ export default function RunningDashboard() {
 
   // 新しい記録を追加
   const addRecord = (newRecord: Omit<RunRecord, "id">) => {
-    console.log("🔥 addRecord called with:", newRecord);
-    console.log("🔥 newRecord.distance type:", typeof newRecord.distance, "value:", newRecord.distance);
-    
     // 距離を確実に数値に変換
     const distance = typeof newRecord.distance === 'string' 
       ? parseFloat(newRecord.distance) 
@@ -161,34 +146,20 @@ export default function RunningDashboard() {
         ? newRecord.distance 
         : 0;
     
-    console.log("🔢 Converted distance:", distance, "type:", typeof distance);
-    
     const record: RunRecord = {
       ...newRecord,
       distance: distance,
       id: Date.now().toString(),
     };
     
-    console.log("📝 Created record:", record);
-    console.log("📝 Final distance in record:", record.distance, "type:", typeof record.distance);
-    
     // 記録を追加（リアルタイム更新で統計が即座に反映される）
-    setRecords(prev => {
-      const newRecords = [record, ...prev];
-      console.log("📊 Updated records:", newRecords);
-      console.log("📊 Records length:", newRecords.length);
-      console.log("📊 First record distance:", newRecords[0]?.distance);
-      return newRecords;
-    });
+    setRecords(prev => [record, ...prev]);
     
     setModalOpen(false);
     setSelectedDate("");
     
     // アニメーションをトリガー（統計カードの更新アニメーション）
     setAnimationTrigger(prev => prev + 1);
-    
-    // 成功フィードバック（統計更新の視覚的確認）
-    console.log("✅ 新しい記録が追加されました:", record);
   };
 
   // 目標を更新

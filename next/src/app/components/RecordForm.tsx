@@ -5,7 +5,7 @@ import { useForm, Controller } from "react-hook-form";
 
 interface FormData {
   date: string;
-  distance: number;
+  distance: number | undefined;
 }
 
 interface RecordFormProps {
@@ -40,13 +40,15 @@ export default function RecordForm({ onSubmit, onCancel, selectedDate }: RecordF
   });
 
   const handleFormSubmit = async (data: FormData) => {
-    console.log("🚀 Form submitted with data:", data);
     setLoading(true);
     try {
-      onSubmit(data);
-      console.log("✅ onSubmit called successfully");
+      const submissionData = {
+        date: data.date,
+        distance: data.distance || 1 // デフォルト値を設定
+      };
+      onSubmit(submissionData);
     } catch (error) {
-      console.error("❌ Error in form submission:", error);
+      console.error("Error in form submission:", error);
     } finally {
       setLoading(false);
     }
@@ -94,7 +96,7 @@ export default function RecordForm({ onSubmit, onCancel, selectedDate }: RecordF
             sx={inputStyles}
             onChange={(e) => {
               const value = e.target.value;
-              const numValue = value === '' ? '' : parseFloat(value);
+              const numValue = value === '' ? undefined : parseFloat(value);
               field.onChange(numValue);
             }}
           />
