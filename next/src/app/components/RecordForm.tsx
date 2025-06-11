@@ -94,9 +94,7 @@ export default function RecordForm({ onSubmit, onCancel, selectedDate }: RecordF
             sx={inputStyles}
             onChange={(e) => {
               const value = e.target.value;
-              console.log("🎯 Distance input changed:", value, "type:", typeof value);
-              const numValue = value === '' ? 0 : parseFloat(value);
-              console.log("🔢 Parsed distance:", numValue, "type:", typeof numValue);
+              const numValue = value === '' ? '' : parseFloat(value);
               field.onChange(numValue);
             }}
           />

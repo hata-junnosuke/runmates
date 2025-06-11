@@ -78,6 +78,53 @@ export default function RunningCalendar({ records, onDateClick }: RunningCalenda
   // 曜日名
   const weekDays = ['日', '月', '火', '水', '木', '金', '土'];
 
+  // 連続ランニング日数を計算
+  const getConsecutiveDays = (): number => {
+    if (!records || !Array.isArray(records) || records.length === 0) return 0;
+    
+    const validRecords = records.filter(r => r && r.date && typeof r.distance === 'number');
+    if (validRecords.length === 0) return 0;
+    
+    const sortedRecords = [...validRecords]
+      .sort((a, b) => {
+        try {
+          return new Date(b.date).getTime() - new Date(a.date).getTime();
+        } catch {
+          return 0;
+        }
+      });
+    
+    let consecutive = 0;
+    
+    try {
+      // 最新記録の日付から開始
+      const latestRecordDate = new Date(sortedRecords[0].date);
+      latestRecordDate.setHours(0, 0, 0, 0);
+      
+      const checkDate = new Date(latestRecordDate);
+      
+      for (const record of sortedRecords) {
+        try {
+          const recordDate = new Date(record.date);
+          recordDate.setHours(0, 0, 0, 0);
+          
+          if (recordDate.getTime() === checkDate.getTime()) {
+            consecutive++;
+            checkDate.setDate(checkDate.getDate() - 1);
+          } else {
+            break;
+          }
+        } catch {
+          break;
+        }
+      }
+    } catch {
+      return 0;
+    }
+    
+    return consecutive;
+  };
+
   return (
     <Box className="bg-white rounded-2xl shadow-lg p-6 border-l-4 border-blue-400">
       {/* ヘッダー */}
@@ -216,57 +263,4 @@ export default function RunningCalendar({ records, onDateClick }: RunningCalenda
       </div>
     </Box>
   );
-
-  // 連続ランニング日数を計算
-  function getConsecutiveDays(): number {
-    if (!records || !Array.isArray(records) || records.length === 0) return 0;
-    
-    const validRecords = records.filter(r => r && r.date && typeof r.distance === 'number');
-    if (validRecords.length === 0) return 0;
-    
-    const sortedRecords = [...validRecords]
-      .sort((a, b) => {
-        try {
-          return new Date(b.date).getTime() - new Date(a.date).getTime();
-        } catch {
-          return 0;
-        }
-      });
-    
-    let consecutive = 0;
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    
-    try {
-      // 今日または昨日から連続チェック
-      const checkDate = new Date(today);
-      const latestRecord = new Date(sortedRecords[0].date);
-      latestRecord.setHours(0, 0, 0, 0);
-      
-      // 最新記録が今日でない場合は昨日をチェック
-      if (latestRecord.getTime() !== today.getTime()) {
-        checkDate.setDate(checkDate.getDate() - 1);
-      }
-      
-      for (const record of sortedRecords) {
-        try {
-          const recordDate = new Date(record.date);
-          recordDate.setHours(0, 0, 0, 0);
-          
-          if (recordDate.getTime() === checkDate.getTime()) {
-            consecutive++;
-            checkDate.setDate(checkDate.getDate() - 1);
-          } else {
-            break;
-          }
-        } catch {
-          break;
-        }
-      }
-    } catch {
-      return 0;
-    }
-    
-    return consecutive;
-  }
 }
