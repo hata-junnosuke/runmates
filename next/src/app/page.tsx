@@ -1,5 +1,6 @@
 import { getAuthStatus } from "@/lib/server-auth";
 import LogoutButton from "./components/LogoutButton";
+import RunningDashboard from "./components/RunningDashboard";
 
 export default async function HomePage() {
   const isAuthenticated = await getAuthStatus();
@@ -10,16 +11,17 @@ export default async function HomePage() {
         <div className="bg-white rounded-xl shadow-lg p-8">
           <div className="flex justify-between items-center mb-6">
             <h1 className="text-3xl font-bold text-green-700">
-              runmate を作ろう！
+              🏃‍♂️ Runmates
             </h1>
             {isAuthenticated && <LogoutButton />}
           </div>
-          <div className="text-center">
-            <p className="text-gray-600 text-lg">ログイン中です！</p>
-            <p className="text-green-600 mt-2">
-              runmateアプリの開発を始めましょう 🏃‍♂️
-            </p>
-          </div>
+          {isAuthenticated ? (
+            <RunningDashboard />
+          ) : (
+            <div className="text-center">
+              <p className="text-gray-600 text-lg">ログインしてランニングを記録しましょう！</p>
+            </div>
+          )}
         </div>
       </div>
     </div>
