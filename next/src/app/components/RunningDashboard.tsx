@@ -40,25 +40,29 @@ export default function RunningDashboard() {
     const currentYear = currentDate.getFullYear();
     const currentMonth = currentDate.getMonth();
     
+    // 今月の日付を安全に計算
+    const date1 = new Date(currentYear, currentMonth, Math.max(1, currentDate.getDate() - 2));
+    const date2 = new Date(currentYear, currentMonth, Math.max(1, currentDate.getDate() - 4));
+    
     const sampleRecords: RunRecord[] = [
       {
         id: "1",
-        date: `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}-${String(currentDate.getDate() - 2).padStart(2, '0')}`,
+        date: `${date1.getFullYear()}-${String(date1.getMonth() + 1).padStart(2, '0')}-${String(date1.getDate()).padStart(2, '0')}`,
         distance: 5.2,
       },
       {
         id: "2", 
-        date: `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}-${String(currentDate.getDate() - 4).padStart(2, '0')}`,
+        date: `${date2.getFullYear()}-${String(date2.getMonth() + 1).padStart(2, '0')}-${String(date2.getDate()).padStart(2, '0')}`,
         distance: 3.1,
       },
       {
         id: "3",
-        date: `${currentYear}-${String(currentMonth).padStart(2, '0')}-15`,
+        date: `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}-15`,
         distance: 7.5,
       },
       {
         id: "4",
-        date: `${currentYear}-${String(currentMonth).padStart(2, '0')}-05`,
+        date: `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}-05`,
         distance: 4.8,
       },
       {
