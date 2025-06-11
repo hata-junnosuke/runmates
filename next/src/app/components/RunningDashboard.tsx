@@ -40,9 +40,12 @@ export default function RunningDashboard() {
     const currentYear = currentDate.getFullYear();
     const currentMonth = currentDate.getMonth();
     
-    // 今月の日付を安全に計算
-    const date1 = new Date(currentYear, currentMonth, Math.max(1, currentDate.getDate() - 2));
-    const date2 = new Date(currentYear, currentMonth, Math.max(1, currentDate.getDate() - 4));
+    // 正しい相対日付を計算（月をまたぐ場合も考慮）
+    const date1 = new Date(currentDate);
+    date1.setDate(currentDate.getDate() - 2);
+    
+    const date2 = new Date(currentDate);
+    date2.setDate(currentDate.getDate() - 4);
     
     const sampleRecords: RunRecord[] = [
       {
