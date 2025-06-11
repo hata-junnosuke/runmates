@@ -22,9 +22,8 @@ export default function RunningCalendar({ records, onDateClick }: RunningCalenda
   const year = currentDate.getFullYear();
   const month = currentDate.getMonth();
 
-  // 月の最初の日と最後の日
+  // 月の最初の日
   const firstDay = new Date(year, month, 1);
-  const lastDay = new Date(year, month + 1, 0);
   
   // 週の最初の日（日曜日）から始まるように調整
   const startDate = new Date(firstDay);
@@ -186,7 +185,7 @@ export default function RunningCalendar({ records, onDateClick }: RunningCalenda
           <div>
             <div className="text-sm text-gray-500">連続記録</div>
             <div className="font-bold text-blue-600">
-              {useMemo(() => getConsecutiveDays(), [records])}日
+              {getConsecutiveDays()}日
             </div>
           </div>
           <div>
@@ -240,7 +239,7 @@ export default function RunningCalendar({ records, onDateClick }: RunningCalenda
     
     try {
       // 今日または昨日から連続チェック
-      let checkDate = new Date(today);
+      const checkDate = new Date(today);
       const latestRecord = new Date(sortedRecords[0].date);
       latestRecord.setHours(0, 0, 0, 0);
       

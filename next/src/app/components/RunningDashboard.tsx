@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect, useMemo } from "react";
-import { Fab, Modal, Box, Typography, Button, IconButton, LinearProgress } from "@mui/material";
+import { Fab, Modal, Box, Typography, IconButton, LinearProgress } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import DirectionsRunIcon from "@mui/icons-material/DirectionsRun";
 import TimerIcon from "@mui/icons-material/Timer";
@@ -218,7 +218,6 @@ export default function RunningDashboard() {
     const { distance, date } = record;
     const recordDate = new Date(date);
     const dayOfWeek = recordDate.getDay();
-    const hour = recordDate.getHours();
     
     // 最新記録の場合
     if (index === 0) {
