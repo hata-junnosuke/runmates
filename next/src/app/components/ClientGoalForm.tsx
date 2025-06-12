@@ -7,17 +7,25 @@ import { setMonthlyGoal } from '../actions/running-actions';
 
 interface ClientGoalFormProps {
   currentGoal: number;
+  isOpen?: boolean;
+  onClose?: () => void;
+  onOpen?: () => void;
+  showWelcomeMessage?: boolean;
 }
 
-export default function ClientGoalForm({ currentGoal }: ClientGoalFormProps) {
+export default function ClientGoalForm({ currentGoal, isOpen = false, onClose, onOpen, showWelcomeMessage = false }: ClientGoalFormProps) {
   const [modalOpen, setModalOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // 外部から制御される場合
+  const isExternallyControlled = isOpen !== undefined && onClose !== undefined;
+  const currentModalOpen = isExternallyControlled ? isOpen : modalOpen;
 
   const handleSubmit = async (formData: FormData) => {
     setIsSubmitting(true);
     try {
       await setMonthlyGoal(formData);
-      setModalOpen(false);
+      handleClose();
     } catch (error) {
       console.error('Failed to set goal:', error);
       alert('目標の設定に失敗しました');
@@ -26,27 +34,48 @@ export default function ClientGoalForm({ currentGoal }: ClientGoalFormProps) {
     }
   };
 
+  const handleClose = () => {
+    if (isExternallyControlled && onClose) {
+      onClose();
+    } else {
+      setModalOpen(false);
+    }
+  };
+
+  const handleOpen = () => {
+    if (isExternallyControlled && onOpen) {
+      onOpen();
+    } else {
+      setModalOpen(true);
+    }
+  };
+
   return (
     <>
       <Button
         variant="outlined"
         startIcon={<EmojiEventsIcon />}
-        onClick={() => setModalOpen(true)}
+        onClick={handleOpen}
         className="border-purple-300 text-purple-700 hover:bg-purple-50 py-3 px-6 rounded-lg shadow-md transform hover:scale-105 transition-all duration-200"
         size="large"
       >
-        月次目標を設定
+        {showWelcomeMessage ? '目標を設定しましょう！' : '月次目標を変更'}
       </Button>
 
       <Modal
-        open={modalOpen}
-        onClose={() => setModalOpen(false)}
+        open={currentModalOpen}
+        onClose={showWelcomeMessage ? undefined : handleClose}
         aria-labelledby="goal-modal-title"
       >
         <Box className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white rounded-xl shadow-xl p-6 w-full max-w-md">
           <Typography id="goal-modal-title" variant="h5" className="mb-4 text-gray-800 font-bold">
-            🎯 今月の目標を設定
+            {showWelcomeMessage ? '🎉 ランニングを始めましょう！' : '🎯 今月の目標を変更'}
           </Typography>
+          {showWelcomeMessage && (
+            <Typography className="mb-4 text-gray-600">
+              まずは今月の走行距離目標を設定して、モチベーションを高めましょう！
+            </Typography>
+          )}
           
           <form action={handleSubmit} className="space-y-4">
             <div>
@@ -76,17 +105,19 @@ export default function ClientGoalForm({ currentGoal }: ClientGoalFormProps) {
                 disabled={isSubmitting}
                 className="flex-1 bg-purple-500 hover:bg-purple-600 py-2"
               >
-                {isSubmitting ? '保存中...' : '目標を設定'}
+                {isSubmitting ? '保存中...' : (showWelcomeMessage ? '目標を設定' : '目標を変更')}
               </Button>
-              <Button
-                type="button"
-                variant="outlined"
-                onClick={() => setModalOpen(false)}
-                disabled={isSubmitting}
-                className="flex-1 border-gray-300 text-gray-700 hover:bg-gray-50 py-2"
-              >
-                キャンセル
-              </Button>
+              {!showWelcomeMessage && (
+                <Button
+                  type="button"
+                  variant="outlined"
+                  onClick={handleClose}
+                  disabled={isSubmitting}
+                  className="flex-1 border-gray-300 text-gray-700 hover:bg-gray-50 py-2"
+                >
+                  キャンセル
+                </Button>
+              )}
             </div>
           </form>
         </Box>

@@ -101,8 +101,8 @@ jobs:
       run: |
         cd next
         cat <<EOF > .env.production
-        NEXT_PUBLIC_API_BASE_URL=${{ secrets.NEXT_PUBLIC_API_BASE_URL }}
-        NEXT_PUBLIC_FRONT_BASE_URL=${{ secrets.NEXT_PUBLIC_FRONT_BASE_URL }}
+        NEXT_PUBLIC_API_URL=${{ secrets.NEXT_PUBLIC_API_URL }}
+        INTERNAL_API_URL=${{ secrets.INTERNAL_API_URL }}
         EOF
 
     - name: Build, tag, and push image to Amazon ECR

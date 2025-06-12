@@ -3,7 +3,7 @@
 export async function signIn(email: string, password: string) {
   try {
     const res = await fetch(
-      process.env.NEXT_PUBLIC_API_BASE_URL + "/auth/sign_in",
+      process.env.NEXT_PUBLIC_API_URL + "/auth/sign_in",
       {
         method: "POST",
         headers: {
@@ -40,7 +40,7 @@ export async function signUp(
   passwordConfirmation: string
 ) {
   try {
-    const res = await fetch(process.env.NEXT_PUBLIC_API_BASE_URL + "/auth", {
+    const res = await fetch(process.env.NEXT_PUBLIC_API_URL + "/auth", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -50,10 +50,7 @@ export async function signUp(
         email,
         password,
         password_confirmation: passwordConfirmation,
-        confirm_success_url: new URL(
-          "/",
-          process.env.NEXT_PUBLIC_FRONT_BASE_URL
-        ),
+        confirm_success_url: "http://localhost:8000/",
       }),
     });
 
@@ -79,7 +76,7 @@ export async function signUp(
 
 export async function signOut() {
   try {
-    await fetch(process.env.NEXT_PUBLIC_API_BASE_URL + "/auth/sign_out", {
+    await fetch(process.env.NEXT_PUBLIC_API_URL + "/auth/sign_out", {
       method: "DELETE",
       credentials: "include", // クッキーを送受信
     });

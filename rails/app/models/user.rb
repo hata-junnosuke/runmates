@@ -9,4 +9,5 @@ class User < ApplicationRecord
 
   has_many :running_records, dependent: :destroy
   has_many :monthly_goals, dependent: :destroy
+  has_many :yearly_goals, dependent: :destroy
 end

@@ -5,15 +5,26 @@ import { Button, Modal, Box, Typography } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import { addRunningRecord } from '../actions/running-actions';
 
-export default function ClientRecordForm() {
+interface ClientRecordFormProps {
+  selectedDate?: string;
+  isOpen?: boolean;
+  onClose?: () => void;
+  hideButton?: boolean;
+}
+
+export default function ClientRecordForm({ selectedDate, isOpen = false, onClose, hideButton = false }: ClientRecordFormProps) {
   const [modalOpen, setModalOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // 外部から制御される場合
+  const isExternallyControlled = isOpen !== undefined && onClose !== undefined;
+  const currentModalOpen = isExternallyControlled ? isOpen : modalOpen;
 
   const handleSubmit = async (formData: FormData) => {
     setIsSubmitting(true);
     try {
       await addRunningRecord(formData);
-      setModalOpen(false);
+      handleClose();
     } catch (error) {
       console.error('Failed to add record:', error);
       alert('記録の追加に失敗しました');
@@ -22,21 +33,38 @@ export default function ClientRecordForm() {
     }
   };
 
+  const handleClose = () => {
+    if (isExternallyControlled && onClose) {
+      onClose();
+    } else {
+      setModalOpen(false);
+    }
+  };
+
+  const handleOpen = () => {
+    if (!isExternallyControlled) {
+      setModalOpen(true);
+    }
+  };
+
   return (
     <>
-      <Button
-        variant="contained"
-        startIcon={<AddIcon />}
-        onClick={() => setModalOpen(true)}
-        className="bg-emerald-500 hover:bg-emerald-600 text-white py-3 px-6 rounded-lg shadow-md transform hover:scale-105 transition-all duration-200"
-        size="large"
-      >
-        走行記録を追加
-      </Button>
+      {!hideButton && (
+        <Button
+          variant="contained"
+          startIcon={<AddIcon />}
+          onClick={handleOpen}
+          className="bg-emerald-500 hover:bg-emerald-600 text-white py-3 px-6 rounded-lg shadow-md transform hover:scale-105 transition-all duration-200"
+          size="large"
+          disabled={isExternallyControlled}
+        >
+          走行記録を追加
+        </Button>
+      )}
 
       <Modal
-        open={modalOpen}
-        onClose={() => setModalOpen(false)}
+        open={currentModalOpen}
+        onClose={handleClose}
         aria-labelledby="record-modal-title"
       >
         <Box className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white rounded-xl shadow-xl p-6 w-full max-w-md">
@@ -54,7 +82,7 @@ export default function ClientRecordForm() {
                 id="date"
                 name="date"
                 required
-                defaultValue={new Date().toISOString().split('T')[0]}
+                defaultValue={selectedDate || new Date().toISOString().split('T')[0]}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500"
               />
             </div>
@@ -87,7 +115,7 @@ export default function ClientRecordForm() {
               <Button
                 type="button"
                 variant="outlined"
-                onClick={() => setModalOpen(false)}
+                onClick={handleClose}
                 disabled={isSubmitting}
                 className="flex-1 border-gray-300 text-gray-700 hover:bg-gray-50 py-2"
               >

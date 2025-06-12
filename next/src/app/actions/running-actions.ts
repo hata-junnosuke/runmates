@@ -67,6 +67,34 @@ export async function addRunningRecord(formData: FormData) {
   }
 }
 
+// 年間目標設定アクション
+export async function setYearlyGoal(formData: FormData) {
+  try {
+    const distanceGoal = parseFloat(formData.get('distance_goal') as string);
+
+    if (!distanceGoal || distanceGoal <= 0) {
+      throw new Error('有効な目標距離を入力してください');
+    }
+
+    const currentDate = new Date();
+    
+    await apiCall('/current_yearly_goal', {
+      method: 'POST',
+      body: JSON.stringify({
+        yearly_goal: {
+          year: currentDate.getFullYear(),
+          distance_goal: distanceGoal
+        }
+      }),
+    });
+
+    revalidatePath('/');
+  } catch (error) {
+    console.error('Failed to set yearly goal:', error);
+    throw error;
+  }
+}
+
 // 月次目標設定アクション
 export async function setMonthlyGoal(formData: FormData) {
   try {

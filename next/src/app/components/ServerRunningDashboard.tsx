@@ -5,20 +5,20 @@ import TimerIcon from '@mui/icons-material/Timer';
 import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 import { serverRunningRecordsAPI, serverMonthlyGoalsAPI } from '../../lib/server-api';
-import ClientRecordForm from './ClientRecordForm';
-import ClientGoalForm from './ClientGoalForm';
+import DashboardWithCalendar from './DashboardWithCalendar';
 
 // データ取得コンポーネント
 async function DashboardData() {
   try {
-    const [statistics, monthlyGoal] = await Promise.all([
+    const [records, statistics, monthlyGoal] = await Promise.all([
+      serverRunningRecordsAPI.getAll(),
       serverRunningRecordsAPI.getStatistics(),
       serverMonthlyGoalsAPI.getCurrent().catch(() => ({ distance_goal: 50.0 }))
     ]);
 
-    const thisYearDistance = Number(statistics.this_year_distance || 0);
-    const thisMonthDistance = Number(statistics.this_month_distance || 0);
-    const goal = Number(monthlyGoal.distance_goal || 50);
+    const thisYearDistance = Number(statistics?.this_year_distance || 0);
+    const thisMonthDistance = Number(statistics?.this_month_distance || 0);
+    const goal = Number(monthlyGoal?.distance_goal || 50);
     
     const goalAchievementRate = goal > 0 ? (thisMonthDistance / goal) * 100 : 0;
     const yearGoalProgress = (thisYearDistance / 500) * 100;
@@ -117,58 +117,13 @@ async function DashboardData() {
           </div>
         </div>
 
-        {/* 最近の記録 */}
-        <div className="bg-white rounded-xl shadow-lg p-6">
-          <h3 className="text-xl font-bold text-gray-800 mb-4 flex items-center">
-            <DirectionsRunIcon className="mr-2 text-emerald-600" />
-            最近の記録
-            <span className="ml-2 text-sm bg-emerald-100 text-emerald-700 px-2 py-1 rounded-full">
-              {statistics.total_records}回
-            </span>
-          </h3>
-          <div className="space-y-3">
-            {statistics.recent_records.length === 0 ? (
-              <div className="text-center py-12 text-gray-500">
-                <DirectionsRunIcon className="mx-auto text-6xl text-gray-300 mb-4" />
-                <p className="text-lg">まだ記録がありません</p>
-                <p className="text-sm">最初の走行記録を追加してみましょう！</p>
-              </div>
-            ) : (
-              statistics.recent_records.map((record, index) => (
-                <div
-                  key={record.id}
-                  className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors group"
-                >
-                  <div className="flex items-center space-x-3">
-                    <div className="text-emerald-600 group-hover:animate-pulse">
-                      <DirectionsRunIcon />
-                    </div>
-                    <div>
-                      <p className="font-semibold text-gray-800 flex items-center">
-                        {record.distance.toFixed(1)} km
-                        {index === 0 && <span className="ml-2 text-xs bg-yellow-400 text-yellow-800 px-2 py-1 rounded-full">最新</span>}
-                      </p>
-                      <p className="text-sm text-gray-500">
-                        {new Date(record.date).toLocaleDateString('ja-JP', {
-                          year: 'numeric',
-                          month: 'long',
-                          day: 'numeric',
-                          weekday: 'short'
-                        })}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              ))
-            )}
-          </div>
-        </div>
-
-        {/* アクションボタン */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <ClientRecordForm />
-          <ClientGoalForm currentGoal={goal} />
-        </div>
+        {/* カレンダーとアクションボタン */}
+        <DashboardWithCalendar 
+          records={records} 
+          goal={goal} 
+          statistics={statistics}
+          hasGoal={monthlyGoal?.id !== undefined}
+        />
       </div>
     );
   } catch (error) {

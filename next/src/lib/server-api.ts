@@ -20,6 +20,14 @@ export interface MonthlyGoal {
   updated_at?: string;
 }
 
+export interface YearlyGoal {
+  id?: string;
+  year: number;
+  distance_goal: number;
+  created_at?: string;
+  updated_at?: string;
+}
+
 export interface RunningStatistics {
   this_year_distance: number;
   this_month_distance: number;
@@ -79,5 +87,11 @@ export const serverRunningRecordsAPI = {
 export const serverMonthlyGoalsAPI = {
   getCurrent: (): Promise<MonthlyGoal> => {
     return serverApiCall('/current_monthly_goal');
+  },
+};
+
+export const serverYearlyGoalsAPI = {
+  getCurrent: (): Promise<YearlyGoal> => {
+    return serverApiCall('/current_yearly_goal');
   },
 };

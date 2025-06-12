@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_06_12_124225) do
+ActiveRecord::Schema[8.0].define(version: 2025_06_12_135728) do
   create_table "monthly_goals", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.bigint "user_id", null: false
     t.integer "year", null: false
@@ -58,6 +58,16 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_12_124225) do
     t.index ["uid", "provider"], name: "index_users_on_uid_and_provider", unique: true
   end
 
+  create_table "yearly_goals", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.integer "year"
+    t.decimal "distance_goal", precision: 10
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_yearly_goals_on_user_id"
+  end
+
   add_foreign_key "monthly_goals", "users"
   add_foreign_key "running_records", "users"
+  add_foreign_key "yearly_goals", "users"
 end
