@@ -15,10 +15,10 @@ class ApplicationController < ActionController::API
       return if request.headers['access-token'].present?
 
       # クッキーから認証情報を取得してヘッダーにセット
-      if cookies[:access_token].present? && cookies[:client].present? && cookies[:uid].present?
-        request.headers['access-token'] = cookies[:access_token]
-        request.headers['client'] = cookies[:client]
-        request.headers['uid'] = cookies[:uid]
+      if request.cookies['access_token'].present? && request.cookies['client'].present? && request.cookies['uid'].present?
+        request.headers['access-token'] = request.cookies['access_token']
+        request.headers['client'] = request.cookies['client']
+        request.headers['uid'] = request.cookies['uid']
         request.headers['token-type'] = 'Bearer'
       end
     end
