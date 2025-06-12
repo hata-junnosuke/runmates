@@ -1,0 +1,217 @@
+import { Suspense } from 'react';
+import { LinearProgress, Typography } from '@mui/material';
+import DirectionsRunIcon from '@mui/icons-material/DirectionsRun';
+import TimerIcon from '@mui/icons-material/Timer';
+import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
+import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
+import { serverRunningRecordsAPI, serverMonthlyGoalsAPI } from '../../lib/server-api';
+import ClientRecordForm from './ClientRecordForm';
+import ClientGoalForm from './ClientGoalForm';
+
+// データ取得コンポーネント
+async function DashboardData() {
+  try {
+    const [statistics, monthlyGoal] = await Promise.all([
+      serverRunningRecordsAPI.getStatistics(),
+      serverMonthlyGoalsAPI.getCurrent().catch(() => ({ distance_goal: 50.0 }))
+    ]);
+
+    const thisYearDistance = Number(statistics.this_year_distance || 0);
+    const thisMonthDistance = Number(statistics.this_month_distance || 0);
+    const goal = Number(monthlyGoal.distance_goal || 50);
+    
+    const goalAchievementRate = goal > 0 ? (thisMonthDistance / goal) * 100 : 0;
+    const yearGoalProgress = (thisYearDistance / 500) * 100;
+
+    return (
+      <div className="space-y-6">
+        {/* 統計カード */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {/* 今年の総走行距離 */}
+          <div className="bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-xl p-6 text-white shadow-lg transform hover:scale-105 transition-all duration-300 group">
+            <div className="flex justify-between items-start">
+              <div>
+                <p className="text-emerald-100 text-sm font-medium flex items-center group-hover:animate-pulse">
+                  <CalendarTodayIcon className="mr-1 text-sm group-hover:animate-bounce" />
+                  今年の総距離
+                </p>
+                <p className="text-3xl font-bold">{thisYearDistance.toFixed(1)} km</p>
+                <LinearProgress 
+                  variant="determinate" 
+                  value={Math.min(yearGoalProgress, 100)} 
+                  className="mt-2"
+                  sx={{
+                    backgroundColor: 'rgba(255,255,255,0.3)',
+                    '& .MuiLinearProgress-bar': {
+                      backgroundColor: '#fbbf24'
+                    }
+                  }}
+                />
+                <p className="text-emerald-100 text-xs mt-1">🎯 年間目標: 500km ({yearGoalProgress.toFixed(0)}%)</p>
+              </div>
+              <div className="text-right">
+                <DirectionsRunIcon className="text-5xl text-emerald-200 mb-2 group-hover:animate-pulse" />
+                <div className="text-xs text-emerald-100 font-bold">
+                  残り{Math.max(0, 500 - thisYearDistance).toFixed(0)}km
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* 今月の走行距離 */}
+          <div className="bg-gradient-to-br from-blue-400 to-blue-600 rounded-xl p-6 text-white shadow-lg transform hover:scale-105 transition-all duration-300 group">
+            <div className="flex justify-between items-start">
+              <div>
+                <p className="text-blue-100 text-sm font-medium flex items-center">
+                  <TimerIcon className="mr-1 text-sm" />
+                  今月の距離
+                </p>
+                <p className="text-3xl font-bold">{thisMonthDistance.toFixed(1)} km</p>
+                <p className="text-blue-100 text-xs mt-1">
+                  頑張って続けましょう！
+                </p>
+              </div>
+              <div className="text-right">
+                <TimerIcon className="text-5xl text-blue-200 mb-2 group-hover:animate-pulse" />
+                <div className="text-xs text-blue-100">
+                  記録: {statistics.total_records}回
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* 目標達成率 */}
+          <div className="bg-gradient-to-br from-purple-400 to-purple-600 rounded-xl p-6 text-white shadow-lg transform hover:scale-105 transition-all duration-300 group">
+            <div className="flex justify-between items-start">
+              <div>
+                <p className="text-purple-100 text-sm font-medium flex items-center">
+                  <EmojiEventsIcon className="mr-1 text-sm" />
+                  目標達成率
+                </p>
+                <p className="text-3xl font-bold flex items-center">
+                  {goalAchievementRate.toFixed(0)}%
+                  {goalAchievementRate >= 100 && <span className="ml-2 group-hover:animate-bounce">🎉</span>}
+                </p>
+                <LinearProgress 
+                  variant="determinate" 
+                  value={Math.min(goalAchievementRate, 100)} 
+                  className="mt-2"
+                  sx={{
+                    backgroundColor: 'rgba(255,255,255,0.3)',
+                    '& .MuiLinearProgress-bar': {
+                      backgroundColor: goalAchievementRate >= 100 ? '#10b981' : '#fbbf24'
+                    }
+                  }}
+                />
+                <p className="text-purple-100 text-xs mt-1">
+                  目標: {goal}km / 現在: {thisMonthDistance.toFixed(1)}km
+                </p>
+              </div>
+              <div className="text-right">
+                <EmojiEventsIcon className={`text-5xl text-purple-200 mb-2 ${goalAchievementRate >= 100 ? 'group-hover:animate-bounce' : 'group-hover:animate-pulse'}`} />
+                <div className="text-xs text-purple-100">
+                  残り{Math.max(0, goal - thisMonthDistance).toFixed(1)}km
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* 最近の記録 */}
+        <div className="bg-white rounded-xl shadow-lg p-6">
+          <h3 className="text-xl font-bold text-gray-800 mb-4 flex items-center">
+            <DirectionsRunIcon className="mr-2 text-emerald-600" />
+            最近の記録
+            <span className="ml-2 text-sm bg-emerald-100 text-emerald-700 px-2 py-1 rounded-full">
+              {statistics.total_records}回
+            </span>
+          </h3>
+          <div className="space-y-3">
+            {statistics.recent_records.length === 0 ? (
+              <div className="text-center py-12 text-gray-500">
+                <DirectionsRunIcon className="mx-auto text-6xl text-gray-300 mb-4" />
+                <p className="text-lg">まだ記録がありません</p>
+                <p className="text-sm">最初の走行記録を追加してみましょう！</p>
+              </div>
+            ) : (
+              statistics.recent_records.map((record, index) => (
+                <div
+                  key={record.id}
+                  className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors group"
+                >
+                  <div className="flex items-center space-x-3">
+                    <div className="text-emerald-600 group-hover:animate-pulse">
+                      <DirectionsRunIcon />
+                    </div>
+                    <div>
+                      <p className="font-semibold text-gray-800 flex items-center">
+                        {record.distance.toFixed(1)} km
+                        {index === 0 && <span className="ml-2 text-xs bg-yellow-400 text-yellow-800 px-2 py-1 rounded-full">最新</span>}
+                      </p>
+                      <p className="text-sm text-gray-500">
+                        {new Date(record.date).toLocaleDateString('ja-JP', {
+                          year: 'numeric',
+                          month: 'long',
+                          day: 'numeric',
+                          weekday: 'short'
+                        })}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+        </div>
+
+        {/* アクションボタン */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <ClientRecordForm />
+          <ClientGoalForm currentGoal={goal} />
+        </div>
+      </div>
+    );
+  } catch (error) {
+    console.error('Failed to load dashboard data:', error);
+    return (
+      <div className="text-center py-12">
+        <p className="text-red-500 text-lg">データの読み込みに失敗しました</p>
+        <p className="text-gray-500 text-sm mt-2">ページを再読み込みしてください</p>
+      </div>
+    );
+  }
+}
+
+// ローディングコンポーネント
+function DashboardLoading() {
+  return (
+    <div className="space-y-6">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        {[1, 2, 3].map((i) => (
+          <div key={i} className="bg-gray-200 rounded-xl p-6 animate-pulse">
+            <div className="h-4 bg-gray-300 rounded mb-2"></div>
+            <div className="h-8 bg-gray-300 rounded mb-2"></div>
+            <div className="h-2 bg-gray-300 rounded"></div>
+          </div>
+        ))}
+      </div>
+      <div className="bg-gray-200 rounded-xl p-6 animate-pulse">
+        <div className="h-6 bg-gray-300 rounded mb-4"></div>
+        <div className="space-y-3">
+          {[1, 2, 3].map((i) => (
+            <div key={i} className="h-16 bg-gray-300 rounded"></div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// メインコンポーネント
+export default function ServerRunningDashboard() {
+  return (
+    <Suspense fallback={<DashboardLoading />}>
+      <DashboardData />
+    </Suspense>
+  );
+}
