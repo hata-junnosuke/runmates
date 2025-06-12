@@ -8,7 +8,8 @@
       "Bash(npm run lint)",
       "Bash(brew install:*)",
       "Bash(git add:*)",
-      "Bash(gh auth:*)"
+      "Bash(gh auth:*)",
+      "Bash(gh pr list:*)"
     ],
     "deny": []
   }
