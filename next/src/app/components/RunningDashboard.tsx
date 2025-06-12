@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect, useMemo } from "react";
-import { Fab, Modal, Box, Typography, IconButton, LinearProgress } from "@mui/material";
+import { Fab, Modal, Box, Typography, IconButton, LinearProgress, Alert } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import DirectionsRunIcon from "@mui/icons-material/DirectionsRun";
 import TimerIcon from "@mui/icons-material/Timer";
@@ -12,167 +12,106 @@ import FlashOnIcon from "@mui/icons-material/FlashOn";
 import RecordForm from "./RecordForm";
 import GoalForm from "./GoalForm";
 import RunningCalendar from "./RunningCalendar";
-
-// 走行記録の型定義
-interface RunRecord {
-  id: string;
-  date: string;
-  distance: number; // km
-}
+import { runningRecordsAPI, monthlyGoalsAPI, RunRecord, MonthlyGoal, RunningStatistics } from "../../lib/api";
 
 export default function RunningDashboard() {
   const [records, setRecords] = useState<RunRecord[]>([]);
+  const [statistics, setStatistics] = useState<RunningStatistics | null>(null);
+  const [monthlyGoal, setMonthlyGoal] = useState<MonthlyGoal | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
   const [goalModalOpen, setGoalModalOpen] = useState(false);
-  const [monthlyGoal, setMonthlyGoal] = useState(50); // デフォルト50km
   const [animationTrigger, setAnimationTrigger] = useState(0);
   const [mounted, setMounted] = useState(false);
   const [selectedDate, setSelectedDate] = useState<string>("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   // クライアントサイドでのマウント確認
   useEffect(() => {
     setMounted(true);
+    loadData();
   }, []);
 
-  // 初期データ（本来はAPIから取得）
-  useEffect(() => {
-    const currentDate = new Date();
-    const currentYear = currentDate.getFullYear();
-    const currentMonth = currentDate.getMonth();
-    
-    // 正しい相対日付を計算（月をまたぐ場合も考慮）
-    const date1 = new Date(currentDate);
-    date1.setDate(currentDate.getDate() - 2);
-    
-    const date2 = new Date(currentDate);
-    date2.setDate(currentDate.getDate() - 4);
-    
-    const sampleRecords: RunRecord[] = [
-      {
-        id: "1",
-        date: `${date1.getFullYear()}-${String(date1.getMonth() + 1).padStart(2, '0')}-${String(date1.getDate()).padStart(2, '0')}`,
-        distance: 5.2,
-      },
-      {
-        id: "2", 
-        date: `${date2.getFullYear()}-${String(date2.getMonth() + 1).padStart(2, '0')}-${String(date2.getDate()).padStart(2, '0')}`,
-        distance: 3.1,
-      },
-      {
-        id: "3",
-        date: `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}-15`,
-        distance: 7.5,
-      },
-      {
-        id: "4",
-        date: `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}-05`,
-        distance: 4.8,
-      },
-      {
-        id: "5",
-        date: `${currentYear - 1}-12-20`,
-        distance: 6.2,
-      },
-    ];
-    setRecords(sampleRecords);
-  }, []);
-
-  // 今年の走行距離を計算（リアルタイム更新対応）
-  const thisYearDistance = useMemo(() => {
+  // データ読み込み
+  const loadData = async () => {
     try {
-      if (!records || !Array.isArray(records) || records.length === 0) {
-        return 0;
-      }
+      setLoading(true);
+      setError(null);
       
-      const filtered = records.filter(record => {
-        if (!record || !record.date) return false;
-        try {
-          const recordDate = new Date(record.date);
-          const now = new Date();
-          return !isNaN(recordDate.getTime()) && recordDate.getFullYear() === now.getFullYear();
-        } catch {
-          return false;
-        }
-      });
+      const [recordsData, statsData, goalData] = await Promise.all([
+        runningRecordsAPI.getAll(),
+        runningRecordsAPI.getStatistics(),
+        monthlyGoalsAPI.getCurrent().catch(() => ({ distance_goal: 50.0 }))
+      ]);
       
-      const total = filtered.reduce((sum, record) => {
-        const distance = typeof record.distance === 'number' ? record.distance : 0;
-        return sum + distance;
-      }, 0);
-      
-      return typeof total === 'number' && !isNaN(total) ? total : 0;
-    } catch (error) {
-      console.error("Error calculating thisYearDistance:", error);
-      return 0;
+      setRecords(recordsData);
+      setStatistics(statsData);
+      setMonthlyGoal(goalData);
+    } catch (err) {
+      setError('データの読み込みに失敗しました');
+      console.error('Failed to load data:', err);
+    } finally {
+      setLoading(false);
     }
-  }, [records]);
+  };
 
-  // 今月の走行距離（リアルタイム更新対応）
-  const thisMonthDistance = useMemo(() => {
-    try {
-      if (!records || !Array.isArray(records) || records.length === 0) {
-        return 0;
-      }
-      
-      const now = new Date();
-      const filtered = records.filter(record => {
-        if (!record || !record.date) return false;
-        try {
-          const recordDate = new Date(record.date);
-          return !isNaN(recordDate.getTime()) && 
-                 recordDate.getMonth() === now.getMonth() && 
-                 recordDate.getFullYear() === now.getFullYear();
-        } catch {
-          return false;
-        }
-      });
-      
-      const total = filtered.reduce((sum, record) => {
-        const distance = typeof record.distance === 'number' ? record.distance : 0;
-        return sum + distance;
-      }, 0);
-      
-      return typeof total === 'number' && !isNaN(total) ? total : 0;
-    } catch (error) {
-      console.error("Error calculating thisMonthDistance:", error);
-      return 0;
-    }
-  }, [records]);
 
-  // 目標達成率（リアルタイム更新対応）
+  // 今年の走行距離
+  const thisYearDistance = statistics?.this_year_distance || 0;
+
+  // 今月の走行距離
+  const thisMonthDistance = statistics?.this_month_distance || 0;
+
+  // 目標達成率
   const goalAchievementRate = useMemo(() => {
-    return monthlyGoal > 0 ? (thisMonthDistance / monthlyGoal) * 100 : 0;
+    const goal = monthlyGoal?.distance_goal || 50;
+    return goal > 0 ? (thisMonthDistance / goal) * 100 : 0;
   }, [thisMonthDistance, monthlyGoal]);
 
   // 新しい記録を追加
-  const addRecord = (newRecord: Omit<RunRecord, "id">) => {
-    // 距離を確実に数値に変換
-    const distance = typeof newRecord.distance === 'string' 
-      ? parseFloat(newRecord.distance) 
-      : typeof newRecord.distance === 'number' 
-        ? newRecord.distance 
-        : 0;
-    
-    const record: RunRecord = {
-      ...newRecord,
-      distance: distance,
-      id: Date.now().toString(),
-    };
-    
-    // 記録を追加（リアルタイム更新で統計が即座に反映される）
-    setRecords(prev => [record, ...prev]);
-    
-    setModalOpen(false);
-    setSelectedDate("");
-    
-    // アニメーションをトリガー（統計カードの更新アニメーション）
-    setAnimationTrigger(prev => prev + 1);
+  const addRecord = async (newRecord: { date: string; distance: number }) => {
+    try {
+      setLoading(true);
+      const createdRecord = await runningRecordsAPI.create(newRecord);
+      
+      // ローカル状態を更新
+      setRecords(prev => [createdRecord, ...prev]);
+      
+      // 統計情報を再取得
+      const updatedStats = await runningRecordsAPI.getStatistics();
+      setStatistics(updatedStats);
+      
+      setModalOpen(false);
+      setSelectedDate("");
+      setAnimationTrigger(prev => prev + 1);
+    } catch (err) {
+      setError('記録の保存に失敗しました');
+      console.error('Failed to add record:', err);
+    } finally {
+      setLoading(false);
+    }
   };
 
   // 目標を更新
-  const updateGoal = (newGoal: number) => {
-    setMonthlyGoal(newGoal);
-    setGoalModalOpen(false);
+  const updateGoal = async (newGoalValue: number) => {
+    try {
+      setLoading(true);
+      const currentDate = new Date();
+      const goalData = {
+        year: currentDate.getFullYear(),
+        month: currentDate.getMonth() + 1,
+        distance_goal: newGoalValue
+      };
+      
+      const updatedGoal = await monthlyGoalsAPI.upsert(goalData);
+      setMonthlyGoal(updatedGoal);
+      setGoalModalOpen(false);
+    } catch (err) {
+      setError('目標の保存に失敗しました');
+      console.error('Failed to update goal:', err);
+    } finally {
+      setLoading(false);
+    }
   };
 
   // 固定の励ましメッセージ（クライアントサイドでのみランダム化）
@@ -230,15 +169,29 @@ export default function RunningDashboard() {
     setModalOpen(true);
   };
 
-  // 年間目標進捗率（リアルタイム更新対応）
+  // 年間目標進捗率
   const yearGoalProgress = useMemo(() => {
-    const distance = typeof thisYearDistance === 'number' ? thisYearDistance : 0;
-    const progress = (distance / 500) * 100;
-    return typeof progress === 'number' && !isNaN(progress) ? progress : 0;
+    const progress = (thisYearDistance / 500) * 100;
+    return !isNaN(progress) ? progress : 0;
   }, [thisYearDistance]);
+
+  if (loading && !mounted) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <Typography>ロード中...</Typography>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
+      {/* エラー表示 */}
+      {error && (
+        <Alert severity="error" onClose={() => setError(null)}>
+          {error}
+        </Alert>
+      )}
+      
       {/* 統計カード */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {/* 今年の総走行距離 */}
@@ -255,7 +208,7 @@ export default function RunningDashboard() {
                 <CalendarTodayIcon className="mr-1 text-sm group-hover:animate-bounce" />
                 今年の総距離
               </p>
-              <p className="text-3xl font-bold">{(typeof thisYearDistance === 'number' ? thisYearDistance : 0).toFixed(1)} km</p>
+              <p className="text-3xl font-bold">{thisYearDistance.toFixed(1)} km</p>
               <LinearProgress 
                 variant="determinate" 
                 value={Math.min(yearGoalProgress, 100)} 
@@ -267,12 +220,12 @@ export default function RunningDashboard() {
                   }
                 }}
               />
-              <p className="text-emerald-100 text-xs mt-1">🎯 年間目標: 500km ({(typeof yearGoalProgress === 'number' ? yearGoalProgress : 0).toFixed(0)}%)</p>
+              <p className="text-emerald-100 text-xs mt-1">🎯 年間目標: 500km ({yearGoalProgress.toFixed(0)}%)</p>
             </div>
             <div className="text-right">
               <DirectionsRunIcon className="text-5xl text-emerald-200 mb-2 group-hover:animate-pulse" />
               <div className="text-xs text-emerald-100 font-bold">
-                残り{Math.max(0, 500 - (typeof thisYearDistance === 'number' ? thisYearDistance : 0)).toFixed(0)}km
+                残り{Math.max(0, 500 - thisYearDistance).toFixed(0)}km
               </div>
             </div>
           </div>
@@ -290,7 +243,7 @@ export default function RunningDashboard() {
                 <TimerIcon className="mr-1 text-sm" />
                 今月の距離
               </p>
-              <p className="text-3xl font-bold">{(typeof thisMonthDistance === 'number' ? thisMonthDistance : 0).toFixed(1)} km</p>
+              <p className="text-3xl font-bold">{thisMonthDistance.toFixed(1)} km</p>
               <p className="text-blue-100 text-xs mt-1">
                 {getMotivationMessage()}
               </p>
@@ -326,7 +279,7 @@ export default function RunningDashboard() {
                 </IconButton>
               </p>
               <p className="text-3xl font-bold flex items-center">
-                {(typeof goalAchievementRate === 'number' ? goalAchievementRate : 0).toFixed(0)}%
+                {goalAchievementRate.toFixed(0)}%
                 {goalAchievementRate >= 100 && <span className="ml-2 group-hover:animate-bounce">🎉</span>}
               </p>
               <LinearProgress 
@@ -341,13 +294,13 @@ export default function RunningDashboard() {
                 }}
               />
               <p className="text-purple-100 text-xs mt-1">
-                目標: {monthlyGoal}km / 現在: {(typeof thisMonthDistance === 'number' ? thisMonthDistance : 0).toFixed(1)}km
+                目標: {monthlyGoal?.distance_goal || 50}km / 現在: {thisMonthDistance.toFixed(1)}km
               </p>
             </div>
             <div className="text-right">
               <EmojiEventsIcon className={`text-5xl text-purple-200 mb-2 ${goalAchievementRate >= 100 ? 'group-hover:animate-bounce' : 'group-hover:animate-pulse'}`} />
               <div className="text-xs text-purple-100">
-                残り{Math.max(0, monthlyGoal - (typeof thisMonthDistance === 'number' ? thisMonthDistance : 0)).toFixed(1)}km
+                残り{Math.max(0, (monthlyGoal?.distance_goal || 50) - thisMonthDistance).toFixed(1)}km
               </div>
             </div>
           </div>
@@ -363,7 +316,7 @@ export default function RunningDashboard() {
           <DirectionsRunIcon className="mr-2 text-emerald-600" />
           最近の記録
           <span className="ml-2 text-sm bg-emerald-100 text-emerald-700 px-2 py-1 rounded-full">
-            {(records || []).length}回
+            {statistics?.total_records || 0}回
           </span>
         </h3>
         <div className="space-y-3">
@@ -390,7 +343,7 @@ export default function RunningDashboard() {
                 </div>
                 <div>
                   <p className="font-semibold text-gray-800 flex items-center">
-                    {(typeof record.distance === 'number' ? record.distance : 0).toFixed(1)} km
+                    {record.distance.toFixed(1)} km
                     {index === 0 && <span className="ml-2 text-xs bg-yellow-400 text-yellow-800 px-2 py-1 rounded-full">最新</span>}
                   </p>
                   <p className="text-sm text-gray-500">
@@ -528,7 +481,7 @@ export default function RunningDashboard() {
             🎯 今月の目標を設定
           </Typography>
           <GoalForm 
-            currentGoal={monthlyGoal}
+            currentGoal={monthlyGoal?.distance_goal || 50}
             onSubmit={updateGoal} 
             onCancel={() => setGoalModalOpen(false)} 
           />
