@@ -4,7 +4,7 @@ import { cookies } from 'next/headers';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000/api/v1';
+const API_BASE_URL = process.env.INTERNAL_API_URL || 'http://rails:3000/api/v1';
 
 // サーバーアクション用API呼び出し関数
 async function apiCall(endpoint: string, options: RequestInit = {}) {

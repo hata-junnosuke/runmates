@@ -1,6 +1,7 @@
 import { cookies } from 'next/headers';
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000/api/v1';
+// サーバーサイドでは内部Docker通信、クライアントサイドでは外部URLを使用
+const API_BASE_URL = process.env.INTERNAL_API_URL || 'http://rails:3000/api/v1';
 
 export interface RunRecord {
   id: string;
