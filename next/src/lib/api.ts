@@ -89,7 +89,7 @@ export const runningRecordsAPI = {
 
   // 統計情報取得
   getStatistics: (): Promise<RunningStatistics> => {
-    return apiCall('/running_records/statistics');
+    return apiCall('/running_statistics');
   },
 };
 
@@ -107,7 +107,7 @@ export const monthlyGoalsAPI = {
 
   // 現在月の目標取得
   getCurrent: (): Promise<MonthlyGoal> => {
-    return apiCall('/monthly_goals/current');
+    return apiCall('/current_monthly_goal');
   },
 
   // 目標作成
@@ -120,7 +120,7 @@ export const monthlyGoalsAPI = {
 
   // 目標更新（または作成）
   upsert: (data: MonthlyGoal): Promise<MonthlyGoal> => {
-    return apiCall('/monthly_goals/upsert', {
+    return apiCall('/current_monthly_goal', {
       method: 'POST',
       body: JSON.stringify({ monthly_goal: data }),
     });

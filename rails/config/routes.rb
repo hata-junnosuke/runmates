@@ -11,19 +11,12 @@ Rails.application.routes.draw do
       namespace :current do
         resource :user, only: [:show]
       end
-      
-      resources :running_records do
-        collection do
-          get :statistics
-        end
-      end
-      
-      resources :monthly_goals do
-        collection do
-          get :current
-          post :upsert
-        end
-      end
+
+      resources :running_records
+      resource :running_statistics, only: [:show]
+
+      resources :monthly_goals
+      resource :current_monthly_goal, only: [:show, :create]
     end
   end
 end

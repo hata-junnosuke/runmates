@@ -57,10 +57,10 @@ export default function RunningDashboard() {
 
 
   // 今年の走行距離
-  const thisYearDistance = statistics?.this_year_distance || 0;
+  const thisYearDistance = Number(statistics?.this_year_distance || 0);
 
   // 今月の走行距離
-  const thisMonthDistance = statistics?.this_month_distance || 0;
+  const thisMonthDistance = Number(statistics?.this_month_distance || 0);
 
   // 目標達成率
   const goalAchievementRate = useMemo(() => {
