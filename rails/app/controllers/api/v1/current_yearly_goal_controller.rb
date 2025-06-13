@@ -7,7 +7,14 @@ class Api::V1::CurrentYearlyGoalController < Api::V1::BaseController
     if current_goal
       render json: current_goal
     else
-      render json: { distance_goal: 500.0 }, status: :ok
+      # 一貫したレスポンス構造のためにデフォルト値を含む完全なオブジェクトを返す
+      render json: {
+        id: nil,
+        year: Date.current.year,
+        distance_goal: 500.0,
+        created_at: nil,
+        updated_at: nil,
+      }, status: :ok
     end
   end
 

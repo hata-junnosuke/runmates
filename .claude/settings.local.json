@@ -12,7 +12,8 @@
       "Bash(gh pr list:*)",
       "Bash(rails generate model:*)",
       "Bash(docker-compose exec rails rubocop:*)",
-      "Bash(docker-compose exec rails bundle:*)"
+      "Bash(docker-compose exec rails bundle:*)",
+      "Bash(git commit:*)"
     ],
     "deny": []
   }
