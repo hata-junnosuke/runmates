@@ -14,7 +14,7 @@ class Api::V1::CurrentMonthlyGoalController < Api::V1::BaseController
         month: Date.current.month,
         distance_goal: 50.0,
         created_at: nil,
-        updated_at: nil
+        updated_at: nil,
       }, status: :ok
     end
   end
