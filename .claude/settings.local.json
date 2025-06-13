@@ -4,12 +4,18 @@
       "Bash(git checkout:*)",
       "Bash(docker compose exec:*)",
       "Bash(docker compose:*)",
-      "Bash(git push:*)",
       "Bash(npm run lint)",
       "Bash(brew install:*)",
       "Bash(git add:*)",
       "Bash(gh auth:*)",
-      "Bash(gh pr list:*)"
+      "Bash(gh pr list:*)",
+      "Bash(rails generate model:*)",
+      "Bash(docker-compose exec rails rubocop:*)",
+      "Bash(docker-compose exec rails bundle:*)",
+      "Bash(git commit:*)",
+      "Bash(docker-compose logs:*)",
+      "Bash(docker-compose restart:*)",
+      "Bash(docker-compose ps:*)"
     ],
     "deny": []
   }

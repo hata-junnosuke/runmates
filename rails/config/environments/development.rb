@@ -69,4 +69,12 @@ Rails.application.configure do
   config.action_mailer.default_options = { from: "no-replay@example.com" }
   config.action_mailer.default_url_options = { host: "localhost:3000" }
   config.action_mailer.delivery_method = :letter_opener_web
+
+  # Docker内部通信のためのhost authorization設定
+  config.hosts.clear
+  config.hosts << "localhost"
+  config.hosts << "127.0.0.1"
+  config.hosts << "rails"
+  config.hosts << "rails:3000"
+  config.hosts << /.*\.*/ # 開発環境では全てのホストを許可
 end

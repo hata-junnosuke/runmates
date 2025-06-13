@@ -1,6 +1,6 @@
 import { getAuthStatus } from "@/lib/server-auth";
 import LogoutButton from "./components/LogoutButton";
-import RunningDashboard from "./components/RunningDashboard";
+import ServerRunningDashboard from "./components/ServerRunningDashboard";
 
 export default async function HomePage() {
   const isAuthenticated = await getAuthStatus();
@@ -16,7 +16,7 @@ export default async function HomePage() {
             {isAuthenticated && <LogoutButton />}
           </div>
           {isAuthenticated ? (
-            <RunningDashboard />
+            <ServerRunningDashboard />
           ) : (
             <div className="text-center">
               <p className="text-gray-600 text-lg">ログインしてランニングを記録しましょう！</p>
