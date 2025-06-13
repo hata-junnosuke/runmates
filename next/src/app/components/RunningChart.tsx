@@ -1,6 +1,6 @@
 'use client';
 
-import { Line } from 'react-chartjs-2';
+import { Chart } from 'react-chartjs-2';
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -13,6 +13,7 @@ import {
   Legend,
   Filler,
   ChartOptions,
+  ChartData,
 } from 'chart.js';
 
 ChartJS.register(
@@ -71,9 +72,9 @@ export default function RunningChart({ records, monthlyGoals }: RunningChartProp
     return goal ? Number(goal.distance_goal) : 50; // デフォルト50km
   };
 
-  const dailyData = [];
-  const cumulativeData = [];
-  const goalLineData = [];
+  const dailyData: number[] = [];
+  const cumulativeData: number[] = [];
+  const goalLineData: number[] = [];
   let cumulative = 0;
 
   // 各月の目標に基づく正確な累積目標計算
@@ -128,7 +129,7 @@ export default function RunningChart({ records, monthlyGoals }: RunningChartProp
     labels.push(`${currentDate.getMonth() + 1}/${currentDate.getDate()}`);
   }
 
-  const data = {
+  const data: ChartData<'line' | 'bar'> = {
     labels,
     datasets: [
       {
@@ -143,6 +144,7 @@ export default function RunningChart({ records, monthlyGoals }: RunningChartProp
         pointBorderWidth: 2,
         pointRadius: 4,
         pointHoverRadius: 6,
+        type: 'line' as const,
       },
       {
         label: '目標ペース',
@@ -157,6 +159,7 @@ export default function RunningChart({ records, monthlyGoals }: RunningChartProp
         pointHoverRadius: 4,
         pointBorderColor: 'rgb(239, 68, 68)',
         pointBackgroundColor: 'rgb(239, 68, 68)',
+        type: 'line' as const,
       },
       {
         label: '日別走行距離',
@@ -170,7 +173,7 @@ export default function RunningChart({ records, monthlyGoals }: RunningChartProp
     ],
   };
 
-  const options: ChartOptions<'line'> = {
+  const options: ChartOptions<'line' | 'bar'> = {
     responsive: true,
     maintainAspectRatio: false,
     plugins: {
@@ -284,7 +287,7 @@ export default function RunningChart({ records, monthlyGoals }: RunningChartProp
   return (
     <div className="bg-white rounded-xl shadow-lg p-6">
       <div className="h-80">
-        <Line data={data} options={options} />
+        <Chart type="line" data={data} options={options} />
       </div>
       <div className="mt-4 grid grid-cols-3 gap-4 text-sm text-gray-600">
         <div className="text-center">

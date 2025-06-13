@@ -14,10 +14,11 @@ interface RunRecord {
 interface ClientRunningCalendarProps {
   records: RunRecord[];
   onDateClick?: (date: string) => void;
+  currentDate?: Date;
 }
 
-export default function ClientRunningCalendar({ records, onDateClick }: ClientRunningCalendarProps) {
-  const [currentDate, setCurrentDate] = useState(new Date());
+export default function ClientRunningCalendar({ records, onDateClick, currentDate: initialDate }: ClientRunningCalendarProps) {
+  const [currentDate, setCurrentDate] = useState(initialDate || new Date());
 
   // 現在の年月
   const year = currentDate.getFullYear();

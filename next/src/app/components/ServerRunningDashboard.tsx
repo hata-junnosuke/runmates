@@ -1,6 +1,6 @@
 import { Suspense } from 'react';
 import { serverRunningRecordsAPI, serverMonthlyGoalsAPI, serverYearlyGoalsAPI } from '../../lib/server-api';
-import DashboardWithCalendar from './DashboardWithCalendar';
+import ClientDashboardWrapper from './ClientDashboardWrapper';
 
 // データ取得コンポーネント
 async function DashboardData() {
@@ -106,7 +106,7 @@ async function DashboardData() {
         </div>
 
         {/* カレンダーとアクションボタン */}
-        <DashboardWithCalendar 
+        <ClientDashboardWrapper 
           records={records} 
           goal={goal} 
           statistics={statistics}

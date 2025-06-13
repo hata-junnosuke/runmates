@@ -41,7 +41,7 @@ export default function RunningDashboard() {
       const [recordsData, statsData, goalData] = await Promise.all([
         runningRecordsAPI.getAll(),
         runningRecordsAPI.getStatistics(),
-        monthlyGoalsAPI.getCurrent().catch(() => ({ distance_goal: 50.0 }))
+        monthlyGoalsAPI.getCurrent().catch(() => null)
       ]);
       
       setRecords(recordsData);
