@@ -17,7 +17,8 @@ const RunningChart = dynamic(() => import('./RunningChart'), {
           </div>
         </div>
       </div>
-      <div className="mt-4 grid grid-cols-2 gap-4">
+      <div className="mt-4 grid grid-cols-3 gap-4">
+        <div className="h-12 bg-gray-200 rounded animate-pulse"></div>
         <div className="h-12 bg-gray-200 rounded animate-pulse"></div>
         <div className="h-12 bg-gray-200 rounded animate-pulse"></div>
       </div>

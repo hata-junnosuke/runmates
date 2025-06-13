@@ -76,12 +76,10 @@ export default function RunningChart({ records, monthlyGoals }: RunningChartProp
   const goalLineData = [];
   let cumulative = 0;
 
-  // 現在月の目標に基づく一貫した累積目標計算
-  const currentMonthGoal = getMonthlyGoalForDate(today);
+  // 各月の目標に基づく正確な累積目標計算
+  let cumulativeGoal = 0;
   const currentMonth = today.getMonth();
   const currentYear = today.getFullYear();
-  const daysInCurrentMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
-  const dailyGoalPace = currentMonthGoal / daysInCurrentMonth;
 
   for (let i = 0; i < 30; i++) {
     const currentDate = new Date(thirtyDaysAgo);
@@ -94,9 +92,17 @@ export default function RunningChart({ records, monthlyGoals }: RunningChartProp
     
     cumulative += dayDistance;
     
-    // 現在月の目標に基づく一貫した目標ペースライン
-    // 各日に対して現在月の日別目標ペースを累積
-    const cumulativeGoal = dailyGoalPace * (i + 1);
+    // その日が属する月の情報を取得
+    const dateMonth = currentDate.getMonth();
+    const dateYear = currentDate.getFullYear();
+    const daysInDateMonth = new Date(dateYear, dateMonth + 1, 0).getDate();
+    
+    // その日の月に対応する目標を取得
+    const monthlyGoalForDate = getMonthlyGoalForDate(currentDate);
+    const dailyGoalPaceForDate = monthlyGoalForDate / daysInDateMonth;
+    
+    // その日の理想的な1日あたりの目標距離を累積に追加
+    cumulativeGoal += dailyGoalPaceForDate;
     
     dailyData.push(dayDistance);
     cumulativeData.push(cumulative);

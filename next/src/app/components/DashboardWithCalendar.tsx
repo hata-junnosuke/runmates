@@ -144,12 +144,7 @@ export default function DashboardWithCalendar({ records, goal, statistics, hasGo
                       {index === 0 && <span className="ml-2 text-xs bg-yellow-400 text-yellow-800 px-2 py-1 rounded-full">最新</span>}
                     </p>
                     <p className="text-sm text-gray-500">
-                      {new Date(record.date).toLocaleDateString('ja-JP', {
-                        year: 'numeric',
-                        month: 'long',
-                        day: 'numeric',
-                        weekday: 'short'
-                      })}
+                      {record.date}
                     </p>
                   </div>
                 </div>
