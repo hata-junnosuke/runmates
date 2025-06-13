@@ -110,9 +110,9 @@ async function DashboardData() {
           records={records} 
           goal={goal} 
           statistics={statistics}
-          hasGoal={monthlyGoal !== null && monthlyGoal?.id !== undefined}
+          hasGoal={monthlyGoal !== null && monthlyGoal?.id != null}
           yearlyGoal={yearGoal}
-          hasYearlyGoal={yearlyGoal !== null && yearlyGoal?.id !== undefined}
+          hasYearlyGoal={yearlyGoal !== null && yearlyGoal?.id != null}
           monthlyGoals={monthlyGoals}
         />
       </div>
