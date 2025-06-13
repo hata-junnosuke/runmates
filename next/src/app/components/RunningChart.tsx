@@ -99,6 +99,18 @@ export default function RunningChart({ records, monthlyGoals }: RunningChartProp
     goalLineData.push(cumulativeGoal);
   }
 
+  // 現在の月の累積距離を計算（カレンダー月ベース）
+  const currentMonth = today.getMonth();
+  const currentYear = today.getFullYear();
+  const firstDayOfMonth = new Date(currentYear, currentMonth, 1);
+  
+  const currentMonthCumulative = records
+    .filter(record => {
+      const recordDate = new Date(record.date);
+      return recordDate >= firstDayOfMonth && recordDate <= today;
+    })
+    .reduce((sum, record) => sum + Number(record.distance || 0), 0);
+
   // ラベル（日付）を準備
   const labels = [];
   for (let i = 0; i < 30; i++) {
@@ -268,16 +280,16 @@ export default function RunningChart({ records, monthlyGoals }: RunningChartProp
       <div className="mt-4 grid grid-cols-3 gap-4 text-sm text-gray-600">
         <div className="text-center">
           <div className="font-semibold text-emerald-600">今月の累積</div>
-          <div className="text-lg font-bold">{Number(cumulativeData[cumulativeData.length - 1] || 0).toFixed(1)} km</div>
+          <div className="text-lg font-bold">{currentMonthCumulative.toFixed(1)} km</div>
         </div>
         <div className="text-center">
-          <div className="font-semibold text-red-500">目標ペース</div>
-          <div className="text-lg font-bold">{Number(goalLineData[goalLineData.length - 1] || 0).toFixed(1)} km</div>
+          <div className="font-semibold text-red-500">30日間累積</div>
+          <div className="text-lg font-bold">{Number(cumulativeData[cumulativeData.length - 1] || 0).toFixed(1)} km</div>
         </div>
         <div className="text-center">
           <div className="font-semibold text-blue-600">目標まで</div>
           <div className="text-lg font-bold">
-            {Math.max(0, getMonthlyGoalForDate(today) - Number(cumulativeData[cumulativeData.length - 1] || 0)).toFixed(1)} km
+            {Math.max(0, getMonthlyGoalForDate(today) - currentMonthCumulative).toFixed(1)} km
           </div>
         </div>
       </div>
