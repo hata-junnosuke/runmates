@@ -46,9 +46,10 @@ async function apiCall(endpoint: string, options: RequestInit = {}) {
 export async function addRunningRecord(formData: FormData) {
   try {
     const date = formData.get('date') as string;
-    const distance = parseFloat(formData.get('distance') as string);
+    const distanceStr = formData.get('distance') as string;
+    const distance = distanceStr ? parseFloat(distanceStr) : NaN;
 
-    if (!date || !distance || distance <= 0) {
+    if (!date || !distanceStr || isNaN(distance) || distance <= 0) {
       throw new Error('有効な日付と距離を入力してください');
     }
 
@@ -69,9 +70,10 @@ export async function addRunningRecord(formData: FormData) {
 // 年間目標設定アクション
 export async function setYearlyGoal(formData: FormData) {
   try {
-    const distanceGoal = parseFloat(formData.get('distance_goal') as string);
+    const distanceGoalStr = formData.get('distance_goal') as string;
+    const distanceGoal = distanceGoalStr ? parseFloat(distanceGoalStr) : NaN;
 
-    if (!distanceGoal || distanceGoal <= 0) {
+    if (!distanceGoalStr || isNaN(distanceGoal) || distanceGoal <= 0) {
       throw new Error('有効な目標距離を入力してください');
     }
 
@@ -97,9 +99,10 @@ export async function setYearlyGoal(formData: FormData) {
 // 月次目標設定アクション
 export async function setMonthlyGoal(formData: FormData) {
   try {
-    const distanceGoal = parseFloat(formData.get('distance_goal') as string);
+    const distanceGoalStr = formData.get('distance_goal') as string;
+    const distanceGoal = distanceGoalStr ? parseFloat(distanceGoalStr) : NaN;
 
-    if (!distanceGoal || distanceGoal <= 0) {
+    if (!distanceGoalStr || isNaN(distanceGoal) || distanceGoal <= 0) {
       throw new Error('有効な目標距離を入力してください');
     }
 
