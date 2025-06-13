@@ -1,9 +1,4 @@
 import { Suspense } from 'react';
-import { LinearProgress } from '@mui/material';
-import DirectionsRunIcon from '@mui/icons-material/DirectionsRun';
-import TimerIcon from '@mui/icons-material/Timer';
-import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
-import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 import { serverRunningRecordsAPI, serverMonthlyGoalsAPI, serverYearlyGoalsAPI } from '../../lib/server-api';
 import DashboardWithCalendar from './DashboardWithCalendar';
 
@@ -35,25 +30,20 @@ async function DashboardData() {
             <div className="flex justify-between items-start">
               <div>
                 <p className="text-emerald-100 text-sm font-medium flex items-center group-hover:animate-pulse">
-                  <CalendarTodayIcon className="mr-1 text-sm group-hover:animate-bounce" />
+                  <span className="mr-1 text-sm group-hover:animate-bounce">📅</span>
                   今年の総距離
                 </p>
                 <p className="text-3xl font-bold">{thisYearDistance.toFixed(1)} km</p>
-                <LinearProgress 
-                  variant="determinate" 
-                  value={Math.min(yearGoalProgress, 100)} 
-                  className="mt-2"
-                  sx={{
-                    backgroundColor: 'rgba(255,255,255,0.3)',
-                    '& .MuiLinearProgress-bar': {
-                      backgroundColor: '#fbbf24'
-                    }
-                  }}
-                />
+                <div className="mt-2 w-full bg-white bg-opacity-30 rounded-full h-2">
+                  <div 
+                    className="bg-yellow-400 h-2 rounded-full transition-all duration-300"
+                    style={{ width: `${Math.min(yearGoalProgress, 100)}%` }}
+                  ></div>
+                </div>
                 <p className="text-emerald-100 text-xs mt-1">🎯 年間目標: {yearGoal}km ({yearGoalProgress.toFixed(0)}%)</p>
               </div>
               <div className="text-right">
-                <DirectionsRunIcon className="text-5xl text-emerald-200 mb-2 group-hover:animate-pulse" />
+                <span className="text-5xl text-emerald-200 mb-2 group-hover:animate-pulse">🏃</span>
                 <div className="text-xs text-emerald-100 font-bold">
                   残り{Math.max(0, yearGoal - thisYearDistance).toFixed(0)}km
                 </div>
@@ -66,7 +56,7 @@ async function DashboardData() {
             <div className="flex justify-between items-start">
               <div>
                 <p className="text-blue-100 text-sm font-medium flex items-center">
-                  <TimerIcon className="mr-1 text-sm" />
+                  <span className="mr-1 text-sm">⏱️</span>
                   今月の距離
                 </p>
                 <p className="text-3xl font-bold">{thisMonthDistance.toFixed(1)} km</p>
@@ -75,7 +65,7 @@ async function DashboardData() {
                 </p>
               </div>
               <div className="text-right">
-                <TimerIcon className="text-5xl text-blue-200 mb-2 group-hover:animate-pulse" />
+                <span className="text-5xl text-blue-200 mb-2 group-hover:animate-pulse">⏱️</span>
                 <div className="text-xs text-blue-100">
                   記録: {statistics.total_records}回
                 </div>
@@ -88,30 +78,25 @@ async function DashboardData() {
             <div className="flex justify-between items-start">
               <div>
                 <p className="text-purple-100 text-sm font-medium flex items-center">
-                  <EmojiEventsIcon className="mr-1 text-sm" />
+                  <span className="mr-1 text-sm">🏆</span>
                   目標達成率
                 </p>
                 <p className="text-3xl font-bold flex items-center">
                   {goalAchievementRate.toFixed(0)}%
                   {goalAchievementRate >= 100 && <span className="ml-2 group-hover:animate-bounce">🎉</span>}
                 </p>
-                <LinearProgress 
-                  variant="determinate" 
-                  value={Math.min(goalAchievementRate, 100)} 
-                  className="mt-2"
-                  sx={{
-                    backgroundColor: 'rgba(255,255,255,0.3)',
-                    '& .MuiLinearProgress-bar': {
-                      backgroundColor: goalAchievementRate >= 100 ? '#10b981' : '#fbbf24'
-                    }
-                  }}
-                />
+                <div className="mt-2 w-full bg-white bg-opacity-30 rounded-full h-2">
+                  <div 
+                    className={`h-2 rounded-full transition-all duration-300 ${goalAchievementRate >= 100 ? 'bg-green-400' : 'bg-yellow-400'}`}
+                    style={{ width: `${Math.min(goalAchievementRate, 100)}%` }}
+                  ></div>
+                </div>
                 <p className="text-purple-100 text-xs mt-1">
                   目標: {goal}km / 現在: {thisMonthDistance.toFixed(1)}km
                 </p>
               </div>
               <div className="text-right">
-                <EmojiEventsIcon className={`text-5xl text-purple-200 mb-2 ${goalAchievementRate >= 100 ? 'group-hover:animate-bounce' : 'group-hover:animate-pulse'}`} />
+                <span className={`text-5xl text-purple-200 mb-2 ${goalAchievementRate >= 100 ? 'group-hover:animate-bounce' : 'group-hover:animate-pulse'}`}>🏆</span>
                 <div className="text-xs text-purple-100">
                   残り{Math.max(0, goal - thisMonthDistance).toFixed(1)}km
                 </div>
