@@ -48,11 +48,19 @@ interface RunningChartProps {
 }
 
 export default function RunningChart({ records, monthlyGoals }: RunningChartProps) {
-  // 過去30日間のデータを準備（UTCを使用してサーバー・クライアント間の一貫性を保つ）
+  // 過去30日間のデータを準備（タイムゾーン安全な日付処理）
   const today = new Date();
   today.setHours(0, 0, 0, 0); // 時間をリセット
   const thirtyDaysAgo = new Date(today);
   thirtyDaysAgo.setDate(today.getDate() - 29);
+
+  // タイムゾーン安全な日付文字列フォーマット関数
+  const formatDateString = (date: Date): string => {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
 
   // 指定された日付の月間目標を取得するヘルパー関数
   const getMonthlyGoalForDate = (date: Date): number => {
@@ -68,13 +76,17 @@ export default function RunningChart({ records, monthlyGoals }: RunningChartProp
   const goalLineData = [];
   let cumulative = 0;
 
-  // 月ごとの目標ペース計算（各月の日数に基づく）
-  let cumulativeGoal = 0;
+  // 現在月の目標に基づく一貫した累積目標計算
+  const currentMonthGoal = getMonthlyGoalForDate(today);
+  const currentMonth = today.getMonth();
+  const currentYear = today.getFullYear();
+  const daysInCurrentMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+  const dailyGoalPace = currentMonthGoal / daysInCurrentMonth;
 
   for (let i = 0; i < 30; i++) {
     const currentDate = new Date(thirtyDaysAgo);
     currentDate.setDate(thirtyDaysAgo.getDate() + i);
-    const dateStr = currentDate.toISOString().split('T')[0];
+    const dateStr = formatDateString(currentDate);
     
     // その日の走行記録を探す
     const dayRecord = records.find(record => record.date === dateStr);
@@ -82,17 +94,9 @@ export default function RunningChart({ records, monthlyGoals }: RunningChartProp
     
     cumulative += dayDistance;
     
-    // その日が属する月の情報を取得
-    const dateMonth = currentDate.getMonth();
-    const dateYear = currentDate.getFullYear();
-    const daysInDateMonth = new Date(dateYear, dateMonth + 1, 0).getDate();
-    
-    // その日の月に対応する目標を取得
-    const monthlyGoalForDate = getMonthlyGoalForDate(currentDate);
-    const dailyGoalPaceForDate = monthlyGoalForDate / daysInDateMonth;
-    
-    // その日の理想的な1日あたりの目標距離を累積に追加
-    cumulativeGoal += dailyGoalPaceForDate;
+    // 現在月の目標に基づく一貫した目標ペースライン
+    // 各日に対して現在月の日別目標ペースを累積
+    const cumulativeGoal = dailyGoalPace * (i + 1);
     
     dailyData.push(dayDistance);
     cumulativeData.push(cumulative);
@@ -100,14 +104,13 @@ export default function RunningChart({ records, monthlyGoals }: RunningChartProp
   }
 
   // 現在の月の累積距離を計算（カレンダー月ベース）
-  const currentMonth = today.getMonth();
-  const currentYear = today.getFullYear();
   const firstDayOfMonth = new Date(currentYear, currentMonth, 1);
+  const firstDayOfMonthStr = formatDateString(firstDayOfMonth);
+  const todayStr = formatDateString(today);
   
   const currentMonthCumulative = records
     .filter(record => {
-      const recordDate = new Date(record.date);
-      return recordDate >= firstDayOfMonth && recordDate <= today;
+      return record.date >= firstDayOfMonthStr && record.date <= todayStr;
     })
     .reduce((sum, record) => sum + Number(record.distance || 0), 0);
 
