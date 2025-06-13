@@ -13,8 +13,8 @@ async function DashboardData() {
     const [records, statistics, monthlyGoal, yearlyGoal] = await Promise.all([
       serverRunningRecordsAPI.getAll(),
       serverRunningRecordsAPI.getStatistics(),
-      serverMonthlyGoalsAPI.getCurrent().catch(() => ({ distance_goal: 50.0 })),
-      serverYearlyGoalsAPI.getCurrent().catch(() => ({ distance_goal: 500.0 }))
+      serverMonthlyGoalsAPI.getCurrent().catch(() => null),
+      serverYearlyGoalsAPI.getCurrent().catch(() => null)
     ]);
 
     const thisYearDistance = Number(statistics?.this_year_distance || 0);
@@ -124,9 +124,9 @@ async function DashboardData() {
           records={records} 
           goal={goal} 
           statistics={statistics}
-          hasGoal={monthlyGoal?.id !== undefined}
+          hasGoal={monthlyGoal !== null && monthlyGoal?.id !== undefined}
           yearlyGoal={yearGoal}
-          hasYearlyGoal={yearlyGoal?.id !== undefined}
+          hasYearlyGoal={yearlyGoal !== null && yearlyGoal?.id !== undefined}
         />
       </div>
     );
