@@ -1,4 +1,4 @@
-class Api::V1::CurrentMonthlyGoalsController < Api::V1::BaseController
+class Api::V1::CurrentMonthlyGoalController < Api::V1::BaseController
   before_action :authenticate_user!
 
   def show
@@ -7,7 +7,15 @@ class Api::V1::CurrentMonthlyGoalsController < Api::V1::BaseController
     if current_goal
       render json: current_goal
     else
-      render json: { distance_goal: 50.0 }, status: :ok
+      # 一貫したレスポンス構造のためにデフォルト値を含む完全なオブジェクトを返す
+      render json: {
+        id: nil,
+        year: Date.current.year,
+        month: Date.current.month,
+        distance_goal: 50.0,
+        created_at: nil,
+        updated_at: nil
+      }, status: :ok
     end
   end
 
