@@ -33,17 +33,35 @@ interface RunRecord {
   distance: number;
 }
 
-interface RunningChartProps {
-  records: RunRecord[];
-  monthlyGoal: number;
+interface MonthlyGoal {
+  id?: string;
+  year: number;
+  month: number;
+  distance_goal: number;
+  created_at?: string;
+  updated_at?: string;
 }
 
-export default function RunningChart({ records, monthlyGoal }: RunningChartProps) {
+interface RunningChartProps {
+  records: RunRecord[];
+  monthlyGoals: MonthlyGoal[];
+}
+
+export default function RunningChart({ records, monthlyGoals }: RunningChartProps) {
   // 過去30日間のデータを準備（UTCを使用してサーバー・クライアント間の一貫性を保つ）
   const today = new Date();
   today.setHours(0, 0, 0, 0); // 時間をリセット
   const thirtyDaysAgo = new Date(today);
   thirtyDaysAgo.setDate(today.getDate() - 29);
+
+  // 指定された日付の月間目標を取得するヘルパー関数
+  const getMonthlyGoalForDate = (date: Date): number => {
+    const year = date.getFullYear();
+    const month = date.getMonth() + 1; // JavaScript months are 0-indexed
+    
+    const goal = monthlyGoals.find(g => g.year === year && g.month === month);
+    return goal ? Number(goal.distance_goal) : 50; // デフォルト50km
+  };
 
   const dailyData = [];
   const cumulativeData = [];
@@ -68,7 +86,10 @@ export default function RunningChart({ records, monthlyGoal }: RunningChartProps
     const dateMonth = currentDate.getMonth();
     const dateYear = currentDate.getFullYear();
     const daysInDateMonth = new Date(dateYear, dateMonth + 1, 0).getDate();
-    const dailyGoalPaceForDate = monthlyGoal / daysInDateMonth;
+    
+    // その日の月に対応する目標を取得
+    const monthlyGoalForDate = getMonthlyGoalForDate(currentDate);
+    const dailyGoalPaceForDate = monthlyGoalForDate / daysInDateMonth;
     
     // その日の理想的な1日あたりの目標距離を累積に追加
     cumulativeGoal += dailyGoalPaceForDate;
@@ -256,7 +277,7 @@ export default function RunningChart({ records, monthlyGoal }: RunningChartProps
         <div className="text-center">
           <div className="font-semibold text-blue-600">目標まで</div>
           <div className="text-lg font-bold">
-            {Math.max(0, monthlyGoal - Number(cumulativeData[cumulativeData.length - 1] || 0)).toFixed(1)} km
+            {Math.max(0, getMonthlyGoalForDate(today) - Number(cumulativeData[cumulativeData.length - 1] || 0)).toFixed(1)} km
           </div>
         </div>
       </div>

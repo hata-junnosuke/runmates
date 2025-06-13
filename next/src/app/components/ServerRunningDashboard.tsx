@@ -10,11 +10,12 @@ import DashboardWithCalendar from './DashboardWithCalendar';
 // データ取得コンポーネント
 async function DashboardData() {
   try {
-    const [records, statistics, monthlyGoal, yearlyGoal] = await Promise.all([
+    const [records, statistics, monthlyGoal, yearlyGoal, monthlyGoals] = await Promise.all([
       serverRunningRecordsAPI.getAll(),
       serverRunningRecordsAPI.getStatistics(),
       serverMonthlyGoalsAPI.getCurrent().catch(() => null),
-      serverYearlyGoalsAPI.getCurrent().catch(() => null)
+      serverYearlyGoalsAPI.getCurrent().catch(() => null),
+      serverMonthlyGoalsAPI.getAll().catch(() => [])
     ]);
 
     const thisYearDistance = Number(statistics?.this_year_distance || 0);
@@ -127,6 +128,7 @@ async function DashboardData() {
           hasGoal={monthlyGoal !== null && monthlyGoal?.id !== undefined}
           yearlyGoal={yearGoal}
           hasYearlyGoal={yearlyGoal !== null && yearlyGoal?.id !== undefined}
+          monthlyGoals={monthlyGoals}
         />
       </div>
     );

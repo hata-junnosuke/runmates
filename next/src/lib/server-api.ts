@@ -88,6 +88,10 @@ export const serverMonthlyGoalsAPI = {
   getCurrent: (): Promise<MonthlyGoal> => {
     return serverApiCall('/current_monthly_goal');
   },
+  
+  getAll: (): Promise<MonthlyGoal[]> => {
+    return serverApiCall('/monthly_goals');
+  },
 };
 
 export const serverYearlyGoalsAPI = {

@@ -24,6 +24,15 @@ interface RunningStatistics {
   recent_records: RunRecord[];
 }
 
+interface MonthlyGoal {
+  id?: string;
+  year: number;
+  month: number;
+  distance_goal: number;
+  created_at?: string;
+  updated_at?: string;
+}
+
 interface DashboardWithCalendarProps {
   records: RunRecord[];
   goal: number;
@@ -31,9 +40,10 @@ interface DashboardWithCalendarProps {
   hasGoal: boolean;
   yearlyGoal: number;
   hasYearlyGoal: boolean;
+  monthlyGoals: MonthlyGoal[];
 }
 
-export default function DashboardWithCalendar({ records, goal, statistics, hasGoal, yearlyGoal, hasYearlyGoal }: DashboardWithCalendarProps) {
+export default function DashboardWithCalendar({ records, goal, statistics, hasGoal, yearlyGoal, hasYearlyGoal, monthlyGoals }: DashboardWithCalendarProps) {
   const [selectedDate, setSelectedDate] = useState<string>('');
   const [recordFormOpen, setRecordFormOpen] = useState(false);
   const [goalFormOpen, setGoalFormOpen] = useState(false);
@@ -100,7 +110,7 @@ export default function DashboardWithCalendar({ records, goal, statistics, hasGo
       />
 
       {/* 走行記録グラフ */}
-      <RunningChartWrapper records={records} monthlyGoal={goal} />
+      <RunningChartWrapper records={records} monthlyGoals={monthlyGoals} />
 
       {/* 最近の記録 */}
       <div className="bg-white rounded-xl shadow-lg p-6">

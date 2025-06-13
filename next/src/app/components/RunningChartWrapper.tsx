@@ -31,19 +31,28 @@ interface RunRecord {
   distance: number;
 }
 
-interface RunningChartWrapperProps {
-  records: RunRecord[];
-  monthlyGoal: number;
+interface MonthlyGoal {
+  id?: string;
+  year: number;
+  month: number;
+  distance_goal: number;
+  created_at?: string;
+  updated_at?: string;
 }
 
-export default function RunningChartWrapper({ records, monthlyGoal }: RunningChartWrapperProps) {
+interface RunningChartWrapperProps {
+  records: RunRecord[];
+  monthlyGoals: MonthlyGoal[];
+}
+
+export default function RunningChartWrapper({ records, monthlyGoals }: RunningChartWrapperProps) {
   return (
     <Suspense fallback={
       <div className="bg-white rounded-xl shadow-lg p-6">
         <div className="h-80 bg-gray-200 rounded animate-pulse"></div>
       </div>
     }>
-      <RunningChart records={records} monthlyGoal={monthlyGoal} />
+      <RunningChart records={records} monthlyGoals={monthlyGoals} />
     </Suspense>
   );
 }
