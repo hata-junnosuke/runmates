@@ -64,7 +64,7 @@ export default function ClientGoalForm({ currentGoal, isOpen = false, onClose, o
 
       <Modal
         open={currentModalOpen}
-        onClose={showWelcomeMessage ? undefined : handleClose}
+        onClose={handleClose}
         aria-labelledby="goal-modal-title"
       >
         <Box className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white rounded-xl shadow-xl p-6 w-full max-w-md">
@@ -107,17 +107,15 @@ export default function ClientGoalForm({ currentGoal, isOpen = false, onClose, o
               >
                 {isSubmitting ? '保存中...' : (showWelcomeMessage ? '目標を設定' : '目標を変更')}
               </Button>
-              {!showWelcomeMessage && (
-                <Button
-                  type="button"
-                  variant="outlined"
-                  onClick={handleClose}
-                  disabled={isSubmitting}
-                  className="flex-1 border-gray-300 text-gray-700 hover:bg-gray-50 py-2"
-                >
-                  キャンセル
-                </Button>
-              )}
+              <Button
+                type="button"
+                variant="outlined"
+                onClick={handleClose}
+                disabled={isSubmitting}
+                className="flex-1 border-gray-300 text-gray-700 hover:bg-gray-50 py-2"
+              >
+                {showWelcomeMessage ? '後で設定' : 'キャンセル'}
+              </Button>
             </div>
           </form>
         </Box>
