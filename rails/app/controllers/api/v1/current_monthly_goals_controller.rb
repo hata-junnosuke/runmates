@@ -12,11 +12,12 @@ class Api::V1::CurrentMonthlyGoalsController < Api::V1::BaseController
   end
 
   def create
-    year = params[:year] || Date.current.year
-    month = params[:month] || Date.current.month
+    goal_params = monthly_goal_params
+    year = goal_params[:year]&.to_i || Date.current.year
+    month = goal_params[:month]&.to_i || Date.current.month
 
     @monthly_goal = current_user.monthly_goals.find_or_initialize_by(year: year, month: month)
-    @monthly_goal.distance_goal = monthly_goal_params[:distance_goal]
+    @monthly_goal.distance_goal = goal_params[:distance_goal]
 
     if @monthly_goal.save
       render json: @monthly_goal, status: @monthly_goal.previously_new_record? ? :created : :ok
