@@ -1,11 +1,12 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Typography } from '@mui/material';
 import DirectionsRunIcon from '@mui/icons-material/DirectionsRun';
 import ClientRunningCalendar from './ClientRunningCalendar';
 import ClientRecordForm from './ClientRecordForm';
 import ClientGoalForm from './ClientGoalForm';
+import ClientYearlyGoalForm from './ClientYearlyGoalForm';
+import RunningChartWrapper from './RunningChartWrapper';
 
 interface RunRecord {
   id: string;
@@ -15,14 +16,6 @@ interface RunRecord {
   updated_at?: string;
 }
 
-interface MonthlyGoal {
-  id?: string;
-  year: number;
-  month: number;
-  distance_goal: number;
-  created_at?: string;
-  updated_at?: string;
-}
 
 interface RunningStatistics {
   this_year_distance: number;
@@ -36,12 +29,15 @@ interface DashboardWithCalendarProps {
   goal: number;
   statistics: RunningStatistics;
   hasGoal: boolean;
+  yearlyGoal: number;
+  hasYearlyGoal: boolean;
 }
 
-export default function DashboardWithCalendar({ records, goal, statistics, hasGoal }: DashboardWithCalendarProps) {
+export default function DashboardWithCalendar({ records, goal, statistics, hasGoal, yearlyGoal, hasYearlyGoal }: DashboardWithCalendarProps) {
   const [selectedDate, setSelectedDate] = useState<string>('');
   const [recordFormOpen, setRecordFormOpen] = useState(false);
   const [goalFormOpen, setGoalFormOpen] = useState(false);
+  const [yearlyGoalFormOpen, setYearlyGoalFormOpen] = useState(false);
 
   const handleDateClick = (date: string) => {
     setSelectedDate(date);
@@ -54,6 +50,25 @@ export default function DashboardWithCalendar({ records, goal, statistics, hasGo
       setGoalFormOpen(true);
     }
   }, [hasGoal]);
+
+  // カードクリックイベントリスナー
+  useEffect(() => {
+    const handleCardClick = (event: Event) => {
+      const target = event.target as HTMLElement;
+      const card = target.closest('[data-goal-type]');
+      if (card) {
+        const goalType = card.getAttribute('data-goal-type');
+        if (goalType === 'monthly') {
+          setGoalFormOpen(true);
+        } else if (goalType === 'yearly') {
+          setYearlyGoalFormOpen(true);
+        }
+      }
+    };
+
+    document.addEventListener('click', handleCardClick);
+    return () => document.removeEventListener('click', handleCardClick);
+  }, []);
 
   const handleFormClose = () => {
     setRecordFormOpen(false);
@@ -68,6 +83,14 @@ export default function DashboardWithCalendar({ records, goal, statistics, hasGo
     setGoalFormOpen(true);
   };
 
+  const handleYearlyGoalFormClose = () => {
+    setYearlyGoalFormOpen(false);
+  };
+
+  const handleYearlyGoalFormOpen = () => {
+    setYearlyGoalFormOpen(true);
+  };
+
   return (
     <>
       {/* カレンダー */}
@@ -75,6 +98,9 @@ export default function DashboardWithCalendar({ records, goal, statistics, hasGo
         records={records} 
         onDateClick={handleDateClick}
       />
+
+      {/* 走行記録グラフ */}
+      <RunningChartWrapper records={records} monthlyGoal={goal} />
 
       {/* 最近の記録 */}
       <div className="bg-white rounded-xl shadow-lg p-6">
@@ -124,13 +150,20 @@ export default function DashboardWithCalendar({ records, goal, statistics, hasGo
       </div>
 
       {/* アクションボタン - 目標設定のみ表示 */}
-      <div className="flex justify-center">
+      <div className="flex justify-center space-x-4">
         <ClientGoalForm 
           currentGoal={goal} 
           isOpen={goalFormOpen}
           onClose={handleGoalFormClose}
           onOpen={handleGoalFormOpen}
           showWelcomeMessage={!hasGoal}
+        />
+        <ClientYearlyGoalForm 
+          currentGoal={yearlyGoal} 
+          isOpen={yearlyGoalFormOpen}
+          onClose={handleYearlyGoalFormClose}
+          onOpen={handleYearlyGoalFormOpen}
+          showWelcomeMessage={!hasYearlyGoal}
         />
       </div>
 

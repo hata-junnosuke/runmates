@@ -2,7 +2,6 @@
 
 import { cookies } from 'next/headers';
 import { revalidatePath } from 'next/cache';
-import { redirect } from 'next/navigation';
 
 const API_BASE_URL = process.env.INTERNAL_API_URL || 'http://rails:3000/api/v1';
 

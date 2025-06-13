@@ -17,7 +17,7 @@ Rails.application.routes.draw do
 
       resources :monthly_goals
       resource :current_monthly_goal, only: [:show, :create]
-      
+
       resources :yearly_goals
       resource :current_yearly_goal, only: [:show, :create]
     end

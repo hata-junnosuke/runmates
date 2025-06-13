@@ -50,7 +50,7 @@ export async function signUp(
         email,
         password,
         password_confirmation: passwordConfirmation,
-        confirm_success_url: "http://localhost:8000/",
+        confirm_success_url: process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:8000/",
       }),
     });
 

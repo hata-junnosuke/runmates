@@ -76,5 +76,5 @@ Rails.application.configure do
   config.hosts << "127.0.0.1"
   config.hosts << "rails"
   config.hosts << "rails:3000"
-  config.hosts << /.*\.*/  # 開発環境では全てのホストを許可
+  config.hosts << /.*\.*/ # 開発環境では全てのホストを許可
 end

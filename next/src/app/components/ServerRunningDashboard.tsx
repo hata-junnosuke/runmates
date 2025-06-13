@@ -1,19 +1,20 @@
 import { Suspense } from 'react';
-import { LinearProgress, Typography } from '@mui/material';
+import { LinearProgress } from '@mui/material';
 import DirectionsRunIcon from '@mui/icons-material/DirectionsRun';
 import TimerIcon from '@mui/icons-material/Timer';
 import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
-import { serverRunningRecordsAPI, serverMonthlyGoalsAPI } from '../../lib/server-api';
+import { serverRunningRecordsAPI, serverMonthlyGoalsAPI, serverYearlyGoalsAPI } from '../../lib/server-api';
 import DashboardWithCalendar from './DashboardWithCalendar';
 
 // データ取得コンポーネント
 async function DashboardData() {
   try {
-    const [records, statistics, monthlyGoal] = await Promise.all([
+    const [records, statistics, monthlyGoal, yearlyGoal] = await Promise.all([
       serverRunningRecordsAPI.getAll(),
       serverRunningRecordsAPI.getStatistics(),
-      serverMonthlyGoalsAPI.getCurrent().catch(() => ({ distance_goal: 50.0 }))
+      serverMonthlyGoalsAPI.getCurrent().catch(() => ({ distance_goal: 50.0 })),
+      serverYearlyGoalsAPI.getCurrent().catch(() => ({ distance_goal: 500.0 }))
     ]);
 
     const thisYearDistance = Number(statistics?.this_year_distance || 0);
@@ -21,14 +22,15 @@ async function DashboardData() {
     const goal = Number(monthlyGoal?.distance_goal || 50);
     
     const goalAchievementRate = goal > 0 ? (thisMonthDistance / goal) * 100 : 0;
-    const yearGoalProgress = (thisYearDistance / 500) * 100;
+    const yearGoal = Number(yearlyGoal?.distance_goal || 500);
+    const yearGoalProgress = yearGoal > 0 ? (thisYearDistance / yearGoal) * 100 : 0;
 
     return (
       <div className="space-y-6">
         {/* 統計カード */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {/* 今年の総走行距離 */}
-          <div className="bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-xl p-6 text-white shadow-lg transform hover:scale-105 transition-all duration-300 group">
+          <div className="bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-xl p-6 text-white shadow-lg transform hover:scale-105 transition-all duration-300 group cursor-pointer" data-goal-type="yearly">
             <div className="flex justify-between items-start">
               <div>
                 <p className="text-emerald-100 text-sm font-medium flex items-center group-hover:animate-pulse">
@@ -47,12 +49,12 @@ async function DashboardData() {
                     }
                   }}
                 />
-                <p className="text-emerald-100 text-xs mt-1">🎯 年間目標: 500km ({yearGoalProgress.toFixed(0)}%)</p>
+                <p className="text-emerald-100 text-xs mt-1">🎯 年間目標: {yearGoal}km ({yearGoalProgress.toFixed(0)}%)</p>
               </div>
               <div className="text-right">
                 <DirectionsRunIcon className="text-5xl text-emerald-200 mb-2 group-hover:animate-pulse" />
                 <div className="text-xs text-emerald-100 font-bold">
-                  残り{Math.max(0, 500 - thisYearDistance).toFixed(0)}km
+                  残り{Math.max(0, yearGoal - thisYearDistance).toFixed(0)}km
                 </div>
               </div>
             </div>
@@ -81,7 +83,7 @@ async function DashboardData() {
           </div>
 
           {/* 目標達成率 */}
-          <div className="bg-gradient-to-br from-purple-400 to-purple-600 rounded-xl p-6 text-white shadow-lg transform hover:scale-105 transition-all duration-300 group">
+          <div className="bg-gradient-to-br from-purple-400 to-purple-600 rounded-xl p-6 text-white shadow-lg transform hover:scale-105 transition-all duration-300 group cursor-pointer" data-goal-type="monthly">
             <div className="flex justify-between items-start">
               <div>
                 <p className="text-purple-100 text-sm font-medium flex items-center">
@@ -123,6 +125,8 @@ async function DashboardData() {
           goal={goal} 
           statistics={statistics}
           hasGoal={monthlyGoal?.id !== undefined}
+          yearlyGoal={yearGoal}
+          hasYearlyGoal={yearlyGoal?.id !== undefined}
         />
       </div>
     );

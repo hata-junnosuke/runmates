@@ -1,0 +1,263 @@
+'use client';
+
+import { Line } from 'react-chartjs-2';
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend,
+  Filler,
+  ChartOptions,
+} from 'chart.js';
+
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend,
+  Filler
+);
+
+interface RunRecord {
+  id: string;
+  date: string;
+  distance: number;
+}
+
+interface RunningChartProps {
+  records: RunRecord[];
+  monthlyGoal: number;
+}
+
+export default function RunningChart({ records, monthlyGoal }: RunningChartProps) {
+  // 過去30日間のデータを準備（UTCを使用してサーバー・クライアント間の一貫性を保つ）
+  const today = new Date();
+  today.setHours(0, 0, 0, 0); // 時間をリセット
+  const thirtyDaysAgo = new Date(today);
+  thirtyDaysAgo.setDate(today.getDate() - 29);
+
+  const dailyData = [];
+  const cumulativeData = [];
+  const goalLineData = [];
+  let cumulative = 0;
+
+  // 今月の目標ペースライン（今月の日数で目標を均等分割）
+  const currentMonth = today.getMonth();
+  const currentYear = today.getFullYear();
+  const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+  const dailyGoalPace = monthlyGoal / daysInMonth;
+
+  for (let i = 0; i < 30; i++) {
+    const currentDate = new Date(thirtyDaysAgo);
+    currentDate.setDate(thirtyDaysAgo.getDate() + i);
+    const dateStr = currentDate.toISOString().split('T')[0];
+    
+    // その日の走行記録を探す
+    const dayRecord = records.find(record => record.date === dateStr);
+    const dayDistance = dayRecord ? Number(dayRecord.distance || 0) : 0;
+    
+    cumulative += dayDistance;
+    
+    // 目標ペースライン（その日までの理想的な累積距離）
+    const dayOfMonth = currentDate.getDate();
+    const idealCumulative = dailyGoalPace * dayOfMonth;
+    
+    dailyData.push(dayDistance);
+    cumulativeData.push(cumulative);
+    goalLineData.push(idealCumulative);
+  }
+
+  // ラベル（日付）を準備
+  const labels = [];
+  for (let i = 0; i < 30; i++) {
+    const currentDate = new Date(thirtyDaysAgo);
+    currentDate.setDate(thirtyDaysAgo.getDate() + i);
+    labels.push(`${currentDate.getMonth() + 1}/${currentDate.getDate()}`);
+  }
+
+  const data = {
+    labels,
+    datasets: [
+      {
+        label: '累積走行距離',
+        data: cumulativeData,
+        borderColor: 'rgb(34, 197, 94)',
+        backgroundColor: 'rgba(34, 197, 94, 0.1)',
+        fill: true,
+        tension: 0.4,
+        pointBorderColor: 'rgb(34, 197, 94)',
+        pointBackgroundColor: 'white',
+        pointBorderWidth: 2,
+        pointRadius: 4,
+        pointHoverRadius: 6,
+      },
+      {
+        label: '目標ペース',
+        data: goalLineData,
+        borderColor: 'rgb(239, 68, 68)',
+        backgroundColor: 'rgba(239, 68, 68, 0.1)',
+        borderDash: [10, 5],
+        borderWidth: 2,
+        fill: false,
+        tension: 0,
+        pointRadius: 0,
+        pointHoverRadius: 4,
+        pointBorderColor: 'rgb(239, 68, 68)',
+        pointBackgroundColor: 'rgb(239, 68, 68)',
+      },
+      {
+        label: '日別走行距離',
+        data: dailyData,
+        type: 'bar' as const,
+        backgroundColor: 'rgba(59, 130, 246, 0.6)',
+        borderColor: 'rgb(59, 130, 246)',
+        borderWidth: 1,
+        yAxisID: 'y1',
+      },
+    ],
+  };
+
+  const options: ChartOptions<'line'> = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        position: 'top' as const,
+        labels: {
+          usePointStyle: true,
+          padding: 20,
+          font: {
+            size: 12,
+          },
+        },
+      },
+      title: {
+        display: true,
+        text: '過去30日間の走行記録',
+        font: {
+          size: 16,
+          weight: 'bold',
+        },
+        padding: 20,
+      },
+      tooltip: {
+        mode: 'index',
+        intersect: false,
+        backgroundColor: 'rgba(0, 0, 0, 0.8)',
+        titleColor: 'white',
+        bodyColor: 'white',
+        borderColor: 'rgba(255, 255, 255, 0.2)',
+        borderWidth: 1,
+        cornerRadius: 8,
+        padding: 12,
+        callbacks: {
+          label: function(context) {
+            if (context.datasetIndex === 0) {
+              const goalValue = goalLineData[context.dataIndex] || 0;
+              const diff = context.parsed.y - goalValue;
+              const status = diff >= 0 ? `+${diff.toFixed(1)}km 🔥` : `${diff.toFixed(1)}km`;
+              return `累積: ${context.parsed.y.toFixed(1)} km (目標比: ${status})`;
+            } else if (context.datasetIndex === 1) {
+              return `目標ペース: ${context.parsed.y.toFixed(1)} km`;
+            } else {
+              return `その日: ${context.parsed.y.toFixed(1)} km`;
+            }
+          },
+        },
+      },
+    },
+    interaction: {
+      mode: 'nearest',
+      axis: 'x',
+      intersect: false,
+    },
+    scales: {
+      x: {
+        display: true,
+        title: {
+          display: true,
+          text: '日付',
+          font: {
+            weight: 'bold',
+          },
+        },
+        grid: {
+          color: 'rgba(0, 0, 0, 0.1)',
+        },
+      },
+      y: {
+        type: 'linear',
+        display: true,
+        position: 'left',
+        title: {
+          display: true,
+          text: '累積距離 (km)',
+          font: {
+            weight: 'bold',
+          },
+        },
+        grid: {
+          color: 'rgba(0, 0, 0, 0.1)',
+        },
+        beginAtZero: true,
+      },
+      y1: {
+        type: 'linear',
+        display: true,
+        position: 'right',
+        title: {
+          display: true,
+          text: '日別距離 (km)',
+          font: {
+            weight: 'bold',
+          },
+        },
+        grid: {
+          drawOnChartArea: false,
+        },
+        beginAtZero: true,
+      },
+    },
+    elements: {
+      line: {
+        borderWidth: 3,
+      },
+      point: {
+        hoverBackgroundColor: 'white',
+      },
+    },
+  };
+
+  return (
+    <div className="bg-white rounded-xl shadow-lg p-6">
+      <div className="h-80">
+        <Line data={data} options={options} />
+      </div>
+      <div className="mt-4 grid grid-cols-3 gap-4 text-sm text-gray-600">
+        <div className="text-center">
+          <div className="font-semibold text-emerald-600">今月の累積</div>
+          <div className="text-lg font-bold">{Number(cumulativeData[cumulativeData.length - 1] || 0).toFixed(1)} km</div>
+        </div>
+        <div className="text-center">
+          <div className="font-semibold text-red-500">目標ペース</div>
+          <div className="text-lg font-bold">{Number(goalLineData[goalLineData.length - 1] || 0).toFixed(1)} km</div>
+        </div>
+        <div className="text-center">
+          <div className="font-semibold text-blue-600">目標まで</div>
+          <div className="text-lg font-bold">
+            {Math.max(0, monthlyGoal - Number(cumulativeData[cumulativeData.length - 1] || 0)).toFixed(1)} km
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
