@@ -1,13 +1,13 @@
 'use client';
 
-import { Chart } from 'react-chartjs-2';
+import { Line } from 'react-chartjs-2';
 import {
   Chart as ChartJS,
   CategoryScale,
   LinearScale,
   PointElement,
   LineElement,
-  BarElement,
+  LineController,
   Title,
   Tooltip,
   Legend,
@@ -21,7 +21,7 @@ ChartJS.register(
   LinearScale,
   PointElement,
   LineElement,
-  BarElement,
+  LineController,
   Title,
   Tooltip,
   Legend,
@@ -129,7 +129,7 @@ export default function RunningChart({ records, monthlyGoals }: RunningChartProp
     labels.push(`${currentDate.getMonth() + 1}/${currentDate.getDate()}`);
   }
 
-  const data: ChartData<'line' | 'bar'> = {
+  const data: ChartData<'line'> = {
     labels,
     datasets: [
       {
@@ -144,7 +144,6 @@ export default function RunningChart({ records, monthlyGoals }: RunningChartProp
         pointBorderWidth: 2,
         pointRadius: 4,
         pointHoverRadius: 6,
-        type: 'line' as const,
       },
       {
         label: '目標ペース',
@@ -159,21 +158,23 @@ export default function RunningChart({ records, monthlyGoals }: RunningChartProp
         pointHoverRadius: 4,
         pointBorderColor: 'rgb(239, 68, 68)',
         pointBackgroundColor: 'rgb(239, 68, 68)',
-        type: 'line' as const,
       },
       {
         label: '日別走行距離',
         data: dailyData,
-        type: 'bar' as const,
-        backgroundColor: 'rgba(59, 130, 246, 0.6)',
         borderColor: 'rgb(59, 130, 246)',
-        borderWidth: 1,
+        backgroundColor: 'rgba(59, 130, 246, 0.2)',
+        fill: false,
+        tension: 0,
+        pointRadius: 3,
+        pointHoverRadius: 5,
+        borderWidth: 2,
         yAxisID: 'y1',
       },
     ],
   };
 
-  const options: ChartOptions<'line' | 'bar'> = {
+  const options: ChartOptions<'line'> = {
     responsive: true,
     maintainAspectRatio: false,
     plugins: {
@@ -287,7 +288,7 @@ export default function RunningChart({ records, monthlyGoals }: RunningChartProp
   return (
     <div className="bg-white rounded-xl shadow-lg p-6">
       <div className="h-80">
-        <Chart type="line" data={data} options={options} />
+        <Line data={data} options={options} />
       </div>
       <div className="mt-4 grid grid-cols-3 gap-4 text-sm text-gray-600">
         <div className="text-center">
