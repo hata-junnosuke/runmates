@@ -108,11 +108,7 @@ async function DashboardData() {
         {/* カレンダーとアクションボタン */}
         <ClientDashboardWrapper 
           records={records} 
-          goal={goal} 
           statistics={statistics}
-          hasGoal={monthlyGoal !== null && monthlyGoal?.id != null}
-          yearlyGoal={yearGoal}
-          hasYearlyGoal={yearlyGoal !== null && yearlyGoal?.id != null}
           monthlyGoals={monthlyGoals}
         />
       </div>

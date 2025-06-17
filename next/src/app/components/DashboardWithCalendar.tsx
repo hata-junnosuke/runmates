@@ -1,11 +1,9 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import dynamic from 'next/dynamic';
 import DirectionsRunIcon from '@mui/icons-material/DirectionsRun';
 import ClientRecordForm from './ClientRecordForm';
-import ClientGoalForm from './ClientGoalForm';
-import ClientYearlyGoalForm from './ClientYearlyGoalForm';
 import RunningChartWrapper from './RunningChartWrapper';
 
 const ClientRunningCalendar = dynamic(() => import('./ClientRunningCalendar'), {
@@ -51,71 +49,25 @@ interface MonthlyGoal {
 
 interface DashboardWithCalendarProps {
   records: RunRecord[];
-  goal: number;
   statistics: RunningStatistics;
-  hasGoal: boolean;
-  yearlyGoal: number;
-  hasYearlyGoal: boolean;
   monthlyGoals: MonthlyGoal[];
 }
 
-export default function DashboardWithCalendar({ records, goal, statistics, hasGoal, yearlyGoal, hasYearlyGoal, monthlyGoals }: DashboardWithCalendarProps) {
+export default function DashboardWithCalendar({ records, statistics, monthlyGoals }: DashboardWithCalendarProps) {
   const [selectedDate, setSelectedDate] = useState<string>('');
   const [recordFormOpen, setRecordFormOpen] = useState(false);
-  const [goalFormOpen, setGoalFormOpen] = useState(false);
-  const [yearlyGoalFormOpen, setYearlyGoalFormOpen] = useState(false);
 
   const handleDateClick = (date: string) => {
     setSelectedDate(date);
     setRecordFormOpen(true);
   };
 
-  // 目標未設定時の自動モーダル表示
-  useEffect(() => {
-    if (!hasGoal) {
-      setGoalFormOpen(true);
-    }
-  }, [hasGoal]);
-
-  // カードクリックイベントリスナー
-  useEffect(() => {
-    const handleCardClick = (event: Event) => {
-      const target = event.target as HTMLElement;
-      const card = target.closest('[data-goal-type]');
-      if (card) {
-        const goalType = card.getAttribute('data-goal-type');
-        if (goalType === 'monthly') {
-          setGoalFormOpen(true);
-        } else if (goalType === 'yearly') {
-          setYearlyGoalFormOpen(true);
-        }
-      }
-    };
-
-    document.addEventListener('click', handleCardClick);
-    return () => document.removeEventListener('click', handleCardClick);
-  }, []);
 
   const handleFormClose = () => {
     setRecordFormOpen(false);
     setSelectedDate('');
   };
 
-  const handleGoalFormClose = () => {
-    setGoalFormOpen(false);
-  };
-
-  const handleGoalFormOpen = () => {
-    setGoalFormOpen(true);
-  };
-
-  const handleYearlyGoalFormClose = () => {
-    setYearlyGoalFormOpen(false);
-  };
-
-  const handleYearlyGoalFormOpen = () => {
-    setYearlyGoalFormOpen(true);
-  };
 
   return (
     <>
@@ -170,23 +122,6 @@ export default function DashboardWithCalendar({ records, goal, statistics, hasGo
         </div>
       </div>
 
-      {/* アクションボタン - 目標設定のみ表示 */}
-      <div className="flex justify-center space-x-4">
-        <ClientGoalForm 
-          currentGoal={goal} 
-          isOpen={goalFormOpen}
-          onClose={handleGoalFormClose}
-          onOpen={handleGoalFormOpen}
-          showWelcomeMessage={!hasGoal}
-        />
-        <ClientYearlyGoalForm 
-          currentGoal={yearlyGoal} 
-          isOpen={yearlyGoalFormOpen}
-          onClose={handleYearlyGoalFormClose}
-          onOpen={handleYearlyGoalFormOpen}
-          showWelcomeMessage={!hasYearlyGoal}
-        />
-      </div>
 
       {/* 記録フォーム（非表示ボタン） */}
       <ClientRecordForm 
