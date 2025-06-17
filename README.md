@@ -5,7 +5,7 @@
 ## 技術スタック
 
 **Backend**
-- Rails API (Ruby 3.4.3)
+- Rails API 8.0.2 (Ruby 3.4.3)
 - MySQL 8.0.32
 - DeviseTokenAuth（HTTP-onlyクッキー認証）
 
