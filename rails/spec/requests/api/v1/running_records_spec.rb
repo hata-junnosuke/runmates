@@ -12,7 +12,7 @@ RSpec.describe "Api::V1::RunningRecords", type: :request do
 
       it "ランニングレコード一覧を返す" do
         get "/api/v1/running_records", headers: headers
-        
+
         expect(response).to have_http_status(:ok)
         json = JSON.parse(response.body)
         expect(json.length).to eq(3)
@@ -21,7 +21,7 @@ RSpec.describe "Api::V1::RunningRecords", type: :request do
       it "最大50件まで返す" do
         create_list(:running_record, 60, user: user)
         get "/api/v1/running_records", headers: headers
-        
+
         expect(response).to have_http_status(:ok)
         json = JSON.parse(response.body)
         expect(json.length).to eq(50)
@@ -42,7 +42,7 @@ RSpec.describe "Api::V1::RunningRecords", type: :request do
     context "認証済みユーザーの場合" do
       it "指定されたランニングレコードを返す" do
         get "/api/v1/running_records/#{running_record.id}", headers: headers
-        
+
         expect(response).to have_http_status(:ok)
         json = JSON.parse(response.body)
         expect(json["id"]).to eq(running_record.id)
@@ -52,11 +52,11 @@ RSpec.describe "Api::V1::RunningRecords", type: :request do
       it "他のユーザーのレコードにはアクセスできない" do
         other_user = create(:user)
         other_record = create(:running_record, user: other_user)
-        
+
         get "/api/v1/running_records/#{other_record.id}", headers: headers
         # レコードが見つからない場合の動作を確認
         # 実装によってはステータスが違う可能性があるため、現在の実装を受け入れる
-        expect([404, 401, 403]).to include(response.status)
+        expect(response.status).to be_in([404, 401, 403])
       end
     end
 
@@ -73,8 +73,8 @@ RSpec.describe "Api::V1::RunningRecords", type: :request do
       {
         running_record: {
           date: Date.current,
-          distance: 5.0
-        }
+          distance: 5.0,
+        },
       }
     end
 
@@ -83,8 +83,8 @@ RSpec.describe "Api::V1::RunningRecords", type: :request do
         it "新しいランニングレコードを作成する" do
           expect {
             post "/api/v1/running_records", params: valid_params, headers: headers
-          }.to change(RunningRecord, :count).by(1)
-          
+          }.to change { RunningRecord.count }.by(1)
+
           expect(response).to have_http_status(:created)
           json = JSON.parse(response.body)
           expect(json["distance"]).to eq("5.0")
@@ -96,14 +96,14 @@ RSpec.describe "Api::V1::RunningRecords", type: :request do
           {
             running_record: {
               date: nil,
-              distance: -1.0
-            }
+              distance: -1.0,
+            },
           }
         end
 
         it "422を返し、エラーメッセージを含む" do
           post "/api/v1/running_records", params: invalid_params, headers: headers
-          
+
           expect(response).to have_http_status(:unprocessable_entity)
           json = JSON.parse(response.body)
           expect(json["errors"]).to be_present
@@ -124,17 +124,17 @@ RSpec.describe "Api::V1::RunningRecords", type: :request do
     let(:update_params) do
       {
         running_record: {
-          distance: 10.0
-        }
+          distance: 10.0,
+        },
       }
     end
 
     context "認証済みユーザーの場合" do
       context "有効なパラメータの場合" do
         it "ランニングレコードを更新する" do
-          patch "/api/v1/running_records/#{running_record.id}", 
+          patch "/api/v1/running_records/#{running_record.id}",
                 params: update_params, headers: headers
-          
+
           expect(response).to have_http_status(:ok)
           running_record.reload
           expect(running_record.distance).to eq(10.0)
@@ -145,15 +145,15 @@ RSpec.describe "Api::V1::RunningRecords", type: :request do
         let(:invalid_params) do
           {
             running_record: {
-              distance: -1.0
-            }
+              distance: -1.0,
+            },
           }
         end
 
         it "422を返し、エラーメッセージを含む" do
-          patch "/api/v1/running_records/#{running_record.id}", 
+          patch "/api/v1/running_records/#{running_record.id}",
                 params: invalid_params, headers: headers
-          
+
           expect(response).to have_http_status(:unprocessable_entity)
           json = JSON.parse(response.body)
           expect(json["errors"]).to be_present
@@ -176,8 +176,8 @@ RSpec.describe "Api::V1::RunningRecords", type: :request do
       it "ランニングレコードを削除する" do
         expect {
           delete "/api/v1/running_records/#{running_record.id}", headers: headers
-        }.to change(RunningRecord, :count).by(-1)
-        
+        }.to change { RunningRecord.count }.by(-1)
+
         expect(response).to have_http_status(:no_content)
       end
     end

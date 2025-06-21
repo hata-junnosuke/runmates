@@ -1,7 +1,7 @@
 FactoryBot.define do
   factory :running_record do
     association :user
-    sequence(:date) { |n| Date.current - n.days }
+    sequence(:date) {|n| Date.current - n.days }
     distance { 5.0 }
 
     trait :with_past_date do

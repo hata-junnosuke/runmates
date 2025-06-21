@@ -70,7 +70,7 @@ RSpec.describe MonthlyGoal, type: :model do
         user = create(:user)
         create(:monthly_goal, user: user, year: 2024, month: 6)
         duplicate_goal = build(:monthly_goal, user: user, year: 2024, month: 6)
-        
+
         expect(duplicate_goal).not_to be_valid
         expect(duplicate_goal.errors[:user_id]).to be_present
       end

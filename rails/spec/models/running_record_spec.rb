@@ -42,7 +42,7 @@ RSpec.describe RunningRecord, type: :model do
         date = Date.current
         create(:running_record, user: user, date: date)
         duplicate_record = build(:running_record, user: user, date: date)
-        
+
         expect(duplicate_record).not_to be_valid
         expect(duplicate_record.errors[:date]).to be_present
       end
@@ -51,32 +51,32 @@ RSpec.describe RunningRecord, type: :model do
 
   describe "スコープ" do
     let(:user) { create(:user) }
-    let!(:record_2023) { create(:running_record, user: user, date: Date.new(2023, 6, 15)) }
-    let!(:record_2024_jan) { create(:running_record, user: user, date: Date.new(2024, 1, 10)) }
-    let!(:record_2024_feb) { create(:running_record, user: user, date: Date.new(2024, 2, 20)) }
-    let!(:record_latest) { create(:running_record, user: user, date: Date.current) }
+    let!(:old_record) { create(:running_record, user: user, date: Date.new(2023, 6, 15)) }
+    let!(:jan_record) { create(:running_record, user: user, date: Date.new(2024, 1, 10)) }
+    let!(:feb_record) { create(:running_record, user: user, date: Date.new(2024, 2, 20)) }
+    let!(:latest_record) { create(:running_record, user: user, date: Date.current) }
 
     describe ".for_year" do
       it "指定された年のレコードのみを返す" do
-        records_2024 = RunningRecord.for_year(2024)
-        expect(records_2024).to include(record_2024_jan, record_2024_feb)
-        expect(records_2024).not_to include(record_2023)
+        current_year_records = RunningRecord.for_year(2024)
+        expect(current_year_records).to include(jan_record, feb_record)
+        expect(current_year_records).not_to include(old_record)
       end
     end
 
     describe ".for_month" do
       it "指定された年月のレコードのみを返す" do
-        records_2024_jan = RunningRecord.for_month(2024, 1)
-        expect(records_2024_jan).to include(record_2024_jan)
-        expect(records_2024_jan).not_to include(record_2024_feb, record_2023)
+        jan_records = RunningRecord.for_month(2024, 1)
+        expect(jan_records).to include(jan_record)
+        expect(jan_records).not_to include(feb_record, old_record)
       end
     end
 
     describe ".recent" do
       it "日付の降順でソートされたレコードを返す" do
         recent_records = RunningRecord.recent
-        expect(recent_records.first).to eq(record_latest)
-        expect(recent_records.last).to eq(record_2023)
+        expect(recent_records.first).to eq(latest_record)
+        expect(recent_records.last).to eq(old_record)
       end
     end
   end

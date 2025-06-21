@@ -54,7 +54,7 @@ RSpec.describe YearlyGoal, type: :model do
         user = create(:user)
         create(:yearly_goal, user: user, year: 2024)
         duplicate_goal = build(:yearly_goal, user: user, year: 2024)
-        
+
         expect(duplicate_goal).not_to be_valid
         expect(duplicate_goal.errors[:user_id]).to be_present
       end
