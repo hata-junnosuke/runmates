@@ -73,3 +73,11 @@ RSpec.configure do |config|
   # FactoryBotの宣言を省略
   config.include FactoryBot::Syntax::Methods
 end
+
+# Shoulda Matchersの設定
+Shoulda::Matchers.configure do |config|
+  config.integrate do |with|
+    with.test_framework :rspec
+    with.library :rails
+  end
+end
