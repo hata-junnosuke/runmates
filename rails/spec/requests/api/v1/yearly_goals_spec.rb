@@ -1,103 +1,102 @@
 require "rails_helper"
 
-RSpec.describe "Api::V1::MonthlyGoals", type: :request do
+RSpec.describe "Api::V1::YearlyGoals", type: :request do
   let(:user) { create(:user) }
   let(:headers) { user.create_new_auth_token }
 
-  describe "GET /api/v1/monthly_goals" do
+  describe "GET /api/v1/yearly_goals" do
     context "認証済みユーザーの場合" do
       before do
-        create(:monthly_goal, user: user, year: 2024, month: 6)
-        create(:monthly_goal, user: user, year: 2024, month: 5)
-        create(:monthly_goal, user: user, year: 2023, month: 12)
+        create(:yearly_goal, user: user, year: 2024)
+        create(:yearly_goal, user: user, year: 2023)
+        create(:yearly_goal, user: user, year: 2022)
       end
 
-      it "月次目標一覧を年月の降順で返す" do
-        get "/api/v1/monthly_goals", headers: headers
+      it "年次目標一覧を年の降順で返す" do
+        get "/api/v1/yearly_goals", headers: headers
 
         expect(response).to have_http_status(:ok)
         json = JSON.parse(response.body)
         expect(json.length).to eq(3)
         expect(json[0]["year"]).to eq(2024)
-        expect(json[0]["month"]).to eq(6)
+        expect(json[1]["year"]).to eq(2023)
+        expect(json[2]["year"]).to eq(2022)
       end
     end
 
     context "未認証ユーザーの場合" do
       it "401を返す" do
-        get "/api/v1/monthly_goals"
+        get "/api/v1/yearly_goals"
         expect(response).to have_http_status(:unauthorized)
       end
     end
   end
 
-  describe "GET /api/v1/monthly_goals/:id" do
-    let!(:monthly_goal) { create(:monthly_goal, user: user) }
+  describe "GET /api/v1/yearly_goals/:id" do
+    let!(:yearly_goal) { create(:yearly_goal, user: user) }
 
     context "認証済みユーザーの場合" do
-      it "指定された月次目標を返す" do
-        get "/api/v1/monthly_goals/#{monthly_goal.id}", headers: headers
+      it "指定された年次目標を返す" do
+        get "/api/v1/yearly_goals/#{yearly_goal.id}", headers: headers
 
         expect(response).to have_http_status(:ok)
         json = JSON.parse(response.body)
-        expect(json["id"]).to eq(monthly_goal.id)
-        expect(json["distance_goal"]).to eq(monthly_goal.distance_goal.to_s)
+        expect(json["id"]).to eq(yearly_goal.id)
+        expect(json["distance_goal"]).to eq(yearly_goal.distance_goal.to_s)
       end
 
       it "他のユーザーの目標にはアクセスできない" do
         other_user = create(:user)
-        other_goal = create(:monthly_goal, user: other_user)
+        other_goal = create(:yearly_goal, user: other_user)
 
-        get "/api/v1/monthly_goals/#{other_goal.id}", headers: headers
+        get "/api/v1/yearly_goals/#{other_goal.id}", headers: headers
         expect(response.status).to be_in([404, 401, 403])
       end
     end
 
     context "未認証ユーザーの場合" do
       it "401を返す" do
-        get "/api/v1/monthly_goals/#{monthly_goal.id}"
+        get "/api/v1/yearly_goals/#{yearly_goal.id}"
         expect(response).to have_http_status(:unauthorized)
       end
     end
   end
 
-  describe "POST /api/v1/monthly_goals" do
+  describe "POST /api/v1/yearly_goals" do
     let(:valid_params) do
       {
-        monthly_goal: {
+        yearly_goal: {
           year: 2024,
-          month: 6,
-          distance_goal: 100.0,
+          distance_goal: 1200.0,
         },
       }
     end
 
     context "認証済みユーザーの場合" do
       context "有効なパラメータの場合" do
-        it "新しい月次目標を作成する" do
+        it "新しい年次目標を作成する" do
           expect {
-            post "/api/v1/monthly_goals", params: valid_params, headers: headers
-          }.to change { MonthlyGoal.count }.by(1)
+            post "/api/v1/yearly_goals", params: valid_params, headers: headers
+          }.to change { YearlyGoal.count }.by(1)
 
           expect(response).to have_http_status(:created)
           json = JSON.parse(response.body)
-          expect(json["distance_goal"]).to eq("100.0")
+          expect(json["distance_goal"]).to eq("1200.0")
         end
       end
 
       context "無効なパラメータの場合" do
         let(:invalid_params) do
           {
-            monthly_goal: {
+            yearly_goal: {
               year: 2019,
-              month: 13,
-              distance_goal: 0.5,
+              distance_goal: 30.0,
             },
           }
         end
 
         it "422を返し、エラーメッセージを含む" do
-          post "/api/v1/monthly_goals", params: invalid_params, headers: headers
+          post "/api/v1/yearly_goals", params: invalid_params, headers: headers
 
           expect(response).to have_http_status(:unprocessable_entity)
           json = JSON.parse(response.body)
@@ -105,13 +104,13 @@ RSpec.describe "Api::V1::MonthlyGoals", type: :request do
         end
       end
 
-      context "重複する年月の場合" do
+      context "重複する年の場合" do
         before do
-          create(:monthly_goal, user: user, year: 2024, month: 6)
+          create(:yearly_goal, user: user, year: 2024)
         end
 
         it "422を返し、重複エラーを含む" do
-          post "/api/v1/monthly_goals", params: valid_params, headers: headers
+          post "/api/v1/yearly_goals", params: valid_params, headers: headers
 
           expect(response).to have_http_status(:unprocessable_entity)
           json = JSON.parse(response.body)
@@ -122,45 +121,45 @@ RSpec.describe "Api::V1::MonthlyGoals", type: :request do
 
     context "未認証ユーザーの場合" do
       it "401を返す" do
-        post "/api/v1/monthly_goals", params: valid_params
+        post "/api/v1/yearly_goals", params: valid_params
         expect(response).to have_http_status(:unauthorized)
       end
     end
   end
 
-  describe "PATCH/PUT /api/v1/monthly_goals/:id" do
-    let!(:monthly_goal) { create(:monthly_goal, user: user, distance_goal: 100.0) }
+  describe "PATCH/PUT /api/v1/yearly_goals/:id" do
+    let!(:yearly_goal) { create(:yearly_goal, user: user, distance_goal: 1200.0) }
     let(:update_params) do
       {
-        monthly_goal: {
-          distance_goal: 150.0,
+        yearly_goal: {
+          distance_goal: 1500.0,
         },
       }
     end
 
     context "認証済みユーザーの場合" do
       context "有効なパラメータの場合" do
-        it "月次目標を更新する" do
-          patch "/api/v1/monthly_goals/#{monthly_goal.id}",
+        it "年次目標を更新する" do
+          patch "/api/v1/yearly_goals/#{yearly_goal.id}",
                 params: update_params, headers: headers
 
           expect(response).to have_http_status(:ok)
-          monthly_goal.reload
-          expect(monthly_goal.distance_goal).to eq(150.0)
+          yearly_goal.reload
+          expect(yearly_goal.distance_goal).to eq(1500.0)
         end
       end
 
       context "無効なパラメータの場合" do
         let(:invalid_params) do
           {
-            monthly_goal: {
-              distance_goal: 0.5,
+            yearly_goal: {
+              distance_goal: 30.0,
             },
           }
         end
 
         it "422を返し、エラーメッセージを含む" do
-          patch "/api/v1/monthly_goals/#{monthly_goal.id}",
+          patch "/api/v1/yearly_goals/#{yearly_goal.id}",
                 params: invalid_params, headers: headers
 
           expect(response).to have_http_status(:unprocessable_entity)
@@ -172,20 +171,20 @@ RSpec.describe "Api::V1::MonthlyGoals", type: :request do
 
     context "未認証ユーザーの場合" do
       it "401を返す" do
-        patch "/api/v1/monthly_goals/#{monthly_goal.id}", params: update_params
+        patch "/api/v1/yearly_goals/#{yearly_goal.id}", params: update_params
         expect(response).to have_http_status(:unauthorized)
       end
     end
   end
 
-  describe "DELETE /api/v1/monthly_goals/:id" do
-    let!(:monthly_goal) { create(:monthly_goal, user: user) }
+  describe "DELETE /api/v1/yearly_goals/:id" do
+    let!(:yearly_goal) { create(:yearly_goal, user: user) }
 
     context "認証済みユーザーの場合" do
-      it "月次目標を削除する" do
+      it "年次目標を削除する" do
         expect {
-          delete "/api/v1/monthly_goals/#{monthly_goal.id}", headers: headers
-        }.to change { MonthlyGoal.count }.by(-1)
+          delete "/api/v1/yearly_goals/#{yearly_goal.id}", headers: headers
+        }.to change { YearlyGoal.count }.by(-1)
 
         expect(response).to have_http_status(:no_content)
       end
@@ -193,7 +192,7 @@ RSpec.describe "Api::V1::MonthlyGoals", type: :request do
 
     context "未認証ユーザーの場合" do
       it "401を返す" do
-        delete "/api/v1/monthly_goals/#{monthly_goal.id}"
+        delete "/api/v1/yearly_goals/#{yearly_goal.id}"
         expect(response).to have_http_status(:unauthorized)
       end
     end
