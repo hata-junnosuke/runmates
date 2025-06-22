@@ -54,7 +54,7 @@ RSpec.describe RunningRecord, type: :model do
     let!(:old_record) { create(:running_record, user: user, date: Date.new(2023, 6, 15)) }
     let!(:jan_record) { create(:running_record, user: user, date: Date.new(2024, 1, 10)) }
     let!(:feb_record) { create(:running_record, user: user, date: Date.new(2024, 2, 20)) }
-    let!(:latest_record) { create(:running_record, user: user, date: Date.current) }
+    let!(:latest_record) { create(:running_record, user: user, date: Date.new(2024, 12, 31)) }
 
     describe ".for_year" do
       it "指定された年のレコードのみを返す" do
