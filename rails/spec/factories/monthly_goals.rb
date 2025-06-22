@@ -6,7 +6,8 @@ FactoryBot.define do
     distance_goal { 100.0 }
 
     trait :for_previous_month do
-      month { Date.current.month - 1 }
+      month { 1.month.ago.month }
+      year { 1.month.ago.year }
     end
 
     trait :with_high_goal do
