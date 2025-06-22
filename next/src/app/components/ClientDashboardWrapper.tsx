@@ -28,11 +28,7 @@ interface MonthlyGoal {
 
 interface ClientDashboardWrapperProps {
   records: RunRecord[];
-  goal: number;
   statistics: RunningStatistics;
-  hasGoal: boolean;
-  yearlyGoal: number;
-  hasYearlyGoal: boolean;
   monthlyGoals: MonthlyGoal[];
 }
 
