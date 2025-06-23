@@ -16,7 +16,9 @@
       "Bash(docker-compose ps:*)",
       "Bash(curl:*)",
       "Bash(ls:*)",
-      "Bash(docker-compose exec next npm run lint:*)"
+      "Bash(docker-compose exec next npm run lint:*)",
+      "Bash(rm:*)",
+      "Bash(git add:*)"
     ],
     "deny": []
   }
