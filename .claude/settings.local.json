@@ -18,7 +18,8 @@
       "Bash(ls:*)",
       "Bash(docker-compose exec next npm run lint:*)",
       "Bash(rm:*)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(git pull:*)"
     ],
     "deny": []
   }
