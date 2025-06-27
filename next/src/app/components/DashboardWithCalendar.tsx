@@ -1,12 +1,12 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import dynamic from 'next/dynamic';
-import DirectionsRunIcon from '@mui/icons-material/DirectionsRun';
-import ClientRecordForm from './ClientRecordForm';
-import RunningChartWrapper from './RunningChartWrapper';
+import { useState } from "react";
+import dynamic from "next/dynamic";
+import DirectionsRunIcon from "@mui/icons-material/DirectionsRun";
+import ClientRecordForm from "./ClientRecordForm";
+import RunningChartWrapper from "./RunningChartWrapper";
 
-const ClientRunningCalendar = dynamic(() => import('./ClientRunningCalendar'), {
+const ClientRunningCalendar = dynamic(() => import("./ClientRunningCalendar"), {
   ssr: false,
   loading: () => (
     <div className="bg-white rounded-xl shadow-lg p-6">
@@ -19,7 +19,7 @@ const ClientRunningCalendar = dynamic(() => import('./ClientRunningCalendar'), {
         </div>
       </div>
     </div>
-  )
+  ),
 });
 
 interface RunRecord {
@@ -29,7 +29,6 @@ interface RunRecord {
   created_at?: string;
   updated_at?: string;
 }
-
 
 interface RunningStatistics {
   this_year_distance: number;
@@ -53,8 +52,12 @@ interface DashboardWithCalendarProps {
   monthlyGoals: MonthlyGoal[];
 }
 
-export default function DashboardWithCalendar({ records, statistics, monthlyGoals }: DashboardWithCalendarProps) {
-  const [selectedDate, setSelectedDate] = useState<string>('');
+export default function DashboardWithCalendar({
+  records,
+  statistics,
+  monthlyGoals,
+}: DashboardWithCalendarProps) {
+  const [selectedDate, setSelectedDate] = useState<string>("");
   const [recordFormOpen, setRecordFormOpen] = useState(false);
 
   const handleDateClick = (date: string) => {
@@ -62,20 +65,15 @@ export default function DashboardWithCalendar({ records, statistics, monthlyGoal
     setRecordFormOpen(true);
   };
 
-
   const handleFormClose = () => {
     setRecordFormOpen(false);
-    setSelectedDate('');
+    setSelectedDate("");
   };
-
 
   return (
     <>
       {/* カレンダー */}
-      <ClientRunningCalendar 
-        records={records} 
-        onDateClick={handleDateClick}
-      />
+      <ClientRunningCalendar records={records} onDateClick={handleDateClick} />
 
       {/* 走行記録グラフ */}
       <RunningChartWrapper records={records} monthlyGoals={monthlyGoals} />
@@ -94,7 +92,9 @@ export default function DashboardWithCalendar({ records, statistics, monthlyGoal
             <div className="text-center py-12 text-gray-500">
               <DirectionsRunIcon className="mx-auto text-6xl text-gray-300 mb-4" />
               <p className="text-lg">まだ記録がありません</p>
-              <p className="text-sm">カレンダーから日付を選択して最初の走行記録を追加してみましょう！</p>
+              <p className="text-sm">
+                カレンダーから日付を選択して最初の走行記録を追加してみましょう！
+              </p>
             </div>
           ) : (
             (statistics?.recent_records || []).map((record, index) => (
@@ -109,11 +109,13 @@ export default function DashboardWithCalendar({ records, statistics, monthlyGoal
                   <div>
                     <p className="font-semibold text-gray-800 flex items-center">
                       {Number(record.distance || 0).toFixed(1)} km
-                      {index === 0 && <span className="ml-2 text-xs bg-yellow-400 text-yellow-800 px-2 py-1 rounded-full">最新</span>}
+                      {index === 0 && (
+                        <span className="ml-2 text-xs bg-yellow-400 text-yellow-800 px-2 py-1 rounded-full">
+                          最新
+                        </span>
+                      )}
                     </p>
-                    <p className="text-sm text-gray-500">
-                      {record.date}
-                    </p>
+                    <p className="text-sm text-gray-500">{record.date}</p>
                   </div>
                 </div>
               </div>
@@ -122,9 +124,8 @@ export default function DashboardWithCalendar({ records, statistics, monthlyGoal
         </div>
       </div>
 
-
       {/* 記録フォーム（非表示ボタン） */}
-      <ClientRecordForm 
+      <ClientRecordForm
         selectedDate={selectedDate}
         isOpen={recordFormOpen}
         onClose={handleFormClose}
