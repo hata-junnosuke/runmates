@@ -19,9 +19,9 @@ class Api::V1::Auth::RegistrationsController < DeviseTokenAuth::RegistrationsCon
         httponly: true,
         secure: Rails.env.production?,
         # same_site: :lax,
-        # vercelの一時設定
+        # vercelの一時設定 - ドメインをnilにして現在のドメインを使用
         same_site: :none,
-        domain: Rails.env.production? ? ".vercel.app" : nil,
+        domain: nil,
         expires: 2.weeks.from_now,
         path: "/",
       })
