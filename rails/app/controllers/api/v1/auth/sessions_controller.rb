@@ -26,11 +26,11 @@ class Api::V1::Auth::SessionsController < DeviseTokenAuth::SessionsController
         value: value,
         httponly: true,
         secure: Rails.env.production?,
-        # same_site: Rails.env.production? ? :none : :lax,
-        # domain: Rails.env.production? ? ".runmates.net" : nil,
+        same_site: Rails.env.production? ? :none : :lax,
+        domain: Rails.env.production? ? ".runmates.net" : nil,
         # vercelの一時設定 - ドメインをnilにして現在のドメインを使用
-        same_site: :none,
-        domain: nil,
+        # same_site: Rails.env.production? ? :none : :lax,
+        # domain: nil,
         expires: expires,
         path: "/",
       })
