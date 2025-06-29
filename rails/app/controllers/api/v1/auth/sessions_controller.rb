@@ -27,7 +27,8 @@ class Api::V1::Auth::SessionsController < DeviseTokenAuth::SessionsController
         httponly: true,
         secure: Rails.env.production?,
         same_site: Rails.env.production? ? :none : :lax,
-        domain: Rails.env.production? ? ".runmates.net" : nil,
+        # domain: Rails.env.production? ? ".runmates.net" : nil,
+        domain: Rails.env.production? ? ".vercel.app" : nil,
         expires: expires,
         path: "/",
       })
