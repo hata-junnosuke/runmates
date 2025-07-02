@@ -1,4 +1,6 @@
 class Api::V1::Auth::RegistrationsController < DeviseTokenAuth::RegistrationsController
+  include AuthCookieHelper
+
   def create
     super do |resource|
       set_auth_cookies_from_headers if resource.persisted?
@@ -8,22 +10,8 @@ class Api::V1::Auth::RegistrationsController < DeviseTokenAuth::RegistrationsCon
   private
 
     def set_auth_cookies_from_headers
-      set_cookie(:access_token, response.headers["access-token"])
-      set_cookie(:client, response.headers["client"])
-      set_cookie(:uid, response.headers["uid"])
-    end
-
-    def set_cookie(name, value)
-      response.set_cookie(name, {
-        value: value,
-        httponly: true,
-        secure: Rails.env.production?,
-        same_site: :lax,
-        # vercelの一時設定 - ドメインをnilにして現在のドメインを使用
-        # same_site: :none,
-        domain: nil,
-        expires: 2.weeks.from_now,
-        path: "/",
-      })
+      set_auth_cookie(:access_token, response.headers["access-token"])
+      set_auth_cookie(:client, response.headers["client"])
+      set_auth_cookie(:uid, response.headers["uid"])
     end
 end
