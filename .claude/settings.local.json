@@ -20,7 +20,8 @@
       "Bash(rm:*)",
       "Bash(git add:*)",
       "Bash(git pull:*)",
-      "Bash(gh issue:*)"
+      "Bash(gh issue:*)",
+      "Bash(cp:*)"
     ],
     "deny": []
   },
