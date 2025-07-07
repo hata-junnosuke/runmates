@@ -19,7 +19,9 @@
       "Bash(docker-compose exec next npm run lint:*)",
       "Bash(rm:*)",
       "Bash(git add:*)",
-      "Bash(git pull:*)"
+      "Bash(git pull:*)",
+      "Bash(gh issue:*)",
+      "Bash(cp:*)"
     ],
     "deny": []
   },
