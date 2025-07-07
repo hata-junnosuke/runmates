@@ -92,7 +92,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ja"> {/* 日本語サイトであることを明示 */}
+    <html lang="ja">{/* 日本語サイトであることを明示 */}
       <head>
         {/* Material-UIのEmotionキャッシュの挿入ポイント */}
         <meta name="emotion-insertion-point" content="" />
