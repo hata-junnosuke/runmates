@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import ClientThemeWrapper from './ClientThemeWrapper';
 
 // フォント設定: GeistSansとGeistMonoを使用
 const geistSans = Geist({
@@ -100,10 +99,8 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        {/* Material-UIのテーマプロバイダーでアプリケーション全体をラップ */}
-        <ClientThemeWrapper>
-          {children}
-        </ClientThemeWrapper>
+        {/* App Router: サーバーコンポーネントとして動作 */}
+        {children}
       </body>
     </html>
   );

@@ -5,6 +5,7 @@ import dynamic from "next/dynamic";
 import DirectionsRunIcon from "@mui/icons-material/DirectionsRun";
 import ClientRecordForm from "./ClientRecordForm";
 import RunningChartWrapper from "./RunningChartWrapper";
+import MuiProvider from "./MuiProvider";
 
 const ClientRunningCalendar = dynamic(() => import("./ClientRunningCalendar"), {
   ssr: false,
@@ -71,7 +72,7 @@ export default function DashboardWithCalendar({
   };
 
   return (
-    <>
+    <MuiProvider>
       {/* カレンダー */}
       <ClientRunningCalendar records={records} onDateClick={handleDateClick} />
 
@@ -131,6 +132,6 @@ export default function DashboardWithCalendar({
         onClose={handleFormClose}
         hideButton={true}
       />
-    </>
+    </MuiProvider>
   );
 }
