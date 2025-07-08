@@ -10,12 +10,6 @@ interface RunRecord {
   updated_at?: string;
 }
 
-interface RunningStatistics {
-  this_year_distance: number;
-  this_month_distance: number;
-  total_records: number;
-  recent_records: RunRecord[];
-}
 
 interface MonthlyGoal {
   id?: string;
@@ -28,7 +22,6 @@ interface MonthlyGoal {
 
 interface ClientDashboardWrapperProps {
   records: RunRecord[];
-  statistics: RunningStatistics;
   monthlyGoals: MonthlyGoal[];
 }
 

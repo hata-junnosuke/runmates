@@ -1,9 +1,7 @@
 'use client';
 
 import { useState, useMemo } from 'react';
-import { Box, Typography, IconButton } from '@mui/material';
-import { ChevronLeft, ChevronRight } from '@mui/icons-material';
-import DirectionsRunIcon from '@mui/icons-material/DirectionsRun';
+import { Button } from '@/components/ui/button';
 
 interface RunRecord {
   id: string;
@@ -130,22 +128,32 @@ export default function ClientRunningCalendar({ records, onDateClick, currentDat
   };
 
   return (
-    <Box className="bg-white rounded-2xl shadow-lg p-6 border-l-4 border-blue-400">
+    <div className="bg-white rounded-2xl shadow-lg p-6 border-l-4 border-blue-400">
       {/* ヘッダー */}
       <div className="flex items-center justify-between mb-4">
-        <Typography variant="h6" className="font-bold text-gray-800 flex items-center">
+        <h2 className="text-xl font-bold text-gray-800 flex items-center">
           📅 ランニングカレンダー
-        </Typography>
+        </h2>
         <div className="flex items-center space-x-2">
-          <IconButton onClick={goToPreviousMonth} size="small">
-            <ChevronLeft />
-          </IconButton>
-          <Typography variant="h6" className="font-bold text-gray-700 min-w-[120px] text-center">
+          <Button 
+            variant="ghost" 
+            size="sm"
+            onClick={goToPreviousMonth}
+            className="h-8 w-8 p-0"
+          >
+            ←
+          </Button>
+          <h3 className="text-lg font-bold text-gray-700 min-w-[120px] text-center">
             {year}年 {month + 1}月
-          </Typography>
-          <IconButton onClick={goToNextMonth} size="small">
-            <ChevronRight />
-          </IconButton>
+          </h3>
+          <Button 
+            variant="ghost" 
+            size="sm"
+            onClick={goToNextMonth}
+            className="h-8 w-8 p-0"
+          >
+            →
+          </Button>
         </div>
       </div>
 
@@ -190,10 +198,9 @@ export default function ClientRunningCalendar({ records, onDateClick, currentDat
               {/* 走った日のマーカー */}
               {hasRun && isCurrentMonth && (
                 <div className="absolute inset-0 flex items-center justify-center">
-                  <DirectionsRunIcon 
-                    className="absolute top-0 right-0 text-xs text-white opacity-70"
-                    sx={{ fontSize: 12 }}
-                  />
+                  <span className="absolute top-0 right-0 text-xs text-white opacity-70">
+                    🏃
+                  </span>
                   {record && (
                     <div className="absolute bottom-0 left-0 right-0 text-[8px] text-white opacity-90 text-center">
                       {Number(record.distance || 0).toFixed(1)}km
@@ -264,6 +271,6 @@ export default function ClientRunningCalendar({ records, onDateClick, currentDat
           </div>
         </div>
       </div>
-    </Box>
+    </div>
   );
 }

@@ -1,7 +1,8 @@
 import { Suspense } from 'react';
 import { serverRunningRecordsAPI, serverMonthlyGoalsAPI, serverYearlyGoalsAPI } from '../../lib/server-api';
 import ClientDashboardWrapper from './ClientDashboardWrapper';
-import ClientDashboardStatistics from './ClientDashboardStatistics';
+import DashboardStatistics from './DashboardStatistics';
+import RecentRecords from './RecentRecords';
 
 // データ取得コンポーネント
 async function DashboardData() {
@@ -24,8 +25,8 @@ async function DashboardData() {
 
     return (
       <div className="space-y-6">
-        {/* 統計カード */}
-        <ClientDashboardStatistics 
+        {/* 統計カード - クリック可能なカード */}
+        <DashboardStatistics 
           thisYearDistance={thisYearDistance}
           thisMonthDistance={thisMonthDistance}
           goalAchievementRate={goalAchievementRate}
@@ -38,9 +39,11 @@ async function DashboardData() {
         {/* カレンダーとアクションボタン */}
         <ClientDashboardWrapper 
           records={records} 
-          statistics={statistics}
           monthlyGoals={monthlyGoals}
         />
+
+        {/* 最近の記録 - Server Component */}
+        <RecentRecords statistics={statistics} />
       </div>
     );
   } catch (error) {
