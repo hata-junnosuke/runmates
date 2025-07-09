@@ -1,6 +1,6 @@
 import { Suspense } from 'react';
 import { serverRunningRecordsAPI, serverMonthlyGoalsAPI, serverYearlyGoalsAPI } from '../../lib/server-api';
-import ClientDashboardWrapper from './ClientDashboardWrapper';
+import DashboardWithCalendar from './DashboardWithCalendar';
 import DashboardStatistics from './DashboardStatistics';
 import RecentRecords from './RecentRecords';
 
@@ -37,7 +37,7 @@ async function DashboardData() {
         />
 
         {/* カレンダーとアクションボタン */}
-        <ClientDashboardWrapper 
+        <DashboardWithCalendar 
           records={records} 
           monthlyGoals={monthlyGoals}
         />

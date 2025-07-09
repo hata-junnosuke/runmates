@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { useState, useMemo } from 'react';
-import { Button } from '@/components/ui/button';
+import { useState, useMemo } from "react";
+import { Button } from "@/components/ui/button";
 
 interface RunRecord {
   id: string;
@@ -15,7 +15,11 @@ interface ClientRunningCalendarProps {
   currentDate?: Date;
 }
 
-export default function ClientRunningCalendar({ records, onDateClick, currentDate: initialDate }: ClientRunningCalendarProps) {
+export default function ClientRunningCalendar({
+  records,
+  onDateClick,
+  currentDate: initialDate,
+}: ClientRunningCalendarProps) {
   const [currentDate, setCurrentDate] = useState(initialDate || new Date());
 
   // 現在の年月
@@ -24,15 +28,15 @@ export default function ClientRunningCalendar({ records, onDateClick, currentDat
 
   // 月の最初の日
   const firstDay = new Date(year, month, 1);
-  
+
   // 週の最初の日（日曜日）から始まるように調整
   const startDate = new Date(firstDay);
   startDate.setDate(startDate.getDate() - firstDay.getDay());
-  
+
   // カレンダーの日付を生成（6週間分）
   const calendarDays = [];
   const current = new Date(startDate);
-  
+
   for (let i = 0; i < 42; i++) {
     calendarDays.push(new Date(current));
     current.setDate(current.getDate() + 1);
@@ -41,19 +45,19 @@ export default function ClientRunningCalendar({ records, onDateClick, currentDat
   // 指定された日付に記録があるかチェック
   const hasRecord = (date: Date) => {
     const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
     const dateStr = `${year}-${month}-${day}`;
-    return records.some(record => record.date === dateStr);
+    return records.some((record) => record.date === dateStr);
   };
 
   // 指定された日付の記録を取得
   const getRecordForDate = (date: Date) => {
     const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
     const dateStr = `${year}-${month}-${day}`;
-    return records.find(record => record.date === dateStr);
+    return records.find((record) => record.date === dateStr);
   };
 
   // 前月へ
@@ -69,47 +73,48 @@ export default function ClientRunningCalendar({ records, onDateClick, currentDat
   // 日付クリック処理
   const handleDateClick = (date: Date) => {
     if (!onDateClick) return;
-    
+
     const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
     const dateStr = `${year}-${month}-${day}`;
     onDateClick(dateStr);
   };
 
   // 曜日名
-  const weekDays = ['日', '月', '火', '水', '木', '金', '土'];
+  const weekDays = ["日", "月", "火", "水", "木", "金", "土"];
 
   // 連続ランニング日数を計算
   const getConsecutiveDays = (): number => {
     if (!records || !Array.isArray(records) || records.length === 0) return 0;
-    
-    const validRecords = records.filter(r => r && r.date && typeof r.distance === 'number');
+
+    const validRecords = records.filter(
+      (r) => r && r.date && typeof r.distance === "number"
+    );
     if (validRecords.length === 0) return 0;
-    
-    const sortedRecords = [...validRecords]
-      .sort((a, b) => {
-        try {
-          return new Date(b.date).getTime() - new Date(a.date).getTime();
-        } catch {
-          return 0;
-        }
-      });
-    
+
+    const sortedRecords = [...validRecords].sort((a, b) => {
+      try {
+        return new Date(b.date).getTime() - new Date(a.date).getTime();
+      } catch {
+        return 0;
+      }
+    });
+
     let consecutive = 0;
-    
+
     try {
       // 最新記録の日付から開始
       const latestRecordDate = new Date(sortedRecords[0].date);
       latestRecordDate.setHours(0, 0, 0, 0);
-      
+
       const checkDate = new Date(latestRecordDate);
-      
+
       for (const record of sortedRecords) {
         try {
           const recordDate = new Date(record.date);
           recordDate.setHours(0, 0, 0, 0);
-          
+
           if (recordDate.getTime() === checkDate.getTime()) {
             consecutive++;
             checkDate.setDate(checkDate.getDate() - 1);
@@ -123,7 +128,7 @@ export default function ClientRunningCalendar({ records, onDateClick, currentDat
     } catch {
       return 0;
     }
-    
+
     return consecutive;
   };
 
@@ -135,8 +140,8 @@ export default function ClientRunningCalendar({ records, onDateClick, currentDat
           📅 ランニングカレンダー
         </h2>
         <div className="flex items-center space-x-2">
-          <Button 
-            variant="ghost" 
+          <Button
+            variant="ghost"
             size="sm"
             onClick={goToPreviousMonth}
             className="h-8 w-8 p-0"
@@ -146,8 +151,8 @@ export default function ClientRunningCalendar({ records, onDateClick, currentDat
           <h3 className="text-lg font-bold text-gray-700 min-w-[120px] text-center">
             {year}年 {month + 1}月
           </h3>
-          <Button 
-            variant="ghost" 
+          <Button
+            variant="ghost"
             size="sm"
             onClick={goToNextMonth}
             className="h-8 w-8 p-0"
@@ -163,7 +168,11 @@ export default function ClientRunningCalendar({ records, onDateClick, currentDat
           <div
             key={day}
             className={`text-center py-2 text-sm font-semibold ${
-              index === 0 ? 'text-red-500' : index === 6 ? 'text-blue-500' : 'text-gray-600'
+              index === 0
+                ? "text-red-500"
+                : index === 6
+                  ? "text-blue-500"
+                  : "text-gray-600"
             }`}
           >
             {day}
@@ -186,21 +195,26 @@ export default function ClientRunningCalendar({ records, onDateClick, currentDat
               onClick={() => isCurrentMonth && handleDateClick(date)}
               className={`
                 relative h-12 flex items-center justify-center text-sm transition-all duration-200 rounded-lg
-                ${!isCurrentMonth ? 'text-gray-300' : 'cursor-pointer hover:bg-gray-100'}
-                ${isToday ? 'ring-2 ring-blue-400 bg-blue-50' : ''}
-                ${hasRun && isCurrentMonth ? 'bg-gradient-to-br from-emerald-400 to-emerald-500 text-white font-bold shadow-md hover:shadow-lg' : ''}
-                ${isWeekend && !hasRun && isCurrentMonth ? 'text-gray-500' : ''}
-                ${!isCurrentMonth ? 'cursor-default' : ''}
+                ${
+                  !isCurrentMonth
+                    ? "text-gray-300"
+                    : "cursor-pointer hover:bg-gray-100"
+                }
+                ${isToday ? "ring-2 ring-blue-400 bg-blue-50" : ""}
+                ${
+                  hasRun && isCurrentMonth
+                    ? "bg-gradient-to-br from-emerald-400 to-emerald-500 text-white font-bold shadow-md hover:shadow-lg"
+                    : ""
+                }
+                ${isWeekend && !hasRun && isCurrentMonth ? "text-gray-500" : ""}
+                ${!isCurrentMonth ? "cursor-default" : ""}
               `}
             >
               <span className="z-10 relative">{date.getDate()}</span>
-              
+
               {/* 走った日のマーカー */}
               {hasRun && isCurrentMonth && (
                 <div className="absolute inset-0 flex items-center justify-center">
-                  <span className="absolute top-0 right-0 text-xs text-white opacity-70">
-                    🏃
-                  </span>
                   {record && (
                     <div className="absolute bottom-0 left-0 right-0 text-[8px] text-white opacity-90 text-center">
                       {Number(record.distance || 0).toFixed(1)}km
@@ -225,18 +239,21 @@ export default function ClientRunningCalendar({ records, onDateClick, currentDat
             <div className="text-sm text-gray-500">今月の記録</div>
             <div className="font-bold text-emerald-600">
               {useMemo(() => {
-                return (records || []).filter(r => {
+                return (records || []).filter((r) => {
                   if (!r || !r.date) return false;
                   try {
                     const recordDate = new Date(r.date);
-                    return !isNaN(recordDate.getTime()) && 
-                           recordDate.getMonth() === month && 
-                           recordDate.getFullYear() === year;
+                    return (
+                      !isNaN(recordDate.getTime()) &&
+                      recordDate.getMonth() === month &&
+                      recordDate.getFullYear() === year
+                    );
                   } catch {
                     return false;
                   }
                 }).length;
-              }, [records, month, year])}日
+              }, [records, month, year])}
+              日
             </div>
           </div>
           <div>
@@ -250,13 +267,15 @@ export default function ClientRunningCalendar({ records, onDateClick, currentDat
             <div className="font-bold text-purple-600">
               {useMemo(() => {
                 return (records || [])
-                  .filter(r => {
+                  .filter((r) => {
                     if (!r || !r.date) return false;
                     try {
                       const recordDate = new Date(r.date);
-                      return !isNaN(recordDate.getTime()) && 
-                             recordDate.getMonth() === month && 
-                             recordDate.getFullYear() === year;
+                      return (
+                        !isNaN(recordDate.getTime()) &&
+                        recordDate.getMonth() === month &&
+                        recordDate.getFullYear() === year
+                      );
                     } catch {
                       return false;
                     }
@@ -266,7 +285,8 @@ export default function ClientRunningCalendar({ records, onDateClick, currentDat
                     return sum + distance;
                   }, 0)
                   .toFixed(1);
-              }, [records, month, year])}km
+              }, [records, month, year])}
+              km
             </div>
           </div>
         </div>

@@ -11,10 +11,9 @@ interface ClientRecordFormProps {
   selectedDate?: string;
   isOpen?: boolean;
   onClose?: () => void;
-  hideButton?: boolean;
 }
 
-export default function ClientRecordForm({ selectedDate, isOpen = false, onClose, hideButton = false }: ClientRecordFormProps) {
+export default function ClientRecordForm({ selectedDate, isOpen = false, onClose }: ClientRecordFormProps) {
   const [modalOpen, setModalOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -43,25 +42,9 @@ export default function ClientRecordForm({ selectedDate, isOpen = false, onClose
     }
   };
 
-  const handleOpen = () => {
-    if (!isExternallyControlled) {
-      setModalOpen(true);
-    }
-  };
 
   return (
-    <>
-      {!hideButton && (
-        <Button
-          onClick={handleOpen}
-          className="bg-emerald-500 hover:bg-emerald-600 text-white py-3 px-6 rounded-lg shadow-md transform hover:scale-105 transition-all duration-200"
-          disabled={isExternallyControlled}
-        >
-          ➕ 走行記録を追加
-        </Button>
-      )}
-
-      <Dialog open={currentModalOpen} onOpenChange={handleClose}>
+    <Dialog open={currentModalOpen} onOpenChange={handleClose}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
             <DialogTitle className="text-xl font-bold text-gray-800">
@@ -115,6 +98,5 @@ export default function ClientRecordForm({ selectedDate, isOpen = false, onClose
           </form>
         </DialogContent>
       </Dialog>
-    </>
   );
 }

@@ -11,12 +11,10 @@ interface ClientGoalFormProps {
   currentGoal: number;
   isOpen?: boolean;
   onClose?: () => void;
-  onOpen?: () => void;
   showWelcomeMessage?: boolean;
-  hideButton?: boolean;
 }
 
-export default function ClientGoalForm({ currentGoal, isOpen = false, onClose, onOpen, showWelcomeMessage = false, hideButton = false }: ClientGoalFormProps) {
+export default function ClientGoalForm({ currentGoal, isOpen = false, onClose, showWelcomeMessage = false }: ClientGoalFormProps) {
   const [modalOpen, setModalOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -45,27 +43,8 @@ export default function ClientGoalForm({ currentGoal, isOpen = false, onClose, o
     }
   };
 
-  const handleOpen = () => {
-    if (isExternallyControlled && onOpen) {
-      onOpen();
-    } else {
-      setModalOpen(true);
-    }
-  };
-
   return (
-    <>
-      {!hideButton && (
-        <Button
-          variant="outline"
-          onClick={handleOpen}
-          className="border-purple-300 text-purple-700 hover:bg-purple-50 py-3 px-6 rounded-lg shadow-md transform hover:scale-105 transition-all duration-200"
-        >
-          🏆 {showWelcomeMessage ? '目標を設定しましょう！' : '月次目標を変更'}
-        </Button>
-      )}
-
-      <Dialog open={currentModalOpen} onOpenChange={handleClose}>
+    <Dialog open={currentModalOpen} onOpenChange={handleClose}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
             <DialogTitle className="text-xl font-bold text-gray-800">
@@ -118,6 +97,5 @@ export default function ClientGoalForm({ currentGoal, isOpen = false, onClose, o
           </form>
         </DialogContent>
       </Dialog>
-    </>
   );
 }

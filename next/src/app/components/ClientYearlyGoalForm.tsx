@@ -11,12 +11,10 @@ interface ClientYearlyGoalFormProps {
   currentGoal: number;
   isOpen?: boolean;
   onClose?: () => void;
-  onOpen?: () => void;
   showWelcomeMessage?: boolean;
-  hideButton?: boolean;
 }
 
-export default function ClientYearlyGoalForm({ currentGoal, isOpen = false, onClose, onOpen, showWelcomeMessage = false, hideButton = false }: ClientYearlyGoalFormProps) {
+export default function ClientYearlyGoalForm({ currentGoal, isOpen = false, onClose, showWelcomeMessage = false }: ClientYearlyGoalFormProps) {
   const [modalOpen, setModalOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -45,27 +43,9 @@ export default function ClientYearlyGoalForm({ currentGoal, isOpen = false, onCl
     }
   };
 
-  const handleOpen = () => {
-    if (isExternallyControlled && onOpen) {
-      onOpen();
-    } else {
-      setModalOpen(true);
-    }
-  };
 
   return (
-    <>
-      {!hideButton && (
-        <Button
-          variant="outline"
-          onClick={handleOpen}
-          className="border-emerald-300 text-emerald-700 hover:bg-emerald-50 py-3 px-6 rounded-lg shadow-md transform hover:scale-105 transition-all duration-200"
-        >
-          🏃‍♂️ {showWelcomeMessage ? '年間目標を設定しましょう！' : '年間目標を変更'}
-        </Button>
-      )}
-
-      <Dialog open={currentModalOpen} onOpenChange={handleClose}>
+    <Dialog open={currentModalOpen} onOpenChange={handleClose}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
             <DialogTitle className="text-xl font-bold text-gray-800">
@@ -119,6 +99,5 @@ export default function ClientYearlyGoalForm({ currentGoal, isOpen = false, onCl
           </form>
         </DialogContent>
       </Dialog>
-    </>
   );
 }

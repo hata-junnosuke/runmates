@@ -54,14 +54,12 @@ export default function DashboardStatistics({
         currentGoal={goal}
         isOpen={monthlyGoalModalOpen}
         onClose={() => setMonthlyGoalModalOpen(false)}
-        hideButton={true}
       />
       
       <ClientYearlyGoalForm 
         currentGoal={yearGoal}
         isOpen={yearlyGoalModalOpen}
         onClose={() => setYearlyGoalModalOpen(false)}
-        hideButton={true}
       />
     </div>
   );
