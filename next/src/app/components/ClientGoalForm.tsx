@@ -1,20 +1,20 @@
 'use client';
 
 import { useState } from 'react';
-import { Button, Modal, Box, Typography } from '@mui/material';
-import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { setMonthlyGoal } from '../actions/running-actions';
 
 interface ClientGoalFormProps {
   currentGoal: number;
   isOpen?: boolean;
   onClose?: () => void;
-  onOpen?: () => void;
   showWelcomeMessage?: boolean;
-  hideButton?: boolean;
 }
 
-export default function ClientGoalForm({ currentGoal, isOpen = false, onClose, onOpen, showWelcomeMessage = false, hideButton = false }: ClientGoalFormProps) {
+export default function ClientGoalForm({ currentGoal, isOpen = false, onClose, showWelcomeMessage = false }: ClientGoalFormProps) {
   const [modalOpen, setModalOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -43,49 +43,25 @@ export default function ClientGoalForm({ currentGoal, isOpen = false, onClose, o
     }
   };
 
-  const handleOpen = () => {
-    if (isExternallyControlled && onOpen) {
-      onOpen();
-    } else {
-      setModalOpen(true);
-    }
-  };
-
   return (
-    <>
-      {!hideButton && (
-        <Button
-          variant="outlined"
-          startIcon={<EmojiEventsIcon />}
-          onClick={handleOpen}
-          className="border-purple-300 text-purple-700 hover:bg-purple-50 py-3 px-6 rounded-lg shadow-md transform hover:scale-105 transition-all duration-200"
-          size="large"
-        >
-          {showWelcomeMessage ? '目標を設定しましょう！' : '月次目標を変更'}
-        </Button>
-      )}
-
-      <Modal
-        open={currentModalOpen}
-        onClose={handleClose}
-        aria-labelledby="goal-modal-title"
-      >
-        <Box className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white rounded-xl shadow-xl p-6 w-full max-w-md">
-          <Typography id="goal-modal-title" variant="h5" className="mb-4 text-gray-800 font-bold">
-            {showWelcomeMessage ? '🎉 ランニングを始めましょう！' : '🎯 今月の目標を変更'}
-          </Typography>
+    <Dialog open={currentModalOpen} onOpenChange={handleClose}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-xl font-bold text-gray-800">
+              {showWelcomeMessage ? '🎉 ランニングを始めましょう！' : '🎯 今月の目標を変更'}
+            </DialogTitle>
+          </DialogHeader>
+          
           {showWelcomeMessage && (
-            <Typography className="mb-4 text-gray-600">
+            <p className="text-gray-600 mb-4">
               まずは今月の走行距離目標を設定して、モチベーションを高めましょう！
-            </Typography>
+            </p>
           )}
           
           <form action={handleSubmit} className="space-y-4">
-            <div>
-              <label htmlFor="distance_goal" className="block text-sm font-medium text-gray-700 mb-1">
-                目標距離 (km)
-              </label>
-              <input
+            <div className="space-y-2">
+              <Label htmlFor="distance_goal">目標距離 (km)</Label>
+              <Input
                 type="number"
                 id="distance_goal"
                 name="distance_goal"
@@ -94,9 +70,8 @@ export default function ClientGoalForm({ currentGoal, isOpen = false, onClose, o
                 required
                 defaultValue={currentGoal}
                 placeholder="50.0"
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
               />
-              <p className="text-xs text-gray-500 mt-1">
+              <p className="text-xs text-muted-foreground">
                 現在の目標: {currentGoal}km
               </p>
             </div>
@@ -104,25 +79,23 @@ export default function ClientGoalForm({ currentGoal, isOpen = false, onClose, o
             <div className="flex gap-3 pt-4">
               <Button
                 type="submit"
-                variant="contained"
                 disabled={isSubmitting}
-                className="flex-1 bg-purple-500 hover:bg-purple-600 py-2"
+                className="flex-1 bg-purple-500 hover:bg-purple-600"
               >
                 {isSubmitting ? '保存中...' : (showWelcomeMessage ? '目標を設定' : '目標を変更')}
               </Button>
               <Button
                 type="button"
-                variant="outlined"
+                variant="outline"
                 onClick={handleClose}
                 disabled={isSubmitting}
-                className="flex-1 border-gray-300 text-gray-700 hover:bg-gray-50 py-2"
+                className="flex-1"
               >
                 {showWelcomeMessage ? '後で設定' : 'キャンセル'}
               </Button>
             </div>
           </form>
-        </Box>
-      </Modal>
-    </>
+        </DialogContent>
+      </Dialog>
   );
 }

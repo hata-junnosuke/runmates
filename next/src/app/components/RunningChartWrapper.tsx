@@ -3,6 +3,7 @@
 import { Suspense } from 'react';
 import dynamic from 'next/dynamic';
 
+// チャートライブラリは重いので、必要な時だけ読み込む
 const RunningChart = dynamic(() => import('./RunningChart'), {
   ssr: false,
   loading: () => (
