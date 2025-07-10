@@ -238,6 +238,7 @@ export default function ClientRunningCalendar({
           <div>
             <div className="text-sm text-gray-500">今月の記録</div>
             <div className="font-bold text-emerald-600">
+              {/* useMemo: 依存配列が変わった時のみ計算 */}
               {useMemo(() => {
                 return (records || []).filter((r) => {
                   if (!r || !r.date) return false;
@@ -265,6 +266,7 @@ export default function ClientRunningCalendar({
           <div>
             <div className="text-sm text-gray-500">今月距離</div>
             <div className="font-bold text-purple-600">
+              {/* useMemo: 依存配列が変わった時のみ計算 */}
               {useMemo(() => {
                 return (records || [])
                   .filter((r) => {
