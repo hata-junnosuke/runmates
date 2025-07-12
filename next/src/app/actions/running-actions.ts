@@ -42,15 +42,17 @@ async function apiCall(endpoint: string, options: RequestInit = {}) {
   return response.json();
 }
 
-// 走行記録追加アクション
-export async function addRunningRecord(formData: FormData) {
+
+// 走行記録を追加
+export async function createRunningRecord(formData: FormData) {
   try {
+    // FormDataは全ての値を文字列として保存するため、最初から数値で受け取ることはできない。
     const date = formData.get('date') as string;
     const distanceStr = formData.get('distance') as string;
     const distance = distanceStr ? parseFloat(distanceStr) : NaN;
 
     if (!date || !distanceStr || isNaN(distance) || distance <= 0) {
-      throw new Error('有効な日付と距離を入力してください');
+      return { success: false, error: '有効な日付と距離を入力してください' };
     }
 
     await apiCall('/running_records', {
@@ -61,20 +63,54 @@ export async function addRunningRecord(formData: FormData) {
     });
 
     revalidatePath('/');
+    return { success: true };
   } catch (error) {
     console.error('Failed to add running record:', error);
-    throw error;
+    return { success: false, error: '記録の追加に失敗しました' };
   }
 }
 
-// 年間目標設定アクション
-export async function setYearlyGoal(formData: FormData) {
+// 月次目標を更新
+export async function updateMonthlyGoal(formData: FormData) {
   try {
+    // FormDataは全ての値を文字列として保存するため、最初から数値で受け取ることはできない。
     const distanceGoalStr = formData.get('distance_goal') as string;
     const distanceGoal = distanceGoalStr ? parseFloat(distanceGoalStr) : NaN;
 
     if (!distanceGoalStr || isNaN(distanceGoal) || distanceGoal <= 0) {
-      throw new Error('有効な目標距離を入力してください');
+      return { success: false, error: '有効な目標距離を入力してください' };
+    }
+
+    const currentDate = new Date();
+    
+    await apiCall('/current_monthly_goal', {
+      method: 'POST',
+      body: JSON.stringify({
+        monthly_goal: {
+          year: currentDate.getFullYear(),
+          month: currentDate.getMonth() + 1, // getMonth()は0-11の範囲で返すので+1する
+          distance_goal: distanceGoal
+        }
+      }),
+    });
+
+    revalidatePath('/');
+    return { success: true };
+  } catch (error) {
+    console.error('Failed to set monthly goal:', error);
+    return { success: false, error: '月次目標の設定に失敗しました' };
+  }
+}
+
+// 年間目標を更新
+export async function updateYearlyGoal(formData: FormData) {
+  try {
+    // FormDataは全ての値を文字列として保存するため、最初から数値で受け取ることはできない。
+    const distanceGoalStr = formData.get('distance_goal') as string;
+    const distanceGoal = distanceGoalStr ? parseFloat(distanceGoalStr) : NaN;
+
+    if (!distanceGoalStr || isNaN(distanceGoal) || distanceGoal <= 0) {
+      return { success: false, error: '有効な目標距離を入力してください' };
     }
 
     const currentDate = new Date();
@@ -90,38 +126,9 @@ export async function setYearlyGoal(formData: FormData) {
     });
 
     revalidatePath('/');
+    return { success: true };
   } catch (error) {
     console.error('Failed to set yearly goal:', error);
-    throw error;
-  }
-}
-
-// 月次目標設定アクション
-export async function setMonthlyGoal(formData: FormData) {
-  try {
-    const distanceGoalStr = formData.get('distance_goal') as string;
-    const distanceGoal = distanceGoalStr ? parseFloat(distanceGoalStr) : NaN;
-
-    if (!distanceGoalStr || isNaN(distanceGoal) || distanceGoal <= 0) {
-      throw new Error('有効な目標距離を入力してください');
-    }
-
-    const currentDate = new Date();
-    
-    await apiCall('/current_monthly_goal', {
-      method: 'POST',
-      body: JSON.stringify({
-        monthly_goal: {
-          year: currentDate.getFullYear(),
-          month: currentDate.getMonth() + 1,
-          distance_goal: distanceGoal
-        }
-      }),
-    });
-
-    revalidatePath('/');
-  } catch (error) {
-    console.error('Failed to set monthly goal:', error);
-    throw error;
+    return { success: false, error: '年間目標の設定に失敗しました' };
   }
 }
