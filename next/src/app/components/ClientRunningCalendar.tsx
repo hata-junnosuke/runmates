@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 
 interface RunRecord {
@@ -21,6 +21,12 @@ export default function ClientRunningCalendar({
   currentDate: initialDate,
 }: ClientRunningCalendarProps) {
   const [currentDate, setCurrentDate] = useState(initialDate || new Date());
+  const [today, setToday] = useState<Date | null>(null);
+
+  // クライアントサイドでのみ今日の日付を設定
+  useEffect(() => {
+    setToday(new Date());
+  }, []);
 
   // 現在の年月
   const year = currentDate.getFullYear();
@@ -184,7 +190,7 @@ export default function ClientRunningCalendar({
       <div className="grid grid-cols-7 gap-1">
         {calendarDays.map((date, index) => {
           const isCurrentMonth = date.getMonth() === month;
-          const isToday = date.toDateString() === new Date().toDateString();
+          const isToday = today && date.toDateString() === today.toDateString();
           const hasRun = hasRecord(date);
           const record = getRecordForDate(date);
           const isWeekend = date.getDay() === 0 || date.getDay() === 6;
@@ -193,22 +199,14 @@ export default function ClientRunningCalendar({
             <div
               key={index}
               onClick={() => isCurrentMonth && handleDateClick(date)}
-              className={`
-                relative h-12 flex items-center justify-center text-sm transition-all duration-200 rounded-lg
-                ${
-                  !isCurrentMonth
-                    ? "text-gray-300"
-                    : "cursor-pointer hover:bg-gray-100"
-                }
-                ${isToday ? "ring-2 ring-blue-400 bg-blue-50" : ""}
-                ${
-                  hasRun && isCurrentMonth
-                    ? "bg-gradient-to-br from-emerald-400 to-emerald-500 text-white font-bold shadow-md hover:shadow-lg"
-                    : ""
-                }
-                ${isWeekend && !hasRun && isCurrentMonth ? "text-gray-500" : ""}
-                ${!isCurrentMonth ? "cursor-default" : ""}
-              `}
+              className={[
+                "relative h-12 flex items-center justify-center text-sm transition-all duration-200 rounded-lg",
+                !isCurrentMonth ? "text-gray-300" : "cursor-pointer hover:bg-gray-100",
+                isToday === true ? "ring-2 ring-blue-400 bg-blue-50" : "",
+                hasRun && isCurrentMonth ? "bg-gradient-to-br from-emerald-400 to-emerald-500 text-white font-bold shadow-md hover:shadow-lg" : "",
+                isWeekend && !hasRun && isCurrentMonth ? "text-gray-500" : "",
+                !isCurrentMonth ? "cursor-default" : ""
+              ].filter(Boolean).join(" ")}
             >
               <span className="z-10 relative">{date.getDate()}</span>
 
@@ -224,9 +222,10 @@ export default function ClientRunningCalendar({
               )}
 
               {/* 今日のマーカー */}
-              {isToday && !hasRun && (
-                <div className="absolute inset-0 bg-blue-400 opacity-20 rounded-lg"></div>
-              )}
+              <div 
+                className="absolute inset-0 bg-blue-400 opacity-20 rounded-lg"
+                style={{ display: isToday && !hasRun ? 'block' : 'none' }}
+              />
             </div>
           );
         })}

@@ -1,51 +1,73 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useCallback, useTransition } from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import * as z from 'zod';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { setYearlyGoal } from '../actions/running-actions';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage, FormDescription } from '@/components/ui/form';
+import { updateYearlyGoal } from '../actions/running-actions';
+
+const yearlyGoalSchema = z.object({
+  distance_goal: z.union([
+    z.number().min(50, '年間目標距離は50km以上で入力してください'),
+    z.literal('').transform(() => 0)
+  ]),
+});
+
+type YearlyGoalFormData = {
+  distance_goal: number | '';
+};
 
 interface ClientYearlyGoalFormProps {
   currentGoal: number;
-  isOpen?: boolean;
-  onClose?: () => void;
+  isOpen: boolean;
+  onClose: () => void;
   showWelcomeMessage?: boolean;
 }
 
-export default function ClientYearlyGoalForm({ currentGoal, isOpen = false, onClose, showWelcomeMessage = false }: ClientYearlyGoalFormProps) {
-  const [modalOpen, setModalOpen] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
+export default function ClientYearlyGoalForm({ currentGoal, isOpen, onClose, showWelcomeMessage = false }: ClientYearlyGoalFormProps) {
 
-  // 外部から制御される場合
-  const isExternallyControlled = isOpen !== undefined && onClose !== undefined;
-  const currentModalOpen = isExternallyControlled ? isOpen : modalOpen;
+  const form = useForm<YearlyGoalFormData>({
+    resolver: zodResolver(yearlyGoalSchema),
+    defaultValues: {
+      distance_goal: '',
+    },
+  });
 
-  const handleSubmit = async (formData: FormData) => {
-    setIsSubmitting(true);
-    try {
-      await setYearlyGoal(formData);
-      handleClose();
-    } catch (error) {
-      console.error('Failed to set yearly goal:', error);
-      alert('年間目標の設定に失敗しました');
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
+  const [isPending, startTransition] = useTransition();
+  const [error, setError] = useState<string | null>(null);
 
-  const handleClose = () => {
-    if (isExternallyControlled && onClose) {
+  const handleClose = useCallback(() => {
+    form.reset();
+    setError(null);
+    if (onClose) {
       onClose();
-    } else {
-      setModalOpen(false);
     }
+  }, [form, onClose]);
+
+  const onSubmit = async (data: YearlyGoalFormData) => {
+    setError(null);
+    const formData = new FormData();
+    const distance = data.distance_goal === '' ? 0 : data.distance_goal;
+    formData.append('distance_goal', distance.toString());
+    
+    startTransition(async () => {
+      const result = await updateYearlyGoal(formData);
+      if (result.success) {
+        form.reset();
+        handleClose();
+      } else {
+        setError(result.error || '年間目標の設定に失敗しました');
+      }
+    });
   };
 
 
   return (
-    <Dialog open={currentModalOpen} onOpenChange={handleClose}>
+    <Dialog open={isOpen} onOpenChange={handleClose}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
             <DialogTitle className="text-xl font-bold text-gray-800">
@@ -59,44 +81,65 @@ export default function ClientYearlyGoalForm({ currentGoal, isOpen = false, onCl
             </p>
           )}
           
-          <form action={handleSubmit} className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="distance_goal">年間目標距離 (km)</Label>
-              <Input
-                type="number"
-                id="distance_goal"
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+              <FormField
+                control={form.control}
                 name="distance_goal"
-                step="0.1"
-                min="50"
-                max="2000"
-                required
-                defaultValue={currentGoal}
-                placeholder="500.0"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>年間目標距離 (km)</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="number"
+                        step="0.1"
+                        min="50"
+                        max="2000"
+                        placeholder="500.0"
+                        {...field}
+                        onChange={(e) => {
+                          const value = e.target.value;
+                          if (value === '') {
+                            field.onChange('');
+                          } else {
+                            const numValue = parseFloat(value);
+                            field.onChange(isNaN(numValue) ? '' : numValue);
+                          }
+                        }}
+                        value={field.value || ''}
+                      />
+                    </FormControl>
+                    <FormDescription>
+                      現在の目標: {currentGoal}km (推奨: 300-1000km)
+                    </FormDescription>
+                    <FormMessage />
+                    {error && (
+                      <p className="text-sm text-red-500">{error}</p>
+                    )}
+                  </FormItem>
+                )}
               />
-              <p className="text-xs text-muted-foreground">
-                現在の目標: {currentGoal}km (推奨: 300-1000km)
-              </p>
-            </div>
             
             <div className="flex gap-3 pt-4">
               <Button
                 type="submit"
-                disabled={isSubmitting}
+                disabled={isPending || form.formState.isSubmitting}
                 className="flex-1 bg-emerald-500 hover:bg-emerald-600"
               >
-                {isSubmitting ? '保存中...' : (showWelcomeMessage ? '年間目標を設定' : '目標を変更')}
+                {isPending || form.formState.isSubmitting ? '保存中...' : (showWelcomeMessage ? '年間目標を設定' : '目標を変更')}
               </Button>
               <Button
                 type="button"
                 variant="outline"
                 onClick={handleClose}
-                disabled={isSubmitting}
+                disabled={isPending || form.formState.isSubmitting}
                 className="flex-1"
               >
                 {showWelcomeMessage ? '後で設定' : 'キャンセル'}
               </Button>
             </div>
-          </form>
+            </form>
+          </Form>
         </DialogContent>
       </Dialog>
   );

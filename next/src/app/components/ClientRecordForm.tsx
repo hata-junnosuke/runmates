@@ -1,50 +1,90 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useCallback, useTransition } from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import * as z from 'zod';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { addRunningRecord } from '../actions/running-actions';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { createRunningRecord } from '../actions/running-actions';
+
+const runningRecordSchema = z.object({
+  date: z.string().min(1, '日付を入力してください'),
+  distance: z.union([
+    z.number().min(0.1, '距離は0.1km以上で入力してください'),
+    z.literal('').transform(() => 0)
+  ]),
+});
+
+type RunningRecordFormData = {
+  date: string;
+  distance: number | '';
+};
 
 interface ClientRecordFormProps {
   selectedDate?: string;
-  isOpen?: boolean;
-  onClose?: () => void;
+  isOpen: boolean;
+  onClose: () => void;
 }
 
-export default function ClientRecordForm({ selectedDate, isOpen = false, onClose }: ClientRecordFormProps) {
-  const [modalOpen, setModalOpen] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
+export default function ClientRecordForm({ selectedDate, isOpen, onClose }: ClientRecordFormProps) {
 
-  // 外部から制御される場合
-  const isExternallyControlled = isOpen !== undefined && onClose !== undefined;
-  const currentModalOpen = isExternallyControlled ? isOpen : modalOpen;
+  const form = useForm<RunningRecordFormData>({
+    resolver: zodResolver(runningRecordSchema),
+    defaultValues: {
+      date: selectedDate || '',
+      distance: '',
+    },
+  });
 
-  const handleSubmit = async (formData: FormData) => {
-    setIsSubmitting(true);
-    try {
-      await addRunningRecord(formData);
-      handleClose();
-    } catch (error) {
-      console.error('Failed to add record:', error);
-      alert('記録の追加に失敗しました');
-    } finally {
-      setIsSubmitting(false);
+  // モーダルが開かれたときに日付を設定
+  useEffect(() => {
+    if (isOpen) {
+      if (selectedDate) {
+        form.setValue('date', selectedDate);
+      } else {
+        form.setValue('date', new Date().toISOString().split('T')[0]);
+      }
     }
-  };
+  }, [isOpen, selectedDate, form]);
 
-  const handleClose = () => {
-    if (isExternallyControlled && onClose) {
+  const [isPending, startTransition] = useTransition();
+  const [error, setError] = useState<string | null>(null);
+
+  const handleClose = useCallback(() => {
+    form.reset({
+      date: '',
+      distance: '',
+    });
+    setError(null);
+    if (onClose) {
       onClose();
-    } else {
-      setModalOpen(false);
     }
+  }, [form, onClose]);
+
+  const onSubmit = async (data: RunningRecordFormData) => {
+    setError(null);
+    const formData = new FormData();
+    formData.append('date', data.date);
+    const distance = data.distance === '' ? 0 : data.distance;
+    formData.append('distance', distance.toString());
+    
+    startTransition(async () => {
+      const result = await createRunningRecord(formData);
+      if (result.success) {
+        form.reset();
+        handleClose();
+      } else {
+        setError(result.error || '記録の保存に失敗しました');
+      }
+    });
   };
 
 
   return (
-    <Dialog open={currentModalOpen} onOpenChange={handleClose}>
+    <Dialog open={isOpen} onOpenChange={handleClose}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
             <DialogTitle className="text-xl font-bold text-gray-800">
@@ -52,50 +92,78 @@ export default function ClientRecordForm({ selectedDate, isOpen = false, onClose
             </DialogTitle>
           </DialogHeader>
           
-          <form action={handleSubmit} className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="date">日付</Label>
-              <Input
-                type="date"
-                id="date"
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+              <FormField
+                control={form.control}
                 name="date"
-                required
-                defaultValue={selectedDate || new Date().toISOString().split('T')[0]}
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>日付</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="date"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
               />
-            </div>
-            
-            <div className="space-y-2">
-              <Label htmlFor="distance">距離 (km)</Label>
-              <Input
-                type="number"
-                id="distance"
+              
+              <FormField
+                control={form.control}
                 name="distance"
-                step="0.1"
-                min="0.1"
-                required
-                placeholder="5.0"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>距離 (km)</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="number"
+                        step="0.1"
+                        min="0.1"
+                        placeholder="5.0"
+                        {...field}
+                        onChange={(e) => {
+                          const value = e.target.value;
+                          if (value === '') {
+                            field.onChange('');
+                          } else {
+                            const numValue = parseFloat(value);
+                            field.onChange(isNaN(numValue) ? '' : numValue);
+                          }
+                        }}
+                        value={field.value || ''}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                    {error && (
+                      <p className="text-sm text-red-500">{error}</p>
+                    )}
+                  </FormItem>
+                )}
               />
-            </div>
             
             <div className="flex gap-3 pt-4">
               <Button
                 type="submit"
-                disabled={isSubmitting}
+                disabled={isPending || form.formState.isSubmitting}
                 className="flex-1 bg-emerald-500 hover:bg-emerald-600"
               >
-                {isSubmitting ? '保存中...' : '記録を保存'}
+                {isPending || form.formState.isSubmitting ? '保存中...' : '記録を保存'}
               </Button>
               <Button
                 type="button"
                 variant="outline"
                 onClick={handleClose}
-                disabled={isSubmitting}
+                disabled={isPending || form.formState.isSubmitting}
                 className="flex-1"
               >
                 キャンセル
               </Button>
             </div>
-          </form>
+            </form>
+          </Form>
         </DialogContent>
       </Dialog>
   );

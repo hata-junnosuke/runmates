@@ -1,71 +1,109 @@
 "use client";
-import { useState } from "react";
+import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { signIn } from "@/lib/client-auth";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
+import { signInAction } from "@/app/actions/auth-actions";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+
+const signInSchema = z.object({
+  email: z.string().email("有効なメールアドレスを入力してください"),
+  password: z.string().min(1, "パスワードを入力してください"),
+});
+
+type SignInFormData = z.infer<typeof signInSchema>;
 
 export default function SignInForm() {
   const router = useRouter();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [isPending, startTransition] = useTransition();
+  
+  const form = useForm<SignInFormData>({
+    resolver: zodResolver(signInSchema),
+    defaultValues: {
+      email: '',
+      password: '',
+    },
+  });
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setLoading(true);
+  const onSubmit = async (data: SignInFormData) => {
     setError("");
 
-    const result = await signIn(email, password);
+    startTransition(async () => {
+      const formData = new FormData();
+      formData.append('email', data.email);
+      formData.append('password', data.password);
+      
+      const result = await signInAction(formData);
 
-    if (result.success) {
-      router.push("/");
-    } else {
-      setError(result.error || "ログインに失敗しました");
-    }
-    setLoading(false);
+      if (result.success) {
+        router.push("/");
+      } else {
+        setError(result.error || "ログインに失敗しました");
+      }
+    });
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-5">
-      <div>
-        <label className="block text-gray-700 font-semibold mb-1">
-          メールアドレス
-        </label>
-        <input
-          type="email"
-          className="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-green-400"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-          disabled={loading}
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
+        <FormField
+          control={form.control}
+          name="email"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel className="text-gray-700 font-semibold">
+                メールアドレス
+              </FormLabel>
+              <FormControl>
+                <Input
+                  type="email"
+                  className="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-green-400"
+                  disabled={isPending || form.formState.isSubmitting}
+                  {...field}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
         />
-      </div>
-      <div>
-        <label className="block text-gray-700 font-semibold mb-1">
-          パスワード
-        </label>
-        <input
-          type="password"
-          className="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-green-400"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-          disabled={loading}
+        <FormField
+          control={form.control}
+          name="password"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel className="text-gray-700 font-semibold">
+                パスワード
+              </FormLabel>
+              <FormControl>
+                <Input
+                  type="password"
+                  className="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-green-400"
+                  disabled={isPending || form.formState.isSubmitting}
+                  {...field}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
         />
-      </div>
-      {error && <div className="text-red-500 text-sm text-center">{error}</div>}
-      <button
-        type="submit"
-        className="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-2 rounded transition disabled:opacity-50"
-        disabled={loading}
-      >
-        {loading ? "送信中..." : "サインイン"}
-      </button>
+        {error && <div className="text-red-500 text-sm text-center">{error}</div>}
+        <Button
+          type="submit"
+          className="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-2 rounded transition disabled:opacity-50"
+          disabled={form.formState.isSubmitting}
+        >
+          {isPending ? "送信中..." : "サインイン"}
+        </Button>
       <div className="text-center mt-2">
         <a href="/sign_up" className="text-green-500 hover:underline text-sm">
           アカウントをお持ちでない方はこちら
         </a>
       </div>
-    </form>
+      </form>
+    </Form>
   );
 }
