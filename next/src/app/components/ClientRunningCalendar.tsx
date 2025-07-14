@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 
 interface RunRecord {
@@ -57,13 +57,19 @@ export default function ClientRunningCalendar({
     return records.some((record) => record.date === dateStr);
   };
 
-  // 指定された日付の記録を取得
-  const getRecordForDate = (date: Date) => {
+  // 指定された日付の記録を取得（複数対応）
+  const getRecordsForDate = (date: Date) => {
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, "0");
     const day = String(date.getDate()).padStart(2, "0");
     const dateStr = `${year}-${month}-${day}`;
-    return records.find((record) => record.date === dateStr);
+    return records.filter((record) => record.date === dateStr);
+  };
+
+  // 指定された日付の合計距離を取得
+  const getTotalDistanceForDate = (date: Date) => {
+    const dayRecords = getRecordsForDate(date);
+    return dayRecords.reduce((sum, record) => sum + Number(record.distance || 0), 0);
   };
 
   // 前月へ
@@ -90,53 +96,6 @@ export default function ClientRunningCalendar({
   // 曜日名
   const weekDays = ["日", "月", "火", "水", "木", "金", "土"];
 
-  // 連続ランニング日数を計算
-  const getConsecutiveDays = (): number => {
-    if (!records || !Array.isArray(records) || records.length === 0) return 0;
-
-    const validRecords = records.filter(
-      (r) => r && r.date && typeof r.distance === "number"
-    );
-    if (validRecords.length === 0) return 0;
-
-    const sortedRecords = [...validRecords].sort((a, b) => {
-      try {
-        return new Date(b.date).getTime() - new Date(a.date).getTime();
-      } catch {
-        return 0;
-      }
-    });
-
-    let consecutive = 0;
-
-    try {
-      // 最新記録の日付から開始
-      const latestRecordDate = new Date(sortedRecords[0].date);
-      latestRecordDate.setHours(0, 0, 0, 0);
-
-      const checkDate = new Date(latestRecordDate);
-
-      for (const record of sortedRecords) {
-        try {
-          const recordDate = new Date(record.date);
-          recordDate.setHours(0, 0, 0, 0);
-
-          if (recordDate.getTime() === checkDate.getTime()) {
-            consecutive++;
-            checkDate.setDate(checkDate.getDate() - 1);
-          } else {
-            break;
-          }
-        } catch {
-          break;
-        }
-      }
-    } catch {
-      return 0;
-    }
-
-    return consecutive;
-  };
 
   return (
     <div className="bg-white rounded-2xl shadow-lg p-6 border-l-4 border-blue-400">
@@ -192,7 +151,7 @@ export default function ClientRunningCalendar({
           const isCurrentMonth = date.getMonth() === month;
           const isToday = today && date.toDateString() === today.toDateString();
           const hasRun = hasRecord(date);
-          const record = getRecordForDate(date);
+          const totalDistance = getTotalDistanceForDate(date);
           const isWeekend = date.getDay() === 0 || date.getDay() === 6;
 
           return (
@@ -213,11 +172,9 @@ export default function ClientRunningCalendar({
               {/* 走った日のマーカー */}
               {hasRun && isCurrentMonth && (
                 <div className="absolute inset-0 flex items-center justify-center">
-                  {record && (
-                    <div className="absolute bottom-0 left-0 right-0 text-[8px] text-white opacity-90 text-center">
-                      {Number(record.distance || 0).toFixed(1)}km
-                    </div>
-                  )}
+                  <div className="absolute bottom-0 left-0 right-0 text-[8px] text-white opacity-90 text-center">
+                    {totalDistance.toFixed(1)}km
+                  </div>
                 </div>
               )}
 
@@ -229,68 +186,6 @@ export default function ClientRunningCalendar({
             </div>
           );
         })}
-      </div>
-
-      {/* 統計表示 */}
-      <div className="mt-4 pt-4 border-t border-gray-200">
-        <div className="grid grid-cols-3 gap-4 text-center">
-          <div>
-            <div className="text-sm text-gray-500">今月の記録</div>
-            <div className="font-bold text-emerald-600">
-              {/* useMemo: 依存配列が変わった時のみ計算 */}
-              {useMemo(() => {
-                return (records || []).filter((r) => {
-                  if (!r || !r.date) return false;
-                  try {
-                    const recordDate = new Date(r.date);
-                    return (
-                      !isNaN(recordDate.getTime()) &&
-                      recordDate.getMonth() === month &&
-                      recordDate.getFullYear() === year
-                    );
-                  } catch {
-                    return false;
-                  }
-                }).length;
-              }, [records, month, year])}
-              日
-            </div>
-          </div>
-          <div>
-            <div className="text-sm text-gray-500">連続記録</div>
-            <div className="font-bold text-blue-600">
-              {getConsecutiveDays()}日
-            </div>
-          </div>
-          <div>
-            <div className="text-sm text-gray-500">今月距離</div>
-            <div className="font-bold text-purple-600">
-              {/* useMemo: 依存配列が変わった時のみ計算 */}
-              {useMemo(() => {
-                return (records || [])
-                  .filter((r) => {
-                    if (!r || !r.date) return false;
-                    try {
-                      const recordDate = new Date(r.date);
-                      return (
-                        !isNaN(recordDate.getTime()) &&
-                        recordDate.getMonth() === month &&
-                        recordDate.getFullYear() === year
-                      );
-                    } catch {
-                      return false;
-                    }
-                  })
-                  .reduce((sum, r) => {
-                    const distance = Number(r.distance || 0);
-                    return sum + distance;
-                  }, 0)
-                  .toFixed(1);
-              }, [records, month, year])}
-              km
-            </div>
-          </div>
-        </div>
       </div>
     </div>
   );

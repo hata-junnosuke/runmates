@@ -82,10 +82,6 @@ export default function RunningChart({
     );
   };
 
-  const goToCurrentMonth = () => {
-    setCurrentViewDate(new Date());
-  };
-
   // タイムゾーン安全な日付文字列フォーマット関数
   const formatDateString = (date: Date): string => {
     const year = date.getFullYear();
@@ -151,9 +147,9 @@ export default function RunningChart({
     const currentDate = new Date(viewYear, viewMonth, day);
     const dateStr = formatDateString(currentDate);
 
-    // その日の走行記録を探す
-    const dayRecord = records.find((record) => record.date === dateStr);
-    const dayDistance = dayRecord ? Number(dayRecord.distance || 0) : 0;
+    // その日の全ての走行記録を集計
+    const dayRecords = records.filter((record) => record.date === dateStr);
+    const dayDistance = dayRecords.reduce((sum, record) => sum + Number(record.distance || 0), 0);
 
     // 累積距離を更新（今日までのデータのみ）
     if (day <= displayEndDay) {
@@ -192,12 +188,12 @@ export default function RunningChart({
     labels,
     datasets: [
       {
-        label: `${monthDisplayName}累積走行距離`,
+        label: `${monthDisplayName}の走行距離`,
         data: cumulativeData,
         borderColor: "rgb(34, 197, 94)",
         backgroundColor: "rgba(34, 197, 94, 0.1)",
         fill: true,
-        tension: 0.4,
+        tension: 0,
         pointBorderColor: "rgb(34, 197, 94)",
         pointBackgroundColor: "white",
         pointBorderWidth: 2,
@@ -205,7 +201,7 @@ export default function RunningChart({
         pointHoverRadius: 6,
       },
       {
-        label: `${monthDisplayName}目標ペース`,
+        label: `${monthDisplayName}の目標ペース`,
         data: goalLineData,
         borderColor: "rgb(239, 68, 68)",
         backgroundColor: "rgba(239, 68, 68, 0.1)",
@@ -277,11 +273,11 @@ export default function RunningChart({
               const diff = context.parsed.y - goalValue;
               const status =
                 diff >= 0 ? `+${diff.toFixed(1)}km 🔥` : `${diff.toFixed(1)}km`;
-              return `${monthDisplayName}累積: ${context.parsed.y.toFixed(
+              return `${monthDisplayName}の走行距離: ${context.parsed.y.toFixed(
                 1
               )} km (目標比: ${status})`;
             } else if (context.datasetIndex === 1) {
-              return `${monthDisplayName}目標ペース: ${context.parsed.y.toFixed(
+              return `${monthDisplayName}の目標ペース: ${context.parsed.y.toFixed(
                 1
               )} km`;
             } else {
@@ -318,7 +314,7 @@ export default function RunningChart({
         position: "left",
         title: {
           display: true,
-          text: `${monthDisplayName}累積距離 (km)`,
+          text: `${monthDisplayName}の走行距離 (km)`,
           font: {
             weight: "bold",
           },
@@ -377,15 +373,6 @@ export default function RunningChart({
           <h3 className="text-lg font-bold text-gray-800">
             {viewYear}年{viewMonth + 1}月
           </h3>
-          {(viewYear !== today.getFullYear() ||
-            viewMonth !== today.getMonth()) && (
-            <button
-              onClick={goToCurrentMonth}
-              className="px-2 py-1 text-xs bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
-            >
-              今月
-            </button>
-          )}
         </div>
 
         <button
@@ -401,7 +388,7 @@ export default function RunningChart({
       <div className="grid grid-cols-3 gap-4 text-sm text-gray-600">
         <div className="text-center">
           <div className="font-semibold text-emerald-600">
-            {monthDisplayName}累積
+            月間走行距離
           </div>
           <div className="text-lg font-bold">
             {viewMonthCumulative.toFixed(1)} km

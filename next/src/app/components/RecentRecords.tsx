@@ -19,16 +19,42 @@ interface RecentRecordsProps {
 }
 
 export default function RecentRecords({ statistics }: RecentRecordsProps) {
+  // 日付ごとにレコードをグループ化
+  const groupedRecords = (statistics?.recent_records || []).reduce((acc, record) => {
+    const date = record.date;
+    if (!acc[date]) {
+      acc[date] = {
+        date,
+        totalDistance: 0,
+        records: [],
+        latestCreatedAt: record.created_at || ''
+      };
+    }
+    acc[date].totalDistance += Number(record.distance || 0);
+    acc[date].records.push(record);
+    // 最新の作成時刻を保持
+    if (record.created_at && (!acc[date].latestCreatedAt || record.created_at > acc[date].latestCreatedAt)) {
+      acc[date].latestCreatedAt = record.created_at;
+    }
+    return acc;
+  }, {} as Record<string, { date: string; totalDistance: number; records: RunRecord[]; latestCreatedAt: string }>);
+
+  // 日付順にソート（最新順）
+  const sortedDates = Object.values(groupedRecords).sort((a, b) => {
+    // まず日付で比較
+    const dateCompare = new Date(b.date).getTime() - new Date(a.date).getTime();
+    if (dateCompare !== 0) return dateCompare;
+    // 同じ日付の場合は作成時刻で比較
+    return b.latestCreatedAt.localeCompare(a.latestCreatedAt);
+  });
+
   return (
     <div className="bg-white rounded-xl shadow-lg p-6">
       <h3 className="text-xl font-bold text-gray-800 mb-4 flex items-center">
         🏃‍♂️ 最近の記録
-        <span className="ml-2 text-sm bg-emerald-100 text-emerald-700 px-2 py-1 rounded-full">
-          {Number(statistics?.total_records || 0)}回
-        </span>
       </h3>
       <div className="space-y-3">
-        {(statistics?.recent_records || []).length === 0 ? (
+        {sortedDates.length === 0 ? (
           <div className="text-center py-12 text-gray-500">
             <div className="text-6xl text-gray-300 mb-4">🏃‍♂️</div>
             <p className="text-lg">まだ記録がありません</p>
@@ -37,9 +63,9 @@ export default function RecentRecords({ statistics }: RecentRecordsProps) {
             </p>
           </div>
         ) : (
-          (statistics?.recent_records || []).map((record, index) => (
+          sortedDates.slice(0, 5).map((group) => (
             <div
-              key={record.id}
+              key={group.date}
               className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors group"
             >
               <div className="flex items-center space-x-3">
@@ -47,15 +73,10 @@ export default function RecentRecords({ statistics }: RecentRecordsProps) {
                   🏃‍♂️
                 </div>
                 <div>
-                  <p className="font-semibold text-gray-800 flex items-center">
-                    {Number(record.distance || 0).toFixed(1)} km
-                    {index === 0 && (
-                      <span className="ml-2 text-xs bg-yellow-400 text-yellow-800 px-2 py-1 rounded-full">
-                        最新
-                      </span>
-                    )}
+                  <p className="font-semibold text-gray-800">
+                    {group.totalDistance.toFixed(1)} km
                   </p>
-                  <p className="text-sm text-gray-500">{record.date}</p>
+                  <p className="text-sm text-gray-500">{group.date}</p>
                 </div>
               </div>
             </div>
