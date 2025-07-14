@@ -12,7 +12,7 @@ interface DashboardStatisticsProps {
   goal: number;
   yearGoal: number;
   yearGoalProgress: number;
-  totalRecords: number;
+  monthlyRunDays: number;
 }
 
 export default function DashboardStatistics({
@@ -22,7 +22,7 @@ export default function DashboardStatistics({
   goal,
   yearGoal,
   yearGoalProgress,
-  totalRecords
+  monthlyRunDays
 }: DashboardStatisticsProps) {
   const [monthlyGoalModalOpen, setMonthlyGoalModalOpen] = useState(false);
   const [yearlyGoalModalOpen, setYearlyGoalModalOpen] = useState(false);
@@ -44,7 +44,7 @@ export default function DashboardStatistics({
         goal={goal}
         yearGoal={yearGoal}
         yearGoalProgress={yearGoalProgress}
-        totalRecords={totalRecords}
+        monthlyRunDays={monthlyRunDays}
         onYearlyGoalClick={handleYearlyGoalClick}
         onMonthlyGoalClick={handleMonthlyGoalClick}
       />

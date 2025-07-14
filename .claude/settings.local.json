@@ -18,14 +18,14 @@
       "Bash(ls:*)",
       "Bash(docker-compose exec next npm run lint:*)",
       "Bash(rm:*)",
-      "Bash(git add:*)",
       "Bash(git pull:*)",
       "Bash(gh issue:*)",
       "Bash(cp:*)",
       "Bash(gh pr view:*)",
       "Bash(git stash:*)",
       "Bash(docker-compose exec:*)",
-      "WebFetch(domain:react-hook-form.com)"
+      "WebFetch(domain:react-hook-form.com)",
+      "Bash(source:*)"
     ],
     "deny": []
   },

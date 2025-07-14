@@ -5,7 +5,7 @@ interface StatisticsCardsProps {
   goal: number;
   yearGoal: number;
   yearGoalProgress: number;
-  totalRecords: number;
+  monthlyRunDays: number;
   onYearlyGoalClick: () => void;
   onMonthlyGoalClick: () => void;
 }
@@ -17,7 +17,7 @@ export default function StatisticsCards({
   goal,
   yearGoal,
   yearGoalProgress,
-  totalRecords,
+  monthlyRunDays,
   onYearlyGoalClick,
   onMonthlyGoalClick,
 }: StatisticsCardsProps) {
@@ -62,13 +62,13 @@ export default function StatisticsCards({
             </p>
             <p className="text-3xl font-bold">{thisMonthDistance.toFixed(1)} km</p>
             <p className="text-blue-100 text-xs mt-1">
-              頑張って続けましょう！
+            🔥 頑張って続けましょう！
             </p>
           </div>
           <div className="text-right">
             <span className="text-5xl text-blue-200 mb-2">⏱️</span>
             <div className="text-xs text-blue-100">
-              記録: {totalRecords}回
+              練習日: {monthlyRunDays}日
             </div>
           </div>
         </div>

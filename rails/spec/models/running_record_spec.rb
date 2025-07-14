@@ -10,7 +10,6 @@ RSpec.describe RunningRecord, type: :model do
 
     it { should validate_presence_of(:date) }
     it { should validate_presence_of(:distance) }
-    it { should validate_uniqueness_of(:date).scoped_to(:user_id) }
     it { should validate_numericality_of(:distance).is_greater_than(0.1).is_less_than_or_equal_to(100.0) }
 
     context "有効な値の場合" do
@@ -37,14 +36,16 @@ RSpec.describe RunningRecord, type: :model do
     end
 
     context "同じユーザーが同じ日付で複数のレコードを作成する場合" do
-      it "重複エラーになる" do
+      it "複数のレコードを作成できる" do
         user = create(:user)
         date = Date.current
-        create(:running_record, user: user, date: date)
-        duplicate_record = build(:running_record, user: user, date: date)
+        create(:running_record, user: user, date: date, distance: 5.0)
+        second_record = build(:running_record, user: user, date: date, distance: 3.0)
 
-        expect(duplicate_record).not_to be_valid
-        expect(duplicate_record.errors[:date]).to be_present
+        expect(second_record).to be_valid
+        expect { second_record.save! }.not_to raise_error
+        expect(user.running_records.where(date: date).count).to eq(2)
+        expect(user.running_records.where(date: date).sum(:distance)).to eq(8.0)
       end
     end
   end

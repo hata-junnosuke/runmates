@@ -23,6 +23,18 @@ async function DashboardData() {
     const yearGoal = Number(yearlyGoal?.distance_goal || 500);
     const yearGoalProgress = yearGoal > 0 ? (thisYearDistance / yearGoal) * 100 : 0;
 
+    // 今月走った日数と記録回数を計算
+    const currentDate = new Date();
+    const currentMonth = currentDate.getMonth();
+    const currentYear = currentDate.getFullYear();
+    
+    const monthlyRecords = records.filter(record => {
+      const recordDate = new Date(record.date);
+      return recordDate.getMonth() === currentMonth && recordDate.getFullYear() === currentYear;
+    });
+    
+    const monthlyRunDays = new Set(monthlyRecords.map(record => record.date)).size;
+
     return (
       <div className="space-y-6">
         {/* 統計カード - クリック可能なカード */}
@@ -33,7 +45,7 @@ async function DashboardData() {
           goal={goal}
           yearGoal={yearGoal}
           yearGoalProgress={yearGoalProgress}
-          totalRecords={statistics.total_records}
+          monthlyRunDays={monthlyRunDays}
         />
 
         {/* カレンダーとアクションボタン */}

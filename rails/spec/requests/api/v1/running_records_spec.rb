@@ -89,6 +89,30 @@ RSpec.describe "Api::V1::RunningRecords", type: :request do
           json = JSON.parse(response.body)
           expect(json["distance"]).to eq("5.0")
         end
+
+        it "同じ日付で複数のレコードを作成できる" do # rubocop:disable RSpec/ExampleLength
+          # 1つ目のレコード
+          post "/api/v1/running_records", params: valid_params, headers: headers
+          expect(response).to have_http_status(:created)
+
+          # 2つ目のレコード（同じ日付）
+          second_params = {
+            running_record: {
+              date: Date.current,
+              distance: 3.0,
+            },
+          }
+          expect {
+            post "/api/v1/running_records", params: second_params, headers: headers
+          }.to change { RunningRecord.count }.by(1)
+
+          expect(response).to have_http_status(:created)
+
+          # 同じ日付のレコードが2つあることを確認
+          records = user.running_records.where(date: Date.current)
+          expect(records.count).to eq(2)
+          expect(records.sum(:distance)).to eq(8.0)
+        end
       end
 
       context "無効なパラメータの場合" do
