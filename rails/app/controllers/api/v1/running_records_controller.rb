@@ -4,18 +4,18 @@ class Api::V1::RunningRecordsController < Api::V1::BaseController
 
   def index
     @running_records = current_user.running_records.recent.limit(50)
-    render json: @running_records
+    render json: @running_records, each_serializer: RunningRecordSerializer
   end
 
   def show
-    render json: @running_record
+    render json: @running_record, serializer: RunningRecordSerializer
   end
 
   def create
     @running_record = current_user.running_records.build(running_record_params)
 
     if @running_record.save
-      render json: @running_record, status: :created
+      render json: @running_record, serializer: RunningRecordSerializer, status: :created
     else
       render json: { errors: @running_record.errors }, status: :unprocessable_entity
     end
@@ -23,7 +23,7 @@ class Api::V1::RunningRecordsController < Api::V1::BaseController
 
   def update
     if @running_record.update(running_record_params)
-      render json: @running_record
+      render json: @running_record, serializer: RunningRecordSerializer
     else
       render json: { errors: @running_record.errors }, status: :unprocessable_entity
     end

@@ -132,3 +132,22 @@ export async function updateYearlyGoal(formData: FormData) {
     return { success: false, error: '年間目標の設定に失敗しました' };
   }
 }
+
+// 走行記録を削除
+export async function deleteRunningRecord(recordId: string) {
+  try {
+    if (!recordId) {
+      return { success: false, error: '記録IDが必要です' };
+    }
+
+    await apiCall(`/running_records/${recordId}`, {
+      method: 'DELETE',
+    });
+
+    revalidatePath('/');
+    return { success: true };
+  } catch (error) {
+    console.error('Failed to delete running record:', error);
+    return { success: false, error: '記録の削除に失敗しました' };
+  }
+}

@@ -204,6 +204,24 @@ RSpec.describe "Api::V1::RunningRecords", type: :request do
 
         expect(response).to have_http_status(:no_content)
       end
+
+      it "他のユーザーのレコードは削除できない" do
+        other_user = create(:user)
+        other_record = create(:running_record, user: other_user)
+
+        expect {
+          delete "/api/v1/running_records/#{other_record.id}", headers: headers
+        }.not_to change { RunningRecord.count }
+
+        expect(response.status).to be_in([404, 401, 403])
+      end
+
+      it "存在しないレコードを削除しようとすると404を返す" do
+        non_existent_id = 99999
+        delete "/api/v1/running_records/#{non_existent_id}", headers: headers
+
+        expect(response).to have_http_status(:not_found)
+      end
     end
 
     context "未認証ユーザーの場合" do
