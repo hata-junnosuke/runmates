@@ -25,7 +25,10 @@
       "Bash(git stash:*)",
       "Bash(docker-compose exec:*)",
       "WebFetch(domain:react-hook-form.com)",
-      "Bash(source:*)"
+      "Bash(source:*)",
+      "Bash(find:*)",
+      "Bash(docker-compose:*)",
+      "mcp__playwright__browser_navigate"
     ],
     "deny": []
   },
