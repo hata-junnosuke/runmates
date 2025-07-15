@@ -1,4 +1,8 @@
-// Server Component - 最近の記録表示
+'use client';
+
+import { useState } from 'react';
+import RecordDetailModal from './RecordDetailModal';
+
 interface RunRecord {
   id: string;
   date: string;
@@ -19,6 +23,19 @@ interface RecentRecordsProps {
 }
 
 export default function RecentRecords({ statistics }: RecentRecordsProps) {
+  const [selectedRecord, setSelectedRecord] = useState<RunRecord | null>(null);
+  const [modalOpen, setModalOpen] = useState(false);
+
+  const handleRecordClick = (record: RunRecord) => {
+    setSelectedRecord(record);
+    setModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setModalOpen(false);
+    setSelectedRecord(null);
+  };
+
   // 日付ごとにレコードをグループ化
   const groupedRecords = (statistics?.recent_records || []).reduce((acc, record) => {
     const date = record.date;
@@ -49,40 +66,67 @@ export default function RecentRecords({ statistics }: RecentRecordsProps) {
   });
 
   return (
-    <div className="bg-white rounded-xl shadow-lg p-6">
-      <h3 className="text-xl font-bold text-gray-800 mb-4 flex items-center">
-        🏃‍♂️ 最近の記録
-      </h3>
-      <div className="space-y-3">
-        {sortedDates.length === 0 ? (
-          <div className="text-center py-12 text-gray-500">
-            <div className="text-6xl text-gray-300 mb-4">🏃‍♂️</div>
-            <p className="text-lg">まだ記録がありません</p>
-            <p className="text-sm">
-              カレンダーから日付を選択して最初の走行記録を追加してみましょう！
-            </p>
-          </div>
-        ) : (
-          sortedDates.slice(0, 5).map((group) => (
-            <div
-              key={group.date}
-              className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors group"
-            >
-              <div className="flex items-center space-x-3">
-                <div className="text-emerald-600 group-hover:animate-pulse">
-                  🏃‍♂️
-                </div>
-                <div>
-                  <p className="font-semibold text-gray-800">
-                    {group.totalDistance.toFixed(1)} km
-                  </p>
-                  <p className="text-sm text-gray-500">{group.date}</p>
-                </div>
-              </div>
+    <>
+      <div className="bg-white rounded-xl shadow-lg p-6">
+        <h3 className="text-xl font-bold text-gray-800 mb-4 flex items-center">
+          🏃‍♂️ 最近の記録
+        </h3>
+        <div className="space-y-3">
+          {sortedDates.length === 0 ? (
+            <div className="text-center py-12 text-gray-500">
+              <div className="text-6xl text-gray-300 mb-4">🏃‍♂️</div>
+              <p className="text-lg">まだ記録がありません</p>
+              <p className="text-sm">
+                カレンダーから日付を選択して最初の走行記録を追加してみましょう！
+              </p>
             </div>
-          ))
-        )}
+          ) : (
+            sortedDates.slice(0, 5).map((group) => (
+              <div key={group.date} className="space-y-2">
+                {/* 日付ヘッダー */}
+                <div className="text-sm font-medium text-gray-600 px-2">
+                  {group.date} ({group.totalDistance.toFixed(1)} km)
+                </div>
+                
+                {/* 同じ日の記録一覧 */}
+                {group.records.map((record) => (
+                  <div
+                    key={record.id}
+                    onClick={() => handleRecordClick(record)}
+                    className="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 cursor-pointer transition-colors group"
+                  >
+                    <div className="flex items-center space-x-3">
+                      <div className="text-emerald-600 group-hover:animate-pulse">
+                        🏃‍♂️
+                      </div>
+                      <div>
+                        <p className="font-semibold text-gray-800">
+                          {Number(record.distance).toFixed(1)} km
+                        </p>
+                        <p className="text-xs text-gray-500">
+                          {record.created_at || ''}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="text-gray-400 group-hover:text-gray-600">
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                      </svg>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ))
+          )}
+        </div>
       </div>
-    </div>
+
+      {/* 詳細モーダル */}
+      <RecordDetailModal
+        record={selectedRecord}
+        isOpen={modalOpen}
+        onClose={handleCloseModal}
+      />
+    </>
   );
 }
