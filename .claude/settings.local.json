@@ -28,7 +28,8 @@
       "Bash(source:*)",
       "Bash(find:*)",
       "Bash(docker-compose:*)",
-      "mcp__playwright__browser_navigate"
+      "mcp__playwright__browser_navigate",
+      "Bash(unset GH_TOKEN)"
     ],
     "deny": []
   },

@@ -41,7 +41,7 @@ async function serverApiCall(endpoint: string, options: RequestInit = {}) {
   const url = `${API_BASE_URL}${endpoint}`;
   
   // クッキーから認証情報を取得
-  const accessToken = cookieStore.get('access_token')?.value;
+  const accessToken = cookieStore.get('access-token')?.value;
   const client = cookieStore.get('client')?.value;
   const uid = cookieStore.get('uid')?.value;
   
@@ -62,6 +62,16 @@ async function serverApiCall(endpoint: string, options: RequestInit = {}) {
   const response = await fetch(url, defaultOptions);
   
   if (!response.ok) {
+    // 401 Unauthorized の場合は特別な処理
+    if (response.status === 401) {
+      // 認証エラーをより詳細に記録
+      console.error('Authentication failed:', {
+        endpoint,
+        hasAccessToken: !!accessToken,
+        hasClient: !!client,
+        hasUid: !!uid
+      });
+    }
     throw new Error(`API Error: ${response.status} ${response.statusText}`);
   }
   

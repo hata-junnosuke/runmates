@@ -19,13 +19,13 @@ class ApplicationController < ActionController::API
     end
 
     def auth_cookies_present?
-      request.cookies["access_token"].present? &&
+      request.cookies["access-token"].present? &&
         request.cookies["client"].present? &&
         request.cookies["uid"].present?
     end
 
     def set_auth_headers_from_cookie_values
-      request.headers["access-token"] = request.cookies["access_token"]
+      request.headers["access-token"] = request.cookies["access-token"]
       request.headers["client"] = request.cookies["client"]
       request.headers["uid"] = request.cookies["uid"]
       request.headers["token-type"] = "Bearer"
