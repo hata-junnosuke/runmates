@@ -1,6 +1,6 @@
 "use client";
 import { useState, useTransition } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -18,6 +18,7 @@ type SignInFormData = z.infer<typeof signInSchema>;
 
 export default function SignInForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [error, setError] = useState("");
   const [isPending, startTransition] = useTransition();
   
@@ -40,7 +41,9 @@ export default function SignInForm() {
       const result = await signInAction(formData);
 
       if (result.success) {
-        router.push("/");
+        // リダイレクト元のURLがある場合はそこに戻る（middlewareと連携）
+        const from = searchParams.get('from');
+        router.push(from || "/");
       } else {
         setError(result.error || "ログインに失敗しました");
       }

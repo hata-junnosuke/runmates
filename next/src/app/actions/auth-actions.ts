@@ -39,7 +39,7 @@ export async function signInAction(formData: FormData) {
           path: '/',
         };
 
-        cookieStore.set('access_token', accessToken, cookieOptions);
+        cookieStore.set('access-token', accessToken, cookieOptions);
         cookieStore.set('client', client, cookieOptions);
         cookieStore.set('uid', uid, cookieOptions);
       }
@@ -116,7 +116,7 @@ export async function signOutAction() {
     const cookieStore = await cookies();
     
     // 認証情報を取得
-    const accessToken = cookieStore.get('access_token')?.value;
+    const accessToken = cookieStore.get('access-token')?.value;
     const client = cookieStore.get('client')?.value;
     const uid = cookieStore.get('uid')?.value;
 
@@ -133,14 +133,14 @@ export async function signOutAction() {
     }
 
     // Next.js側でもクッキーをクリア（開発環境での確実な削除のため）
-    cookieStore.delete('access_token');
+    cookieStore.delete('access-token');
     cookieStore.delete('client');
     cookieStore.delete('uid');
   } catch (error) {
     console.error('Sign out error:', error);
     // エラーが発生してもクッキーはクリアする
     const cookieStore = await cookies();
-    cookieStore.delete('access_token');
+    cookieStore.delete('access-token');
     cookieStore.delete('client');
     cookieStore.delete('uid');
   }
