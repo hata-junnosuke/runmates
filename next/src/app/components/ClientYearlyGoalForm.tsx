@@ -4,7 +4,7 @@ import { useState, useCallback, useTransition } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage, FormDescription } from '@/components/ui/form';
@@ -73,6 +73,9 @@ export default function ClientYearlyGoalForm({ currentGoal, isOpen, onClose, sho
             <DialogTitle className="text-xl font-bold text-gray-800">
               {showWelcomeMessage ? '🎯 年間目標を設定しましょう！' : '🏃‍♂️ 年間目標を変更'}
             </DialogTitle>
+            <DialogDescription>
+              {showWelcomeMessage ? '1年間の走行距離目標を設定して、長期的なモチベーションを保ちましょう。' : '現在の年間走行距離の目標を変更します。'}
+            </DialogDescription>
           </DialogHeader>
           
           {showWelcomeMessage && (

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useTransition } from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { deleteRunningRecord } from '@/app/actions/running-actions';
 
@@ -66,6 +66,9 @@ export default function RecordDetailModal({ record, isOpen, onClose }: RecordDet
             <DialogTitle className="flex items-center text-gray-800">
               🏃‍♂️ 走行記録の詳細
             </DialogTitle>
+            <DialogDescription>
+              記録の詳細情報を確認し、必要に応じて削除できます。
+            </DialogDescription>
           </DialogHeader>
           
           <div className="space-y-4">
@@ -123,6 +126,9 @@ export default function RecordDetailModal({ record, isOpen, onClose }: RecordDet
             <DialogTitle className="flex items-center text-red-600">
               ⚠️ 記録の削除
             </DialogTitle>
+            <DialogDescription>
+              この操作は取り消すことができません。本当に削除してもよろしいですか？
+            </DialogDescription>
           </DialogHeader>
           
           <div className="space-y-4">
