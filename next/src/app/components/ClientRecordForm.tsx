@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback, useTransition } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
@@ -90,6 +90,9 @@ export default function ClientRecordForm({ selectedDate, isOpen, onClose }: Clie
             <DialogTitle className="text-xl font-bold text-gray-800">
               🏃‍♂️ 新しい走行記録
             </DialogTitle>
+            <DialogDescription>
+              本日の走行距離を記録しましょう。
+            </DialogDescription>
           </DialogHeader>
           
           <Form {...form}>
