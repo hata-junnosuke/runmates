@@ -15,7 +15,7 @@ class Api::V1::Auth::SessionsController < DeviseTokenAuth::SessionsController
         sign_out(resource)
         render json: {
           success: false,
-          errors: ["メールアドレスの確認が完了していません。確認メールをご確認ください。"]
+          errors: ["メールアドレスの確認が完了していません。確認メールをご確認ください。"],
         }, status: :unauthorized
         return
       end

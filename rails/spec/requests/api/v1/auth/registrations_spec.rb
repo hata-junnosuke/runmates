@@ -18,19 +18,19 @@ RSpec.describe "Api::V1::Auth::Registrations", type: :request do
         end.to change { User.count }.by(1)
       end
 
-      it "ウェルカムメールを送信すること" do
+      it "確認メールを送信すること" do
         expect do
           post "/api/v1/auth", params: valid_params
         end.to have_enqueued_job(ActionMailer::MailDeliveryJob).
-                 with("UserMailer", "welcome_email", "deliver_now", { args: [instance_of(User)] })
+                 with("UserMailer", "confirmation_email", "deliver_now", hash_including(args: [instance_of(User), instance_of(String)]))
       end
 
-      it "認証ヘッダーが設定されること" do
+      it "認証ヘッダーが設定されないこと" do
         post "/api/v1/auth", params: valid_params
-        # DeviseTokenAuthは認証トークンをレスポンスヘッダーに設定する
-        expect(response.headers["access-token"]).to be_present
-        expect(response.headers["client"]).to be_present
-        expect(response.headers["uid"]).to be_present
+        # 確認が完了していないため、認証トークンは設定されない
+        expect(response.headers["access-token"]).to be_nil
+        expect(response.headers["client"]).to be_nil
+        expect(response.headers["uid"]).to be_nil
       end
 
       it "成功レスポンスを返すこと" do

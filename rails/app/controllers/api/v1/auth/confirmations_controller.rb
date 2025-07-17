@@ -9,17 +9,17 @@ module Api
           if @resource.errors.empty?
             # メール確認が成功したらウェルカムメールを送信
             UserMailer.welcome_email(@resource).deliver_later
-            
+
             # 確認成功のレスポンス
             render json: {
               success: true,
               message: "メールアドレスの確認が完了しました。",
-              data: @resource
+              data: @resource,
             }
           else
             render json: {
               success: false,
-              errors: @resource.errors.full_messages
+              errors: @resource.errors.full_messages,
             }, status: :unprocessable_entity
           end
         end
@@ -27,3 +27,4 @@ module Api
     end
   end
 end
+
