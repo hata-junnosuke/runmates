@@ -5,6 +5,9 @@ import type { NextRequest } from 'next/server';
 const publicPaths = [
   '/sign_in',
   '/sign_up',
+  '/forgot_password',
+  '/reset_password',
+  '/confirm_email',
 ];
 
 // 認証チェックをスキップするパス

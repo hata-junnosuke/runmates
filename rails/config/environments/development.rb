@@ -70,6 +70,9 @@ Rails.application.configure do
   config.action_mailer.default_url_options = { host: "localhost:3000" }
   config.action_mailer.delivery_method = :letter_opener_web
 
+  # Active Jobの設定
+  config.active_job.queue_adapter = :solid_queue
+
   # Docker内部通信のためのhost authorization設定
   config.hosts.clear
   config.hosts << "localhost"

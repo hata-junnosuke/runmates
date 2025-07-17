@@ -1,6 +1,7 @@
 "use client";
 import { useState, useTransition } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -101,10 +102,13 @@ export default function SignInForm() {
         >
           {isPending ? "送信中..." : "サインイン"}
         </Button>
-      <div className="text-center mt-2">
-        <a href="/sign_up" className="text-green-500 hover:underline text-sm">
+      <div className="text-center mt-2 space-y-2">
+        <Link href="/sign_up" className="text-green-500 hover:underline text-sm block">
           アカウントをお持ちでない方はこちら
-        </a>
+        </Link>
+        <Link href="/forgot_password" className="text-gray-600 hover:underline text-sm block">
+          パスワードをお忘れの方
+        </Link>
       </div>
       </form>
     </Form>
