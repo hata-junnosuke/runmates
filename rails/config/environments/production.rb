@@ -57,7 +57,8 @@ Rails.application.configure do
   # config.cache_store = :mem_cache_store
 
   # Use a real queuing backend for Active Job (and separate queues per environment).
-  # config.active_job.queue_adapter = :resque
+  config.active_job.queue_adapter = :solid_queue
+  config.solid_queue.connects_to = { database: { writing: :queue } }
   # config.active_job.queue_name_prefix = "myapp_production"
 
   config.action_mailer.perform_caching = false
@@ -65,6 +66,22 @@ Rails.application.configure do
   # Ignore bad email addresses and do not raise email delivery errors.
   # Set this to true and configure the email server for immediate delivery to raise delivery errors.
   # config.action_mailer.raise_delivery_errors = false
+
+  # 本番環境のメール設定（環境変数で設定予定）
+  config.action_mailer.default_url_options = { host: ENV.fetch("APP_HOST", "runmates.net"), protocol: "https" }
+  config.action_mailer.default_options = { from: ENV.fetch("MAIL_FROM", "noreply@runmates.net") }
+
+  # TODO: 本番環境ではSMTPまたは外部メールサービス（SendGrid/Mailgun等）を設定
+  # config.action_mailer.delivery_method = :smtp
+  # config.action_mailer.smtp_settings = {
+  #   address: ENV['SMTP_ADDRESS'],
+  #   port: ENV['SMTP_PORT'],
+  #   domain: ENV['SMTP_DOMAIN'],
+  #   user_name: ENV['SMTP_USER_NAME'],
+  #   password: ENV['SMTP_PASSWORD'],
+  #   authentication: :plain,
+  #   enable_starttls_auto: true
+  # }
 
   # Enable locale fallbacks for I18n (makes lookups for any locale fall back to
   # the I18n.default_locale when a translation cannot be found).

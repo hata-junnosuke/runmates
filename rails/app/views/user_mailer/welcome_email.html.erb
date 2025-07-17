@@ -1,0 +1,61 @@
+<div style="max-width: 600px; margin: 0 auto; font-family: Arial, sans-serif; color: #333;">
+  <div style="background-color: #f5f5f5; padding: 20px; text-align: center;">
+    <h1 style="color: #2563eb; margin: 0;"><%= @app_name %></h1>
+  </div>
+  
+  <div style="padding: 40px 20px;">
+    <h2 style="color: #1f2937; font-size: 24px; margin-bottom: 20px;">会員登録ありがとうございます！</h2>
+    
+    <p style="font-size: 16px; line-height: 1.6; margin-bottom: 20px;">
+      <%= @user.name || @user.email %>様
+    </p>
+    
+    <p style="font-size: 16px; line-height: 1.6; margin-bottom: 20px;">
+      <%= @app_name %>へようこそ！<br>
+      会員登録が完了しました。
+    </p>
+    
+    <p style="font-size: 16px; line-height: 1.6; margin-bottom: 30px;">
+      これから、あなたのランニングライフをサポートさせていただきます。<br>
+      毎日の記録を積み重ねて、目標達成を目指しましょう！
+    </p>
+    
+    <div style="background-color: #f9fafb; padding: 20px; border-radius: 8px; margin-bottom: 30px;">
+      <h3 style="color: #1f2937; font-size: 18px; margin-bottom: 15px;">はじめに設定しよう</h3>
+      <ul style="list-style: none; padding: 0; margin: 0;">
+        <li style="margin-bottom: 10px; padding-left: 20px; position: relative;">
+          <span style="position: absolute; left: 0;">✓</span>
+          月間走行距離の目標を設定
+        </li>
+        <li style="margin-bottom: 10px; padding-left: 20px; position: relative;">
+          <span style="position: absolute; left: 0;">✓</span>
+          年間走行距離の目標を設定
+        </li>
+        <li style="margin-bottom: 10px; padding-left: 20px; position: relative;">
+          <span style="position: absolute; left: 0;">✓</span>
+          今日の走行記録を登録
+        </li>
+      </ul>
+    </div>
+    
+    <div style="text-align: center; margin-bottom: 30px;">
+      <a href="<%= ENV.fetch('NEXT_PUBLIC_BASE_URL', 'http://localhost:8000') %>" 
+         style="display: inline-block; background-color: #2563eb; color: white; padding: 12px 30px; text-decoration: none; border-radius: 6px; font-size: 16px;">
+        <%= @app_name %>を始める
+      </a>
+    </div>
+    
+    <p style="font-size: 14px; color: #6b7280; line-height: 1.6;">
+      ご不明な点がございましたら、お気軽にお問い合わせください。
+    </p>
+  </div>
+  
+  <div style="background-color: #f5f5f5; padding: 20px; text-align: center; font-size: 12px; color: #6b7280;">
+    <p style="margin: 0;">
+      © <%= Date.current.year %> <%= @app_name %>. All rights reserved.
+    </p>
+    <p style="margin: 5px 0 0 0;">
+      このメールは自動送信されています。返信はできません。
+    </p>
+  </div>
+</div>
