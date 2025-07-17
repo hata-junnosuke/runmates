@@ -13,16 +13,16 @@ RSpec.describe "Api::V1::Auth::Registrations", type: :request do
 
     context "有効なパラメータの場合" do
       it "新しいユーザーを作成すること" do
-        expect do
+        expect {
           post "/api/v1/auth", params: valid_params
-        end.to change { User.count }.by(1)
+        }.to change { User.count }.by(1)
       end
 
       it "確認メールを送信すること" do
-        expect do
+        expect {
           post "/api/v1/auth", params: valid_params
-        end.to have_enqueued_job(ActionMailer::MailDeliveryJob).
-                 with("UserMailer", "confirmation_email", "deliver_now", hash_including(args: [instance_of(User), instance_of(String)]))
+        }.to have_enqueued_job(ActionMailer::MailDeliveryJob).
+               with("UserMailer", "confirmation_email", "deliver_now", hash_including(args: [instance_of(User), instance_of(String)]))
       end
 
       it "認証ヘッダーが設定されないこと" do
@@ -46,15 +46,15 @@ RSpec.describe "Api::V1::Auth::Registrations", type: :request do
       let(:invalid_params) { valid_params.merge(password_confirmation: "wrong") }
 
       it "ユーザーを作成しないこと" do
-        expect do
+        expect {
           post "/api/v1/auth", params: invalid_params
-        end.not_to change { User.count }
+        }.not_to change { User.count }
       end
 
       it "メールを送信しないこと" do
-        expect do
+        expect {
           post "/api/v1/auth", params: invalid_params
-        end.not_to have_enqueued_job(ActionMailer::MailDeliveryJob)
+        }.not_to have_enqueued_job(ActionMailer::MailDeliveryJob)
       end
 
       it "エラーレスポンスを返すこと" do

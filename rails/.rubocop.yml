@@ -8,3 +8,5 @@ inherit_from:
 
 AllCops:
   TargetRubyVersion: 3.4.3
+  Exclude:
+    - 'db/queue_schema.rb'

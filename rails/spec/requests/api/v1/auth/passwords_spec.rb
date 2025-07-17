@@ -13,10 +13,10 @@ RSpec.describe "Api::V1::Auth::Passwords", type: :request do
 
     context "存在するメールアドレスの場合" do
       it "パスワードリセットメールを送信すること" do
-        expect do
+        expect {
           post "/api/v1/auth/password", params: valid_params
-        end.to have_enqueued_job(ActionMailer::MailDeliveryJob).
-                 with("UserMailer", "password_reset", "deliver_now", { args: [user, instance_of(String)] })
+        }.to have_enqueued_job(ActionMailer::MailDeliveryJob).
+               with("UserMailer", "password_reset", "deliver_now", { args: [user, instance_of(String)] })
       end
 
       it "成功レスポンスを返すこと" do
