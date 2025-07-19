@@ -80,17 +80,7 @@ jobs:
           bundle install --jobs 4 --retry 3 --path vendor/bundle
 
       - name: Run rubocop
-        run: |
-          echo "=== Debugging RuboCop issue ==="
-          echo "Current directory: $(pwd)"
-          echo "Home directory configs:"
-          ls -la ~/ | grep rubocop || echo "No rubocop files in home"
-          echo "Current directory configs:"
-          find . -name ".rubocop*.yml" -type f
-          echo "Environment variables:"
-          env | grep -i rubocop || echo "No rubocop env vars"
-          echo "=== Running RuboCop ==="
-          bundle exec rubocop --config .rubocop.yml --debug
+        run: bundle exec rubocop
 
   # 処理③ eslint(& prettier) のルール違反がないことをチェック
   eslint:
