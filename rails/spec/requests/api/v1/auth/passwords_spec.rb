@@ -22,7 +22,7 @@ RSpec.describe "Api::V1::Auth::Passwords", type: :request do
       it "成功レスポンスを返すこと" do
         post "/api/v1/auth/password", params: valid_params
         expect(response).to have_http_status(:ok)
-        json = JSON.parse(response.body)
+        json = response.parsed_body
         expect(json["success"]).to be true
         expect(json["message"]).to include("案内")
       end
@@ -34,7 +34,7 @@ RSpec.describe "Api::V1::Auth::Passwords", type: :request do
       it "エラーレスポンスを返すこと" do
         post "/api/v1/auth/password", params: invalid_params
         expect(response).to have_http_status(:not_found)
-        json = JSON.parse(response.body)
+        json = response.parsed_body
         expect(json["success"]).to be false
       end
     end

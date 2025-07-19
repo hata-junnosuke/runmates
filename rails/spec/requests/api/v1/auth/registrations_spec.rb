@@ -36,7 +36,7 @@ RSpec.describe "Api::V1::Auth::Registrations", type: :request do
       it "成功レスポンスを返すこと" do
         post "/api/v1/auth", params: valid_params
         expect(response).to have_http_status(:ok)
-        json = JSON.parse(response.body)
+        json = response.parsed_body
         expect(json["status"]).to eq("success")
         expect(json["data"]["email"]).to eq(valid_params[:email])
       end
@@ -60,7 +60,7 @@ RSpec.describe "Api::V1::Auth::Registrations", type: :request do
       it "エラーレスポンスを返すこと" do
         post "/api/v1/auth", params: invalid_params
         expect(response).to have_http_status(:unprocessable_entity)
-        json = JSON.parse(response.body)
+        json = response.parsed_body
         expect(json["status"]).to eq("error")
       end
     end

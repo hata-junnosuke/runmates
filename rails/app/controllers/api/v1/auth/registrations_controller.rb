@@ -5,8 +5,8 @@ class Api::V1::Auth::RegistrationsController < DeviseTokenAuth::RegistrationsCon
     build_resource
 
     if @resource.blank?
-      raise DeviseTokenAuth::Errors::NoResourceDefinedError, "#{self.class.name} #build_resource does not define @resource,"\
-                                                              " execution stopped."
+      raise DeviseTokenAuth::Errors::NoResourceDefinedError, "#{self.class.name} #build_resource does not define @resource, " \
+                                                             "execution stopped."
     end
 
     # 登録フォームのパラメータを保存

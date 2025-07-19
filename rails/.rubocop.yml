@@ -1,4 +1,4 @@
-require:
+plugins:
   - rubocop-rails
 
 inherit_from:
@@ -8,5 +8,6 @@ inherit_from:
 
 AllCops:
   TargetRubyVersion: 3.4.3
+  NewCops: enable
   Exclude:
     - 'db/queue_schema.rb'
