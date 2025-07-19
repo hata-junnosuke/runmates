@@ -73,7 +73,6 @@ jobs:
         with:
           ruby-version: 3.4.3
           bundler-cache: true
-          working-directory: rails
 
       - name: Bundler and gem install
         run: |
