@@ -112,7 +112,7 @@ Metrics/PerceivedComplexity:
 
 #################### Naming ################################
 
-Naming/PredicatePrefix:
+Naming/PredicateName:
   ForbiddenPrefixes:
     - "is_"
     - "have_"
