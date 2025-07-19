@@ -73,11 +73,15 @@ jobs:
         with:
           ruby-version: 3.4.3
           bundler-cache: true
-          working-directory: rails
+
+      - name: Bundler and gem install
+        run: |
+          gem install bundler
+          bundle install --jobs 4 --retry 3 --path vendor/bundle
 
       - name: Run rubocop
         run: |
-          cd /home/runner/work/runmates/runmates/rails
+          unset RUBYOPT
           bundle exec rubocop
 
   # 処理③ eslint(& prettier) のルール違反がないことをチェック
