@@ -36,6 +36,7 @@ jobs:
           ruby-version: 3.4.3
           bundler-cache: true
           working-directory: rails
+          cache-version: v2
 
       - name: Cache node modules
         uses: actions/cache@v3
@@ -70,6 +71,7 @@ jobs:
           ruby-version: 3.4.3
           bundler-cache: true
           working-directory: rails
+          cache-version: v2
 
       - name: Run rubocop
         run: bundle exec rubocop
