@@ -35,6 +35,7 @@ jobs:
         with:
           ruby-version: 3.4.3
           bundler-cache: true
+          working-directory: rails
 
       - name: Cache node modules
         uses: actions/cache@v3
@@ -43,11 +44,6 @@ jobs:
           key: ${{ runner.os }}-node-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
             ${{ runner.os }}-node-
-
-      - name: Bundler and gem install
-        run: |
-          gem install bundler
-          bundle install --jobs 4 --retry 3 --path vendor/bundle
 
       - name: Database create and migrate
         run: |
@@ -73,11 +69,7 @@ jobs:
         with:
           ruby-version: 3.4.3
           bundler-cache: true
-
-      - name: Bundler and gem install
-        run: |
-          gem install bundler
-          bundle install --jobs 4 --retry 3 --path vendor/bundle
+          working-directory: rails
 
       - name: Run rubocop
         run: bundle exec rubocop
