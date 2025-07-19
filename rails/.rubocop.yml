@@ -11,3 +11,5 @@ AllCops:
   NewCops: enable
   Exclude:
     - 'db/queue_schema.rb'
+    - 'vendor/**/*'
+    - 'tmp/**/*'
