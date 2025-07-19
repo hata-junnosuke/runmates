@@ -16,7 +16,7 @@ RSpec.describe "Api::V1::MonthlyGoals", type: :request do
         get "/api/v1/monthly_goals", headers: headers
 
         expect(response).to have_http_status(:ok)
-        json = JSON.parse(response.body)
+        json = response.parsed_body
         expect(json.length).to eq(3)
         expect(json[0]["year"]).to eq(2024)
         expect(json[0]["month"]).to eq(6)
@@ -39,7 +39,7 @@ RSpec.describe "Api::V1::MonthlyGoals", type: :request do
         get "/api/v1/monthly_goals/#{monthly_goal.id}", headers: headers
 
         expect(response).to have_http_status(:ok)
-        json = JSON.parse(response.body)
+        json = response.parsed_body
         expect(json["id"]).to eq(monthly_goal.id)
         expect(json["distance_goal"]).to eq(monthly_goal.distance_goal.to_s)
       end
@@ -80,7 +80,7 @@ RSpec.describe "Api::V1::MonthlyGoals", type: :request do
           }.to change { MonthlyGoal.count }.by(1)
 
           expect(response).to have_http_status(:created)
-          json = JSON.parse(response.body)
+          json = response.parsed_body
           expect(json["distance_goal"]).to eq("100.0")
         end
       end
@@ -100,7 +100,7 @@ RSpec.describe "Api::V1::MonthlyGoals", type: :request do
           post "/api/v1/monthly_goals", params: invalid_params, headers: headers
 
           expect(response).to have_http_status(:unprocessable_entity)
-          json = JSON.parse(response.body)
+          json = response.parsed_body
           expect(json["errors"]).to be_present
         end
       end
@@ -114,7 +114,7 @@ RSpec.describe "Api::V1::MonthlyGoals", type: :request do
           post "/api/v1/monthly_goals", params: valid_params, headers: headers
 
           expect(response).to have_http_status(:unprocessable_entity)
-          json = JSON.parse(response.body)
+          json = response.parsed_body
           expect(json["errors"]["user_id"]).to be_present
         end
       end
@@ -164,7 +164,7 @@ RSpec.describe "Api::V1::MonthlyGoals", type: :request do
                 params: invalid_params, headers: headers
 
           expect(response).to have_http_status(:unprocessable_entity)
-          json = JSON.parse(response.body)
+          json = response.parsed_body
           expect(json["errors"]).to be_present
         end
       end

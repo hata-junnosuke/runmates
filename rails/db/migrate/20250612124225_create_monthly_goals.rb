@@ -8,7 +8,7 @@ class CreateMonthlyGoals < ActiveRecord::Migration[8.0]
 
       t.timestamps
     end
-    
+
     add_index :monthly_goals, [:user_id, :year, :month], unique: true
   end
 end

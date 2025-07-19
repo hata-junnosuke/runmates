@@ -16,7 +16,7 @@ RSpec.describe "Api::V1::YearlyGoals", type: :request do
         get "/api/v1/yearly_goals", headers: headers
 
         expect(response).to have_http_status(:ok)
-        json = JSON.parse(response.body)
+        json = response.parsed_body
         expect(json.length).to eq(3)
         expect(json[0]["year"]).to eq(2024)
         expect(json[1]["year"]).to eq(2023)
@@ -40,7 +40,7 @@ RSpec.describe "Api::V1::YearlyGoals", type: :request do
         get "/api/v1/yearly_goals/#{yearly_goal.id}", headers: headers
 
         expect(response).to have_http_status(:ok)
-        json = JSON.parse(response.body)
+        json = response.parsed_body
         expect(json["id"]).to eq(yearly_goal.id)
         expect(json["distance_goal"]).to eq(yearly_goal.distance_goal.to_s)
       end
@@ -80,7 +80,7 @@ RSpec.describe "Api::V1::YearlyGoals", type: :request do
           }.to change { YearlyGoal.count }.by(1)
 
           expect(response).to have_http_status(:created)
-          json = JSON.parse(response.body)
+          json = response.parsed_body
           expect(json["distance_goal"]).to eq("1200.0")
         end
       end
@@ -99,7 +99,7 @@ RSpec.describe "Api::V1::YearlyGoals", type: :request do
           post "/api/v1/yearly_goals", params: invalid_params, headers: headers
 
           expect(response).to have_http_status(:unprocessable_entity)
-          json = JSON.parse(response.body)
+          json = response.parsed_body
           expect(json["errors"]).to be_present
         end
       end
@@ -113,7 +113,7 @@ RSpec.describe "Api::V1::YearlyGoals", type: :request do
           post "/api/v1/yearly_goals", params: valid_params, headers: headers
 
           expect(response).to have_http_status(:unprocessable_entity)
-          json = JSON.parse(response.body)
+          json = response.parsed_body
           expect(json["errors"]["user_id"]).to be_present
         end
       end
@@ -163,7 +163,7 @@ RSpec.describe "Api::V1::YearlyGoals", type: :request do
                 params: invalid_params, headers: headers
 
           expect(response).to have_http_status(:unprocessable_entity)
-          json = JSON.parse(response.body)
+          json = response.parsed_body
           expect(json["errors"]).to be_present
         end
       end

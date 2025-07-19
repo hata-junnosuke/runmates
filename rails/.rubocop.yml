@@ -13,3 +13,19 @@ AllCops:
     - 'db/queue_schema.rb'
     - 'vendor/**/*'
     - 'tmp/**/*'
+
+# データベース関連とconfig設定ファイルは除外
+Metrics/BlockLength:
+  Exclude:
+    - 'db/schema.rb'
+    - 'config/environments/*.rb'
+
+# マイグレーションファイルは既存のDeviseTokenAuthで修正不可
+Rails/ThreeStateBooleanColumn:
+  Exclude:
+    - 'db/migrate/*.rb'
+    - 'db/schema.rb'
+
+Rails/ReversibleMigration:
+  Exclude:
+    - 'db/migrate/*.rb'

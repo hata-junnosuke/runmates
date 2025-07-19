@@ -14,7 +14,7 @@ RSpec.describe "Api::V1::RunningRecords", type: :request do
         get "/api/v1/running_records", headers: headers
 
         expect(response).to have_http_status(:ok)
-        json = JSON.parse(response.body)
+        json = response.parsed_body
         expect(json.length).to eq(3)
       end
 
@@ -23,7 +23,7 @@ RSpec.describe "Api::V1::RunningRecords", type: :request do
         get "/api/v1/running_records", headers: headers
 
         expect(response).to have_http_status(:ok)
-        json = JSON.parse(response.body)
+        json = response.parsed_body
         expect(json.length).to eq(50)
       end
     end
@@ -44,7 +44,7 @@ RSpec.describe "Api::V1::RunningRecords", type: :request do
         get "/api/v1/running_records/#{running_record.id}", headers: headers
 
         expect(response).to have_http_status(:ok)
-        json = JSON.parse(response.body)
+        json = response.parsed_body
         expect(json["id"]).to eq(running_record.id)
         expect(json["distance"]).to eq(running_record.distance.to_s)
       end
@@ -86,7 +86,7 @@ RSpec.describe "Api::V1::RunningRecords", type: :request do
           }.to change { RunningRecord.count }.by(1)
 
           expect(response).to have_http_status(:created)
-          json = JSON.parse(response.body)
+          json = response.parsed_body
           expect(json["distance"]).to eq("5.0")
         end
 
@@ -129,7 +129,7 @@ RSpec.describe "Api::V1::RunningRecords", type: :request do
           post "/api/v1/running_records", params: invalid_params, headers: headers
 
           expect(response).to have_http_status(:unprocessable_entity)
-          json = JSON.parse(response.body)
+          json = response.parsed_body
           expect(json["errors"]).to be_present
         end
       end
@@ -179,7 +179,7 @@ RSpec.describe "Api::V1::RunningRecords", type: :request do
                 params: invalid_params, headers: headers
 
           expect(response).to have_http_status(:unprocessable_entity)
-          json = JSON.parse(response.body)
+          json = response.parsed_body
           expect(json["errors"]).to be_present
         end
       end
