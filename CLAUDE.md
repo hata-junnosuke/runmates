@@ -2,6 +2,26 @@
 必ず日本語で回答してください。
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## ⚠️ 重要: コマンド実行規則
+
+**すべてのRailsおよびNext.jsコマンドは必ずDockerコンテナ内で実行してください。**
+
+❌ **間違った例（絶対に実行しない）:**
+- `bundle exec rubocop`
+- `rails console`
+- `npm run dev`
+- `rspec`
+- `rails db:migrate`
+
+✅ **正しい例（必ずこの形式で実行）:**
+- `docker-compose exec rails bundle exec rubocop`
+- `docker-compose exec rails rails console`
+- `docker-compose exec next npm run dev`
+- `docker-compose exec rails bundle exec rspec`
+- `docker-compose exec rails rails db:migrate`
+
+**Claudeへの指示: 例外なく、すべてのコマンドは`docker-compose exec`を通じて実行すること。**
+
 ## Architecture Overview
 
 This is a full-stack "Runmates" running management application with a Rails API backend and Next.js frontend, containerized with Docker. The system provides comprehensive running record tracking, goal setting, and data visualization features.
@@ -299,5 +319,17 @@ docker-compose exec next npm run format
 
 #### Database & Migrations
 - Ensure proper database constraints are applied via migrations
-- Use `rails db:migrate` after pulling new migration files
+- Use `docker-compose exec rails rails db:migrate` after pulling new migration files
 - Check `rails/db/schema.rb` for current database structure
+
+### Claude専用: コマンド実行ルール
+
+1. **絶対にローカルでRailsやNode.jsコマンドを実行しない**
+2. **すべてのコマンドは`docker-compose exec`経由で実行する**
+3. **例外なし - テスト、リント、マイグレーション、すべてDockerコンテナ内で実行**
+4. **ローカル環境にRubyやNode.jsがインストールされていないことを前提とする**
+
+**コマンド実行時の思考プロセス:**
+- まず「このコマンドはRailsかNext.js関連か？」を確認
+- 関連する場合は必ず`docker-compose exec [service]`を前置
+- serviceは`rails`または`next`を使用
