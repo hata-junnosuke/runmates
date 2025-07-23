@@ -29,3 +29,8 @@ Rails/ThreeStateBooleanColumn:
 Rails/ReversibleMigration:
   Exclude:
     - 'db/migrate/*.rb'
+
+# Rakeタスクでの標準出力は許可
+Rails/Output:
+  Exclude:
+    - 'lib/tasks/**/*'
