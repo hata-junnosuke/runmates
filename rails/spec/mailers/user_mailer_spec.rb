@@ -15,7 +15,7 @@ RSpec.describe UserMailer, type: :mailer do
     end
 
     it "正しい送信元からメールを送信すること" do
-      expect(mail.from).to eq(["no-replay@example.com"])
+      expect(mail.from).to eq(["no-reply@example.com"])
     end
 
     it "ユーザー名を含むこと" do
@@ -48,7 +48,7 @@ RSpec.describe UserMailer, type: :mailer do
     end
 
     it "正しい送信元からメールを送信すること" do
-      expect(mail.from).to eq(["no-replay@example.com"])
+      expect(mail.from).to eq(["no-reply@example.com"])
     end
 
     it "ユーザー名を含むこと" do
