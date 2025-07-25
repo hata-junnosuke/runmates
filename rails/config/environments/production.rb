@@ -68,32 +68,18 @@ Rails.application.configure do
   # config.action_mailer.raise_delivery_errors = false
 
   # 本番環境のメール設定
-  config.action_mailer.default_url_options = { host: ENV.fetch("APP_HOST", "runmates.net"), protocol: "https" }
-  config.action_mailer.default_options = { from: ENV.fetch("MAIL_FROM", "noreply@runmates.net") }
+  config.action_mailer.default_url_options = { host: "runmates.net", protocol: "https" }
+  config.action_mailer.default_options = { from: "noreply@runmates.net" }
 
   # AWS SES設定
-  if ENV["AWS_SES_ENABLED"] == "true"
-    config.action_mailer.delivery_method = :ses_v2
-    config.action_mailer.ses_v2_settings = {
-      credentials: Aws::Credentials.new(
-        ENV.fetch("AWS_ACCESS_KEY_ID"),
-        ENV.fetch("AWS_SECRET_ACCESS_KEY"),
-      ),
-      region: ENV.fetch("AWS_REGION", "ap-northeast-1"),
-    }
-  else
-    # SESが無効な場合はSMTP設定にフォールバック
-    config.action_mailer.delivery_method = :smtp
-    config.action_mailer.smtp_settings = {
-      address: ENV.fetch("SMTP_ADDRESS", nil),
-      port: ENV.fetch("SMTP_PORT", nil),
-      domain: ENV.fetch("SMTP_DOMAIN", nil),
-      user_name: ENV.fetch("SMTP_USER_NAME", nil),
-      password: ENV.fetch("SMTP_PASSWORD", nil),
-      authentication: :plain,
-      enable_starttls_auto: true,
-    }
-  end
+  config.action_mailer.delivery_method = :ses_v2
+  config.action_mailer.ses_v2_settings = {
+    credentials: Aws::Credentials.new(
+      ENV.fetch("AWS_ACCESS_KEY_ID"),
+      ENV.fetch("AWS_SECRET_ACCESS_KEY"),
+    ),
+    region: "ap-northeast-1",
+  }
 
   # Enable locale fallbacks for I18n (makes lookups for any locale fall back to
   # the I18n.default_locale when a translation cannot be found).
