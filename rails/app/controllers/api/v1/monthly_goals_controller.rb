@@ -41,6 +41,6 @@ class Api::V1::MonthlyGoalsController < Api::V1::BaseController
     end
 
     def monthly_goal_params
-      params.require(:monthly_goal).permit(:year, :month, :distance_goal)
+      params.expect(monthly_goal: [:year, :month, :distance_goal])
     end
 end

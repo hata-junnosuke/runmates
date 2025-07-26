@@ -35,6 +35,6 @@ class Api::V1::CurrentYearlyGoalController < Api::V1::BaseController
   private
 
     def yearly_goal_params
-      params.require(:yearly_goal).permit(:year, :distance_goal)
+      params.expect(yearly_goal: [:year, :distance_goal])
     end
 end

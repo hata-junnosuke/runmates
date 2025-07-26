@@ -41,6 +41,6 @@ class Api::V1::RunningRecordsController < Api::V1::BaseController
     end
 
     def running_record_params
-      params.require(:running_record).permit(:date, :distance)
+      params.expect(running_record: [:date, :distance])
     end
 end

@@ -1,4 +1,4 @@
-require:
+plugins:
   - rubocop-rails
 
 inherit_from:
@@ -8,3 +8,29 @@ inherit_from:
 
 AllCops:
   TargetRubyVersion: 3.4.3
+  NewCops: enable
+  Exclude:
+    - 'db/queue_schema.rb'
+    - 'vendor/**/*'
+    - 'tmp/**/*'
+
+# データベース関連とconfig設定ファイルは除外
+Metrics/BlockLength:
+  Exclude:
+    - 'db/schema.rb'
+    - 'config/environments/*.rb'
+
+# マイグレーションファイルは既存のDeviseTokenAuthで修正不可
+Rails/ThreeStateBooleanColumn:
+  Exclude:
+    - 'db/migrate/*.rb'
+    - 'db/schema.rb'
+
+Rails/ReversibleMigration:
+  Exclude:
+    - 'db/migrate/*.rb'
+
+# Rakeタスクでの標準出力は許可
+Rails/Output:
+  Exclude:
+    - 'lib/tasks/**/*'

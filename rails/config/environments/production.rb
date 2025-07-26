@@ -42,7 +42,7 @@ Rails.application.configure do
 
   # Log to STDOUT by default
   config.logger = ActiveSupport::Logger.new($stdout).
-                    tap  {|logger| logger.formatter = ::Logger::Formatter.new }.
+                    tap  {|logger| logger.formatter = Logger::Formatter.new }.
                     then {|logger| ActiveSupport::TaggedLogging.new(logger) }
 
   # Prepend all log lines with the following tags.
@@ -57,7 +57,8 @@ Rails.application.configure do
   # config.cache_store = :mem_cache_store
 
   # Use a real queuing backend for Active Job (and separate queues per environment).
-  # config.active_job.queue_adapter = :resque
+  config.active_job.queue_adapter = :solid_queue
+  config.solid_queue.connects_to = { database: { writing: :queue } }
   # config.active_job.queue_name_prefix = "myapp_production"
 
   config.action_mailer.perform_caching = false
@@ -65,6 +66,20 @@ Rails.application.configure do
   # Ignore bad email addresses and do not raise email delivery errors.
   # Set this to true and configure the email server for immediate delivery to raise delivery errors.
   # config.action_mailer.raise_delivery_errors = false
+
+  # 本番環境のメール設定
+  config.action_mailer.default_url_options = { host: "runmates.net", protocol: "https" }
+  config.action_mailer.default_options = { from: "noreply@runmates.net" }
+
+  # AWS SES設定
+  config.action_mailer.delivery_method = :ses_v2
+  config.action_mailer.ses_v2_settings = {
+    credentials: Aws::Credentials.new(
+      ENV.fetch("AWS_ACCESS_KEY_ID"),
+      ENV.fetch("AWS_SECRET_ACCESS_KEY"),
+    ),
+    region: "ap-northeast-1",
+  }
 
   # Enable locale fallbacks for I18n (makes lookups for any locale fall back to
   # the I18n.default_locale when a translation cannot be found).

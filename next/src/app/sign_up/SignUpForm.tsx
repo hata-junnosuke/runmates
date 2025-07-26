@@ -49,9 +49,10 @@ export default function SignUpForm() {
 
       if (result.success) {
         setSuccess(
-          result.message || "登録が完了しました。メールを確認してください。"
+          "確認メールを送信しました。メールを確認してアカウントを有効化してください。"
         );
-        setTimeout(() => router.push("/sign_in"), 2000);
+        // サインインページへのリダイレクトを遅延
+        setTimeout(() => router.push("/sign_in"), 5000);
       } else {
         setError(result.error || "登録に失敗しました");
       }

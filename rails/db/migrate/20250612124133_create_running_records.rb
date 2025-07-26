@@ -7,7 +7,7 @@ class CreateRunningRecords < ActiveRecord::Migration[8.0]
 
       t.timestamps
     end
-    
+
     add_index :running_records, [:user_id, :date], unique: true
     add_index :running_records, :date
   end
