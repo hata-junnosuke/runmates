@@ -34,7 +34,22 @@ RSpec.describe "Api::V1::Current::Users", type: :request do
 
     context "認証済みの場合" do
       context "正しいパスワードが提供された場合" do
-        it "ユーザーアカウントと関連データが削除される" do
+        it "ユーザーアカウントが削除される" do
+          # current_userが作成されることを確実にする
+          expect(User.exists?(current_user.id)).to be true
+
+          expect {
+            delete api_v1_current_user_path,
+                   params: { password: "password123" },
+                   headers: headers
+          }.to change { User.count }.by(-1)
+
+          expect(response).to have_http_status(:ok)
+          res = response.parsed_body
+          expect(res["message"]).to eq("アカウントが正常に削除されました")
+        end
+
+        it "関連データも削除される" do
           # 関連データを作成
           create(:running_record, user: current_user)
           create(:monthly_goal, user: current_user)
@@ -44,24 +59,20 @@ RSpec.describe "Api::V1::Current::Users", type: :request do
             delete api_v1_current_user_path,
                    params: { password: "password123" },
                    headers: headers
-          }.to change(User, :count).by(-1).
-                 and change(RunningRecord, :count).by(-1).
-                       and change(MonthlyGoal, :count).by(-1).
-                             and change(YearlyGoal, :count).by(-1)
-
-          expect(response).to have_http_status(:ok)
-          res = response.parsed_body
-          expect(res["message"]).to eq("アカウントが正常に削除されました")
+          }.to change { RunningRecord.count }.by(-1).
+                 and change { MonthlyGoal.count }.by(-1).
+                       and change { YearlyGoal.count }.by(-1)
         end
 
         it "削除プロセスがログに記録される" do
           allow(Rails.logger).to receive(:info)
-          expect(Rails.logger).to receive(:info).with(/User deletion initiated/)
-          expect(Rails.logger).to receive(:info).with(/User deletion completed/)
 
           delete api_v1_current_user_path,
                  params: { password: "password123" },
                  headers: headers
+
+          expect(Rails.logger).to have_received(:info).with(/User deletion initiated/)
+          expect(Rails.logger).to have_received(:info).with(/User deletion completed/)
         end
       end
 
@@ -96,17 +107,17 @@ RSpec.describe "Api::V1::Current::Users", type: :request do
 
           allow_any_instance_of(User).to receive(:destroy!).and_raise(StandardError, "Deletion failed")
           allow(Rails.logger).to receive(:error)
-          expect(Rails.logger).to receive(:error).with(/User deletion failed/)
 
           expect {
             delete api_v1_current_user_path,
                    params: { password: "password123" },
                    headers: headers
-          }.not_to change(User, :count)
+          }.not_to change { User.count }
 
           expect(response).to have_http_status(:unprocessable_entity)
           res = response.parsed_body
           expect(res["errors"]).to include("アカウントの削除に失敗しました")
+          expect(Rails.logger).to have_received(:error).with(/User deletion failed/)
         end
       end
     end
