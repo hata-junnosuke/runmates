@@ -1,5 +1,5 @@
 import { getAuthStatus } from "@/lib/server-auth";
-import LogoutButton from "./components/LogoutButton";
+import HeaderNav from "./components/HeaderNav";
 import ServerRunningDashboard from "./components/ServerRunningDashboard";
 
 export default async function HomePage() {
@@ -13,7 +13,7 @@ export default async function HomePage() {
             <h1 className="text-3xl font-bold text-green-700">
               🏃‍♂️ Runmates
             </h1>
-            {isAuthenticated && <LogoutButton />}
+            {isAuthenticated && <HeaderNav />}
           </div>
           {isAuthenticated ? (
             <ServerRunningDashboard />

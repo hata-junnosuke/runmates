@@ -1,5 +1,5 @@
 import { Suspense } from 'react';
-import { serverRunningRecordsAPI, serverMonthlyGoalsAPI, serverYearlyGoalsAPI } from '../../lib/server-api';
+import { runningRecordsAPI, monthlyGoalsAPI, yearlyGoalsAPI, type RunRecord, type MonthlyGoal } from '../../lib/api';
 import DashboardWithCalendar from './DashboardWithCalendar';
 import DashboardStatistics from './DashboardStatistics';
 import RecentRecords from './RecentRecords';
@@ -7,13 +7,20 @@ import RecentRecords from './RecentRecords';
 // データ取得コンポーネント
 async function DashboardData() {
   try {
-    const [records, statistics, monthlyGoal, yearlyGoal, monthlyGoals] = await Promise.all([
-      serverRunningRecordsAPI.getAll(),
-      serverRunningRecordsAPI.getStatistics(),
-      serverMonthlyGoalsAPI.getCurrent().catch(() => null),
-      serverYearlyGoalsAPI.getCurrent().catch(() => null),
-      serverMonthlyGoalsAPI.getAll().catch(() => [])
+    const [recordsResult, statisticsResult, monthlyGoalResult, yearlyGoalResult, monthlyGoalsResult] = await Promise.all([
+      runningRecordsAPI.getAll(),
+      runningRecordsAPI.getStatistics(),
+      monthlyGoalsAPI.getCurrent(),
+      yearlyGoalsAPI.getCurrent(),
+      monthlyGoalsAPI.getAll()
     ]);
+
+    // 成功したデータのみ取得
+    const records: RunRecord[] = recordsResult.success ? recordsResult.data : [];
+    const statistics = statisticsResult.success ? statisticsResult.data : null;
+    const monthlyGoal = monthlyGoalResult.success ? monthlyGoalResult.data : null;
+    const yearlyGoal = yearlyGoalResult.success ? yearlyGoalResult.data : null;
+    const monthlyGoals: MonthlyGoal[] = monthlyGoalsResult.success ? monthlyGoalsResult.data : [];
 
     const thisYearDistance = Number(statistics?.this_year_distance || 0);
     const thisMonthDistance = Number(statistics?.this_month_distance || 0);

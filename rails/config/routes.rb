@@ -11,7 +11,7 @@ Rails.application.routes.draw do
       }
 
       namespace :current do
-        resource :user, only: [:show]
+        resource :user, only: [:show, :destroy]
       end
 
       resources :running_records
