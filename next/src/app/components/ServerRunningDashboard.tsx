@@ -63,7 +63,7 @@ async function DashboardData() {
         />
 
         {/* 最近の記録 - Server Component */}
-        <RecentRecords statistics={statistics} />
+        {statistics && <RecentRecords statistics={statistics} />}
       </div>
     );
   } catch (error) {
