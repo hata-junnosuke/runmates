@@ -334,6 +334,26 @@ docker-compose exec next npm run format
 - 関連する場合は必ず`docker-compose exec [service]`を前置
 - serviceは`rails`または`next`を使用
 
+### GitHub CLI設定（永続化）
+
+**重要**: GitHub CLIを使用する際は、以下の設定が必要です：
+
+```bash
+# GH_TOKEN環境変数を無効化（keyring認証を使用）
+unset GH_TOKEN
+
+# 認証の確認
+gh auth status
+
+# PRの作成例
+gh pr create --title "タイトル" --body "本文"
+```
+
+**注意**: 
+- GH_TOKEN環境変数が設定されていると認証エラーになります
+- ~/.bashrc と ~/.zshrc に `unset GH_TOKEN` が追加済み
+- keyring認証（hata-junnosuke）を使用してください
+
 ### Claude専用: トークン使用量削減ガイドライン
 
 **⚠️ CRITICAL: トークン使用量を最小限に抑えるため、以下のガイドラインを厳守してください:**
