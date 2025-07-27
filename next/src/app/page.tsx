@@ -1,10 +1,7 @@
-import { getAuthStatus } from "@/lib/server-auth";
-import LogoutButton from "./components/LogoutButton";
+import HeaderNav from "./components/HeaderNav";
 import ServerRunningDashboard from "./components/ServerRunningDashboard";
 
 export default async function HomePage() {
-  const isAuthenticated = await getAuthStatus();
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-100 to-blue-200">
       <div className="container mx-auto px-4 py-8">
@@ -13,15 +10,9 @@ export default async function HomePage() {
             <h1 className="text-3xl font-bold text-green-700">
               🏃‍♂️ Runmates
             </h1>
-            {isAuthenticated && <LogoutButton />}
+            <HeaderNav />
           </div>
-          {isAuthenticated ? (
-            <ServerRunningDashboard />
-          ) : (
-            <div className="text-center">
-              <p className="text-gray-600 text-lg">ログインしてランニングを記録しましょう！</p>
-            </div>
-          )}
+          <ServerRunningDashboard />
         </div>
       </div>
     </div>
