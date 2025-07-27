@@ -87,7 +87,7 @@ export default function DeleteAccountForm() {
           <Checkbox
             id="confirm"
             checked={isConfirmed}
-            onCheckedChange={(checked: boolean) => setIsConfirmed(checked)}
+            onCheckedChange={(checked) => setIsConfirmed(checked === true)}
             disabled={isDeleting}
           />
           <label

@@ -1,5 +1,3 @@
-'use client';
-
 import Link from 'next/link';
 import { Settings } from 'lucide-react';
 import LogoutButton from './LogoutButton';
