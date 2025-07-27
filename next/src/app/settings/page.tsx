@@ -1,15 +1,7 @@
 import Link from 'next/link';
-import { redirect } from 'next/navigation';
-import { getAuthStatus } from '@/lib/server-auth';
 import { ChevronRight, User, Trash2 } from 'lucide-react';
 
 export default async function SettingsPage() {
-  const isAuthenticated = await getAuthStatus();
-
-  if (!isAuthenticated) {
-    redirect('/sign_in');
-  }
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-100 to-blue-200">
       <div className="container mx-auto px-4 py-8">
