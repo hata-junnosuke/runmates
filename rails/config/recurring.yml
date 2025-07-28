@@ -1,3 +1,5 @@
+# config/recurring.yml で定期実行ジョブを設定できます
+# 詳細は https://github.com/rails/solid_queue
 # examples:
 #   periodic_cleanup:
 #     class: CleanSoftDeletedRecordsJob
