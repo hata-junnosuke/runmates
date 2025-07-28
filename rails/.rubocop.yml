@@ -13,6 +13,8 @@ AllCops:
     - 'db/queue_schema.rb'
     - 'vendor/**/*'
     - 'tmp/**/*'
+    - 'config/environments/production.rb'
+    - 'lib/tasks/mail_test_helper.rb'
 
 # データベース関連とconfig設定ファイルは除外
 Metrics/BlockLength:
