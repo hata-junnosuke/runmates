@@ -21,8 +21,8 @@ RSpec.describe "Api::V1::Auth::Registrations", type: :request do
       it "確認メールを送信すること" do
         expect {
           post "/api/v1/auth", params: valid_params
-        }.to have_enqueued_job(ActionMailer::MailDeliveryJob).
-               with("UserMailer", "confirmation_email", "deliver_now", hash_including(args: [instance_of(User), instance_of(String)]))
+        }.to have_enqueued_job(UserMailerJob).
+               with("confirmation_email", instance_of(User), instance_of(String))
       end
 
       it "認証ヘッダーが設定されないこと" do

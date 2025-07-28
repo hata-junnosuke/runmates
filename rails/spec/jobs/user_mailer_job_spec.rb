@@ -13,7 +13,7 @@ RSpec.describe UserMailerJob, type: :job do
         # and_call_original: モックしつつ、実際のメソッドも実行する
         # これにより、実際のMessageDeliveryオブジェクトが生成される
         expect(UserMailer).to receive(:welcome_email).with(user).and_call_original
-        
+
         # ActionMailer::MessageDeliveryは、メール送信を遅延実行するためのラッパークラス
         # expect_any_instance_of: 実行時に生成される任意のインスタンスに対する期待値を設定
         # deliver_nowメソッドが呼ばれることで、実際にメールが送信される
@@ -76,7 +76,7 @@ RSpec.describe UserMailerJob, type: :job do
       # perform_laterでジョブがキューに追加されることを検証
       expect {
         UserMailerJob.perform_later("welcome_email", user)
-      }.to have_enqueued_job(UserMailerJob).      # UserMailerJobがエンキューされる
+      }.to have_enqueued_job(UserMailerJob). # UserMailerJobがエンキューされる
              with("welcome_email", user).          # 引数が正しい
              on_queue("mailers")                   # mailersキューに追加される
     end
