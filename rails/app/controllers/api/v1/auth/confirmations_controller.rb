@@ -8,7 +8,7 @@ module Api
 
           if @resource.errors.empty?
             # メール確認が成功したらウェルカムメールを送信
-            UserMailer.welcome_email(@resource).deliver_later
+            UserMailerJob.perform_later("welcome_email", @resource)
 
             # 確認成功のレスポンス
             render json: {

@@ -14,13 +14,13 @@ class User < ApplicationRecord
   # DeviseのパスワードリセットメールをオーバーライドしてカスタムMailerを使用
   def send_reset_password_instructions(opts = {})
     token = set_reset_password_token
-    UserMailer.password_reset(self, token).deliver_later
+    UserMailerJob.perform_later("password_reset", self, token)
     token
   end
 
   # Deviseの確認メールをオーバーライドしてカスタムMailerを使用
   def send_confirmation_instructions
     generate_confirmation_token! unless @raw_confirmation_token
-    UserMailer.confirmation_email(self, @raw_confirmation_token).deliver_later
+    UserMailerJob.perform_later("confirmation_email", self, @raw_confirmation_token)
   end
 end

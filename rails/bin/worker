@@ -1,0 +1,12 @@
+#!/usr/bin/env ruby
+require_relative "../config/boot"
+require "rake"
+
+# Load Rails application
+require_relative "../config/application"
+
+# Load Rake tasks
+Rails.application.load_tasks
+
+# Start SolidQueue worker
+Rake::Task["solid_queue:start"].invoke
