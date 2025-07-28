@@ -25,7 +25,7 @@ module MailTestHelper
   def self.print_aws_config
     puts "\n=== AWS SES Configuration ==="
     puts "AWS Region: ap-northeast-1"
-    puts "AWS Access Key ID: #{ENV["AWS_ACCESS_KEY_ID"].present? ? "***#{ENV["AWS_ACCESS_KEY_ID"].last(4)}" : "NOT SET"}"
-    puts "AWS Secret Access Key: #{ENV["AWS_SECRET_ACCESS_KEY"].present? ? "***SET***" : "NOT SET"}"
+    puts "AWS Access Key ID: #{${{ secrets.AWS_ACCESS_KEY_ID }}.present? ? "***#{${{ secrets.AWS_ACCESS_KEY_ID }}.last(4)}" : "NOT SET"}"
+    puts "AWS Secret Access Key: #{${{ secrets.AWS_SECRET_ACCESS_KEY }}.present? ? "***SET***" : "NOT SET"}"
   end
 end
