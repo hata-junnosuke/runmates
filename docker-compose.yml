@@ -24,6 +24,19 @@ services:
       - db
     tty: true
     stdin_open: true
+  
+  # SolidQueueワーカーコンテナ
+  worker:
+    build:
+      context: ./rails
+    command: bundle exec rake solid_queue:start
+    volumes:
+      - ./rails:/myapp
+    depends_on:
+      - db
+      - rails
+    environment:
+      - RAILS_ENV=development
   next:
     build:
       context: ./next
