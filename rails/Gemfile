@@ -51,7 +51,7 @@ gem "rack-cors"
 gem "solid_queue"
 
 # AWS SES for email delivery in production
-gem "aws-sdk-rails", "~> 4.0"
+gem "aws-sdk-rails", "~> 5.0"
 
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
