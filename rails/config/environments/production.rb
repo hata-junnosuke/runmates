@@ -73,13 +73,9 @@ Rails.application.configure do
   config.action_mailer.default_url_options = { host: "runmates.net", protocol: "https" }
   config.action_mailer.default_options = { from: "noreply@runmates.net" }
 
-  # AWS SES設定
+  # AWS SES v2設定
   config.action_mailer.delivery_method = :ses_v2
   config.action_mailer.ses_v2_settings = {
-    credentials: Aws::Credentials.new(
-      "${{ secrets.AWS_ACCESS_KEY_ID }}",
-      "${{ secrets.AWS_SECRET_ACCESS_KEY }}",
-    ),
     region: "ap-northeast-1",
   }
 
