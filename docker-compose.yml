@@ -37,6 +37,8 @@ services:
       - rails
     environment:
       - RAILS_ENV=development
+    # entrypoint.shで初期化処理を実行
+    entrypoint: ["/usr/bin/entrypoint.sh"]
   next:
     build:
       context: ./next
