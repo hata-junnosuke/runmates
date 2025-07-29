@@ -51,6 +51,7 @@ gem "rack-cors"
 gem "solid_queue"
 
 # AWS SES for email delivery in production
+gem "aws-sdk-rails", "~> 4.0"
 gem "aws-sdk-sesv2", "~> 1.0"
 
 group :development, :test do
