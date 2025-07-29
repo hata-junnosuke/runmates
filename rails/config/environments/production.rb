@@ -74,10 +74,8 @@ Rails.application.configure do
   config.action_mailer.default_options = { from: "noreply@runmates.net" }
 
   # AWS SES v2設定
+  # カスタムデリバリーメソッドを使用（config/initializers/aws_ses.rb で定義）
   config.action_mailer.delivery_method = :ses_v2
-  config.action_mailer.ses_v2_settings = {
-    region: "ap-northeast-1",
-  }
 
   # Enable locale fallbacks for I18n (makes lookups for any locale fall back to
   # the I18n.default_locale when a translation cannot be found).
