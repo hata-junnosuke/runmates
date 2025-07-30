@@ -72,6 +72,7 @@ Rails.application.configure do
 
   # Active Jobの設定
   config.active_job.queue_adapter = :solid_queue
+  config.solid_queue.connects_to = { database: { writing: :queue } }
 
   # Docker内部通信のためのhost authorization設定
   config.hosts.clear

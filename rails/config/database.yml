@@ -6,10 +6,17 @@ default: &default
   port: 3306
 
 development:
-  <<: *default
-  host: db
-  database: myapp_development
-  password: password
+  primary:
+    <<: *default
+    host: db
+    database: myapp_development
+    password: password
+  queue:
+    <<: *default
+    host: db
+    database: myapp_development
+    password: password
+    migrations_paths: db/queue_migrate
 
 test:
   <<: *default
