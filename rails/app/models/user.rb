@@ -5,7 +5,7 @@ class User < ApplicationRecord
   # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :validatable
-        #  , :confirmable
+  #  , :confirmable
   include DeviseTokenAuth::Concerns::User
 
   has_many :running_records, dependent: :destroy
