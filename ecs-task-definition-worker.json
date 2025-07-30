@@ -10,6 +10,7 @@
     {
       "name": "worker",
       "image": "YOUR_ECR_URI/runmates-rails:latest",
+      "entryPoint": ["entrypoint.worker.prod.sh"],
       "command": ["bundle", "exec", "rake", "solid_queue:start"],
       "essential": true,
       "environment": [
