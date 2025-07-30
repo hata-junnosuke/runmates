@@ -25,5 +25,10 @@ VOLUME /myapp/tmp
 # Add a script to be executed every time the container starts.
 COPY entrypoint.prod.sh /usr/bin/
 RUN chmod +x /usr/bin/entrypoint.prod.sh
+# Also copy worker entrypoint for worker containers
+COPY entrypoint.worker.prod.sh /usr/bin/
+RUN chmod +x /usr/bin/entrypoint.worker.prod.sh
+
+# Default entrypoint for Rails app
 ENTRYPOINT ["entrypoint.prod.sh"]
 EXPOSE 3000
