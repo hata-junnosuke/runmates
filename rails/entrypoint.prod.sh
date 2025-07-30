@@ -36,5 +36,13 @@ if bundle exec rails runner "puts User.count" RAILS_ENV=production | grep -q "0"
   bundle exec rails db:seed RAILS_ENV=production
 fi
 
+echo "Starting SolidQueue worker in background..."
+bundle exec rake solid_queue:start &
+WORKER_PID=$!
+echo "SolidQueue worker started with PID: $WORKER_PID"
+
+# ワーカーが起動するまで少し待つ
+sleep 3
+
 echo "Starting puma server..."
 bundle exec puma -C config/puma.rb
