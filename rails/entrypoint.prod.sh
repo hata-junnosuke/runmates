@@ -13,18 +13,21 @@ until bundle exec rails db:version RAILS_ENV=production 2>/dev/null; do
   sleep 1
 done
 
-# データベース作成（既に存在する場合はスキップ）
-echo "Creating database if not exists..."
-bundle exec rails db:create RAILS_ENV=production 2>/dev/null || true
-
-echo "Running database migrations..."
-bundle exec rails db:migrate RAILS_ENV=production
+# データベースのセットアップ（作成とマイグレーション）
+echo "Setting up database..."
+bundle exec rails db:prepare RAILS_ENV=production
 
 # SolidQueueのテーブルが存在しない場合は作成
 echo "Checking SolidQueue tables..."
 if ! bundle exec rails runner "puts SolidQueue::Job.table_exists?" RAILS_ENV=production 2>/dev/null | grep -q "true"; then
   echo "Creating SolidQueue tables..."
-  bundle exec rails db:queue:prepare RAILS_ENV=production
+  bundle exec rails runner "
+    require 'active_record/schema_dumper'
+    File.open('db/queue_schema.rb', 'r') do |file|
+      eval(file.read)
+    end
+    puts 'SolidQueue tables created successfully'
+  " RAILS_ENV=production
 fi
 
 # シードデータ投入（初回のみ）
