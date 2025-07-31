@@ -17,10 +17,6 @@
           "essential": true,
           "environment": [
               {
-                  "name": "RAILS_MASTER_KEY",
-                  "value": "5a6ef726140f6c4880c6a2613725d6c7"
-              },
-              {
                   "name": "RAILS_LOG_TO_STDOUT",
                   "value": "true"
               }
