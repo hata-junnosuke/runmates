@@ -1,8 +1,16 @@
 FROM --platform=linux/x86_64 ruby:3.4.3
 
+# ビルド引数として受け取る
+ARG RAILS_MASTER_KEY
+ARG NEXT_PUBLIC_BASE_URL
+
 ENV LANG C.UTF-8
 ENV TZ Asia/Tokyo
 ENV RAILS_ENV=production
+
+# 環境変数として設定
+ENV RAILS_MASTER_KEY=$RAILS_MASTER_KEY
+ENV NEXT_PUBLIC_BASE_URL=$NEXT_PUBLIC_BASE_URL
 
 RUN mkdir /myapp
 WORKDIR /myapp
