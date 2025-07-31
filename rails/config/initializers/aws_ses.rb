@@ -51,6 +51,13 @@ module ActionMailer
 end
 
 # ActionMailerにカスタムデリバリーメソッドを登録
+# add_delivery_methodメソッドの引数：
+#   1. 第1引数 :ses_v2 - 配送方法の名前
+#     - これで config.action_mailer.delivery_method = :ses_v2 と書けるようになる
+#   2. 第2引数 ActionMailer::SesV2Delivery::DeliveryMethod - 実際の配送処理を行うクラス
+#     - このクラスは deliver!(mail) メソッドを実装している必要がある
+#   3. 第3引数 { region: "ap-northeast-1" } - デフォルトの設定
+#     - DeliveryMethodクラスの initialize(settings) に渡される
 ActionMailer::Base.add_delivery_method :ses_v2, ActionMailer::SesV2Delivery::DeliveryMethod, {
   region: "ap-northeast-1",
 }
