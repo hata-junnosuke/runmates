@@ -4,7 +4,7 @@ class UserMailer < ApplicationMailer
     @user = user
     @confirmation_token = confirmation_token
     @app_name = "Runmates"
-    @confirmation_url = "#{ENV.fetch("NEXT_PUBLIC_BASE_URL", "http://localhost:8000")}/confirm_email?token=#{@confirmation_token}"
+    @confirmation_url = "#{base_url}/confirm_email?token=#{@confirmation_token}"
 
     mail(
       to: @user.email,
@@ -28,11 +28,21 @@ class UserMailer < ApplicationMailer
     @user = user
     @reset_password_token = reset_password_token
     @app_name = "Runmates"
-    @reset_url = "#{ENV.fetch("NEXT_PUBLIC_BASE_URL", "http://localhost:8000")}/reset_password?token=#{@reset_password_token}"
+    @reset_url = "#{base_url}/reset_password?token=#{@reset_password_token}"
 
     mail(
       to: @user.email,
       subject: "【#{@app_name}】パスワードリセットのご案内",
     )
   end
+
+  private
+
+    def base_url
+      if Rails.env.production?
+        "https://runmates.net"
+      else
+        "http://localhost:8000"
+      end
+    end
 end
