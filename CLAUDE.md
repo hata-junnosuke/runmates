@@ -279,11 +279,16 @@ docker-compose exec rails bundle exec rspec spec/models/user_spec.rb
 - 複数の独立したタスクは一度に実行
 - 関連ファイルは一度に読む
 
-## 作業完了通知
+## 通知音の使い分け
 
-重要なタスクが完了したら、通知音を鳴らしてユーザーに知らせてください：
-
+### 作業完了時
+重要なタスクが完了したら通知音でお知らせ：
 ```bash
-# macOSの通知音
-afplay /System/Library/Sounds/Glass.aiff   # ガラス音
+afplay /System/Library/Sounds/Glass.aiff   # ガラス音（完了通知）
+```
+
+### ユーザー確認が必要な時
+確認や判断が必要な場合は異なる音でお知らせ：
+```bash
+afplay /System/Library/Sounds/Ping.aiff    # ピン音（確認要求）
 ```
