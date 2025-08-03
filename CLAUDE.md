@@ -1,6 +1,6 @@
 # CLAUDE.md
 必ず日本語で回答してください。
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+このファイルは、Claude Code (claude.ai/code) がこのリポジトリで作業する際のガイダンスを提供します。
 
 ## ⚠️ 最重要: Dockerコンテナ内実行の原則
 
@@ -18,103 +18,103 @@ rails console       # ローカル実行
 npm run dev        # ローカル実行
 ```
 
-## Architecture Overview
+## アーキテクチャ概要
 
-This is a full-stack "Runmates" running management application with a Rails API backend and Next.js frontend, containerized with Docker. The system provides comprehensive running record tracking, goal setting, and data visualization features.
+これは、Rails APIバックエンドとNext.jsフロントエンドを持つフルスタックの「Runmates」ランニング管理アプリケーションで、Dockerでコンテナ化されています。ランニング記録の追跡、目標設定、データ可視化機能を提供します。
 
-**Stack:**
-- **Backend**: Rails API (Ruby 3.4.3) with MySQL 8.0.32
-- **Frontend**: Next.js 15.3.1 with TypeScript, Tailwind CSS, MUI, and Chart.js
-- **Authentication**: DeviseTokenAuth with HTTP-only cookies
-- **Data Visualization**: Chart.js + react-chartjs-2 for modern charts
-- **Deployment**: AWS ECS Fargate with Nginx reverse proxy
+**技術スタック:**
+- **バックエンド**: Rails API (Ruby 3.4.3) + MySQL 8.0.32
+- **フロントエンド**: Next.js 15.3.1 + TypeScript、Tailwind CSS、MUI、Chart.js
+- **認証**: DeviseTokenAuth（HTTP-onlyクッキー使用）
+- **データ可視化**: Chart.js + react-chartjs-2
+- **デプロイ**: AWS ECS Fargate + Nginxリバースプロキシ
 
-**Core Features:**
-- Running record management with calendar interface
-- Monthly and yearly goal setting and tracking
-- Interactive data visualization with progress charts
-- Responsive UI with modern design patterns
+**主要機能:**
+- カレンダーインターフェースによるランニング記録管理
+- 月次・年次目標の設定と追跡
+- インタラクティブなデータ可視化と進捗チャート
+- モダンなデザインパターンによるレスポンシブUI
 
-## Development Setup & Commands
+## 開発セットアップとコマンド
 
-### Initial Setup
+### 初期セットアップ
 ```bash
-# Clone and build containers
+# コンテナのクローンとビルド
 docker compose build --no-cache
 docker compose up
 
-# Frontend setup (in new terminal)
+# フロントエンドのセットアップ（新しいターミナルで）
 docker compose exec next /bin/bash
 npm i
-npm run dev  # Starts on localhost:8000
+npm run dev  # localhost:8000で起動
 
-# Backend setup (in new terminal)
+# バックエンドのセットアップ（新しいターミナルで）
 docker compose run --rm rails bundle install
 docker compose exec rails /bin/bash
-rails s -b '0.0.0.0'  # Starts on localhost:3000
+rails s -b '0.0.0.0'  # localhost:3000で起動
 ```
 
-### Daily Development Commands
+### 日常的な開発コマンド
 
 ```bash
-# Frontend (Next.js)
-docker-compose exec next npm run dev          # Development server
-docker-compose exec next npm run build        # Production build
-docker-compose exec next npm run lint         # ESLint checking
-docker-compose exec next npm run format       # Auto-fix linting
+# フロントエンド (Next.js)
+docker-compose exec next npm run dev          # 開発サーバー
+docker-compose exec next npm run build        # プロダクションビルド
+docker-compose exec next npm run lint         # ESLintチェック
+docker-compose exec next npm run format       # リントの自動修正
 
-# Backend (Rails)
-docker-compose exec rails rails s -b '0.0.0.0' # Start server
-docker-compose exec rails rails console        # Interactive console
-docker-compose exec rails rails db:migrate     # Run migrations
+# バックエンド (Rails)
+docker-compose exec rails rails s -b '0.0.0.0' # サーバー起動
+docker-compose exec rails rails console        # 対話型コンソール
+docker-compose exec rails rails db:migrate     # マイグレーション実行
 
-# Testing
-docker-compose exec rails bundle exec rspec    # All tests
-docker-compose exec rails bundle exec rspec spec/models/  # Specific directory
-docker-compose exec rails bundle exec rspec --format documentation  # Verbose
+# テスト
+docker-compose exec rails bundle exec rspec    # 全テスト実行
+docker-compose exec rails bundle exec rspec spec/models/  # 特定ディレクトリ
+docker-compose exec rails bundle exec rspec --format documentation  # 詳細表示
 
-# Code Quality
-docker-compose exec rails bundle exec rubocop  # Ruby linting
-docker-compose exec rails bundle exec rubocop -a  # Auto-fix
-docker-compose exec next npm run lint          # JS/TS linting
-docker-compose exec next npm run format        # Auto-fix
+# コード品質
+docker-compose exec rails bundle exec rubocop  # Rubyリント
+docker-compose exec rails bundle exec rubocop -a  # 自動修正
+docker-compose exec next npm run lint          # JS/TSリント
+docker-compose exec next npm run format        # 自動修正
 ```
 
-## Key Architecture Patterns
+## 主要なアーキテクチャパターン
 
-### Authentication Flow
-1. User submits credentials via React forms (SignInForm/SignUpForm)
-2. Frontend sends requests to Rails API (`/api/v1/auth/`)
-3. Rails validates and generates DeviseTokenAuth tokens
-4. Rails sets HTTP-only cookies with `access-token`, `client`, and `uid`
-5. Subsequent requests automatically include cookies
-6. Rails validates tokens from cookies for protected routes
+### 認証フロー
+1. ユーザーがReactフォーム（SignInForm/SignUpForm）で認証情報を送信
+2. フロントエンドがRails API（`/api/v1/auth/`）にリクエストを送信
+3. RailsがDeviseTokenAuthトークンを検証・生成
+4. RailsがHTTP-onlyクッキーに`access-token`、`client`、`uid`を設定
+5. 以降のリクエストは自動的にクッキーを含む
+6. Railsがクッキーからトークンを検証して保護されたルートへのアクセスを制御
 
-**Important**: Authentication uses cookies, not localStorage. Tokens are HTTP-only for XSS protection.
+**重要**: 認証にはlocalStorageではなくクッキーを使用。トークンはXSS対策のためHTTP-onlyに設定。
 
-### API Structure
-- All API endpoints under `/api/v1/` namespace
-- Routes defined in `rails/config/routes.rb`
-- Controllers in `rails/app/controllers/api/v1/`
-- Serializers in `rails/app/serializers/` for JSON responses
+### API構造
+- すべてのAPIエンドポイントは`/api/v1/`名前空間配下
+- ルート定義は`rails/config/routes.rb`
+- コントローラーは`rails/app/controllers/api/v1/`配下
+- JSONレスポンス用のシリアライザーは`rails/app/serializers/`配下
 
-### Frontend Structure
-- Next.js App Router with TypeScript
-- Authentication utilities split between:
-  - `next/src/lib/client-auth.ts` - Client-side auth functions
-  - `next/src/lib/server-auth.ts` - Server-side auth functions
-- Forms use React Hook Form with validation
-- AuthWrapper component handles authentication state
+### フロントエンド構造
+- Next.js App Router + TypeScript
+- 認証ユーティリティは以下に分割:
+  - `next/src/lib/client-auth.ts` - クライアントサイド認証関数
+  - `next/src/lib/server-auth.ts` - サーバーサイド認証関数
+- フォームはReact Hook Formでバリデーション実装
+- AuthWrapperコンポーネントが認証状態を管理
 
-### Database
-- MySQL database with comprehensive running management schema:
-  - `users` - DeviseTokenAuth managed user accounts
-  - `running_records` - Daily running distance records
-  - `monthly_goals` - Monthly distance goals with year/month constraints
-  - `yearly_goals` - Annual distance goals with unique constraints
-- Database runs in Docker container on port 3307
-- Migrations in `rails/db/migrate/`
-- Test data factories in `rails/spec/factories/`
+### データベース
+- MySQLデータベースで包括的なランニング管理スキーマを実装:
+  - `users` - DeviseTokenAuthで管理されるユーザーアカウント
+  - `running_records` - 日次ランニング距離記録
+  - `monthly_goals` - 年月制約付き月次距離目標
+  - `yearly_goals` - ユニーク制約付き年次距離目標
+- データベースはDockerコンテナでポート3307で稼働
+- マイグレーションは`rails/db/migrate/`配下
+- テストデータファクトリは`rails/spec/factories/`配下
 
 ## Environment Configuration
 
@@ -144,54 +144,54 @@ DEVISE_SECRET_KEY=<auto-generated>
 
 ## Important Files
 
-### Configuration
-- `rails/config/routes.rb` - API routing
-- `rails/config/initializers/cors.rb` - CORS settings
-- `rails/config/initializers/devise_token_auth.rb` - Auth configuration
-- `next/src/lib/client-auth.ts` - Client authentication utilities
-- `next/src/lib/server-auth.ts` - Server authentication utilities
+### 設定ファイル
+- `rails/config/routes.rb` - APIルーティング
+- `rails/config/initializers/cors.rb` - CORS設定
+- `rails/config/initializers/devise_token_auth.rb` - 認証設定
+- `next/src/lib/client-auth.ts` - クライアント側認証ユーティリティ
+- `next/src/lib/server-auth.ts` - サーバー側認証ユーティリティ
 
-### Backend Controllers
-#### Authentication
-- `rails/app/controllers/api/v1/auth/sessions_controller.rb` - Login/logout with cookie management
-- `rails/app/controllers/api/v1/auth/registrations_controller.rb` - User registration
+### バックエンドコントローラー
+#### 認証
+- `rails/app/controllers/api/v1/auth/sessions_controller.rb` - ログイン/ログアウト（Cookie管理）
+- `rails/app/controllers/api/v1/auth/registrations_controller.rb` - ユーザー登録
 
-#### Running Management API
-- `rails/app/controllers/api/v1/running_records_controller.rb` - CRUD for running records
-- `rails/app/controllers/api/v1/running_statistics_controller.rb` - Statistics calculation
-- `rails/app/controllers/api/v1/monthly_goals_controller.rb` - Monthly goals management
-- `rails/app/controllers/api/v1/current_monthly_goals_controller.rb` - Current month goal API
-- `rails/app/controllers/api/v1/yearly_goals_controller.rb` - Yearly goals management
-- `rails/app/controllers/api/v1/current_yearly_goal_controller.rb` - Current year goal API
+#### ランニング管理API
+- `rails/app/controllers/api/v1/running_records_controller.rb` - ランニング記録のCRUD操作
+- `rails/app/controllers/api/v1/running_statistics_controller.rb` - 統計情報の計算
+- `rails/app/controllers/api/v1/monthly_goals_controller.rb` - 月間目標の管理
+- `rails/app/controllers/api/v1/current_monthly_goals_controller.rb` - 当月目標API
+- `rails/app/controllers/api/v1/yearly_goals_controller.rb` - 年間目標の管理
+- `rails/app/controllers/api/v1/current_yearly_goal_controller.rb` - 当年目標API
 
-#### Models & Data
-- `rails/app/models/running_record.rb` - Running record model with validations
-- `rails/app/models/monthly_goal.rb` - Monthly goal model with scopes
-- `rails/app/models/yearly_goal.rb` - Yearly goal model with constraints
+#### モデル＆データ
+- `rails/app/models/running_record.rb` - ランニング記録モデル（バリデーション付き）
+- `rails/app/models/monthly_goal.rb` - 月間目標モデル（スコープ付き）
+- `rails/app/models/yearly_goal.rb` - 年間目標モデル（制約付き）
 
-### Key Frontend Components
-#### Authentication
-- `next/src/app/components/AuthWrapper.tsx` - Authentication state management
-- `next/src/app/sign_in/SignInForm.tsx` - Login form
-- `next/src/app/sign_up/SignUpForm.tsx` - Registration form
-- `next/src/app/components/LogoutButton.tsx` - Logout functionality
+### 主要なフロントエンドコンポーネント
+#### 認証
+- `next/src/app/components/AuthWrapper.tsx` - 認証状態管理
+- `next/src/app/sign_in/SignInForm.tsx` - ログインフォーム
+- `next/src/app/sign_up/SignUpForm.tsx` - 登録フォーム
+- `next/src/app/components/LogoutButton.tsx` - ログアウト機能
 
-#### Dashboard & Data Visualization
-- `next/src/app/components/ServerRunningDashboard.tsx` - Main dashboard with statistics
-- `next/src/app/components/DashboardWithCalendar.tsx` - Calendar and form management
-- `next/src/app/components/RunningChart.tsx` - Chart.js visualization component
-- `next/src/app/components/RunningChartWrapper.tsx` - SSR-safe chart wrapper
+#### ダッシュボード＆データ可視化
+- `next/src/app/components/ServerRunningDashboard.tsx` - 統計情報付きメインダッシュボード
+- `next/src/app/components/DashboardWithCalendar.tsx` - カレンダーとフォーム管理
+- `next/src/app/components/RunningChart.tsx` - Chart.js可視化コンポーネント
+- `next/src/app/components/RunningChartWrapper.tsx` - SSR対応チャートラッパー
 
-#### Running Management
-- `next/src/app/components/ClientRunningCalendar.tsx` - Interactive calendar for date selection
-- `next/src/app/components/ClientRecordForm.tsx` - Running record entry form
-- `next/src/app/components/ClientGoalForm.tsx` - Monthly goal setting form
-- `next/src/app/components/ClientYearlyGoalForm.tsx` - Yearly goal setting form
+#### ランニング管理
+- `next/src/app/components/ClientRunningCalendar.tsx` - 日付選択用インタラクティブカレンダー
+- `next/src/app/components/ClientRecordForm.tsx` - ランニング記録入力フォーム
+- `next/src/app/components/ClientGoalForm.tsx` - 月間目標設定フォーム
+- `next/src/app/components/ClientYearlyGoalForm.tsx` - 年間目標設定フォーム
 
-#### Server Actions & API Integration
-- `next/src/app/actions/running-actions.ts` - Server actions for data mutations
-- `next/src/lib/api.ts` - Client-side API utilities
-- `next/src/lib/server-api.ts` - Server-side API utilities
+#### サーバーアクション＆API連携
+- `next/src/app/actions/running-actions.ts` - データ更新用サーバーアクション
+- `next/src/lib/api.ts` - クライアント側APIユーティリティ
+- `next/src/lib/server-api.ts` - サーバー側APIユーティリティ
 
 
 ## 🚨 必須: コミット前チェック
@@ -206,21 +206,21 @@ DEVISE_SECRET_KEY=<auto-generated>
 ```
 
 
-## Common Issues & Solutions
+## よくある問題と解決方法
 
-### Development Setup
-- If node_modules is empty, delete it and run `npm i` inside container
-- Rails server requires `-b '0.0.0.0'` flag for Docker networking
-- CORS issues: Check `rails/config/initializers/cors.rb` for allowed origins
+### 開発環境セットアップ
+- node_modulesが空の場合は削除してコンテナ内で`npm i`を実行
+- RailsサーバーはDockerネットワーキング用に`-b '0.0.0.0'`フラグが必要
+- CORS問題: `rails/config/initializers/cors.rb`で許可されたオリジンを確認
 
-### Authentication & API
-- Server-side API calls use `INTERNAL_API_URL` (host.docker.internal)
-- Client-side API calls use `NEXT_PUBLIC_API_URL` (localhost)
-- Authentication relies on HTTP-only cookies, not localStorage
+### 認証＆API
+- サーバー側API呼び出しは`INTERNAL_API_URL` (host.docker.internal)を使用
+- クライアント側API呼び出しは`NEXT_PUBLIC_API_URL` (localhost)を使用
+- 認証はlocalStorageではなくHTTP-only cookiesに依存
 
-### Chart.js & SSR
-- Chart.js components must be dynamically imported to avoid SSR issues
-- Use RunningChartWrapper for SSR-safe chart rendering
+### Chart.js＆SSR
+- Chart.jsコンポーネントはSSR問題を避けるため動的インポートが必要
+- SSR対応のチャート描画にはRunningChartWrapperを使用
 
 ## Git Workflow & Guidelines
 
