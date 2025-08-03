@@ -276,6 +276,8 @@ docker-compose exec rails bundle exec rubocop -a
 docker-compose exec next npm run format
 ```
 
+**Hook設定**: `.claude/hooks/pre-commit-checks.md` に詳細な手順が記載されています。必ず参照してください。
+
 ### Docker Usage
 - **重要**: 全ての開発作業はDockerコンテナ内で実行する
 - ローカルでコマンドを実行せず、必ず `docker-compose exec [service] [command]` を使用する
