@@ -354,6 +354,21 @@ gh pr create --title "タイトル" --body "本文"
 - ~/.bashrc と ~/.zshrc に `unset GH_TOKEN` が追加済み
 - keyring認証（hata-junnosuke）を使用してください
 
+### GitHub Issue/PR作成時のテンプレート使用
+
+**重要**: このリポジトリでIssueやPRを作成する際は、必ず以下のテンプレートを参考にしてください：
+
+- **バグレポート**: `.github/ISSUE_TEMPLATE/bug_report.md`
+  - タイトル: `[Bug] ` プレフィックスを使用
+  - ラベル: `bug`
+- **機能要望**: `.github/ISSUE_TEMPLATE/feature_request.md`
+  - タイトル: `[Feature] ` プレフィックスを使用
+  - ラベル: `enhancement`
+- **PR**: `.github/PULL_REQUEST_TEMPLATE.md`
+  - 必ず関連Issueを `Fixes #番号` 形式で紐付け
+
+詳細は `.claude/hooks/github-templates.md` を参照してください。
+
 ### Claude専用: トークン使用量削減ガイドライン
 
 **⚠️ CRITICAL: トークン使用量を最小限に抑えるため、以下のガイドラインを厳守してください:**
