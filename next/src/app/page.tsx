@@ -1,5 +1,5 @@
-import HeaderNav from "./components/HeaderNav";
-import ServerRunningDashboard from "./components/ServerRunningDashboard";
+import HeaderNav from "@/components/layout/HeaderNav";
+import ServerRunningDashboard from "./(dashboard)/_components/ServerRunningDashboard";
 
 export default async function HomePage() {
   return (
