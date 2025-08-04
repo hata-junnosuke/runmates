@@ -281,6 +281,8 @@ docker-compose exec rails bundle exec rspec spec/models/user_spec.rb
 
 ## 通知音の使い分け
 
+**Hook設定**: `.claude/hooks/notification-sounds.md` で詳細な実装ガイドラインが定義されています。
+
 ### 作業完了時
 重要なタスクが完了したら通知音でお知らせ：
 ```bash
@@ -292,3 +294,5 @@ afplay /System/Library/Sounds/Glass.aiff   # ガラス音（完了通知）
 ```bash
 afplay /System/Library/Sounds/Ping.aiff    # ピン音（確認要求）
 ```
+
+**重要**: 音を鳴らすコマンドは許可不要。必ず音を鳴らしてからメッセージを表示すること。
