@@ -5,7 +5,7 @@
 
 ## 通知音について
 
-このコマンドでも、git add実行前には必ず通知音（Submarine音）を鳴らします：
+このコマンドでは、各操作（git add、git commit、git push、PR作成）の前に必ず通知音を鳴らします：
 ```bash
 afplay /System/Library/Sounds/Submarine.aiff
 ```
