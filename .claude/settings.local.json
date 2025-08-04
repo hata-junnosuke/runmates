@@ -30,7 +30,8 @@
       "Bash(docker-compose:*)",
       "mcp__playwright__browser_navigate",
       "Bash(unset GH_TOKEN)",
-      "Bash(afplay:*)"
+      "Bash(afplay:*)",
+      "WebFetch(domain:nextjs.org)"
     ],
     "deny": []
   },
