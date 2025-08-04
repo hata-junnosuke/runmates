@@ -3,11 +3,11 @@ import type { NextRequest } from 'next/server';
 
 // 認証が不要なパス（公開ページ）
 const publicPaths = [
-  '/sign_in',
-  '/sign_up',
-  '/forgot_password',
-  '/reset_password',
-  '/confirm_email',
+  '/sign-in',
+  '/sign-up',
+  '/forgot-password',
+  '/reset-password',
+  '/confirm-email',
 ];
 
 // 認証チェックをスキップするパス
@@ -39,7 +39,7 @@ export function middleware(request: NextRequest) {
 
   // 認証トークンが全て存在しない場合はログインページへリダイレクト
   if (!accessToken || !client || !uid) {
-    const signInUrl = new URL('/sign_in', request.url);
+    const signInUrl = new URL('/sign-in', request.url);
     // 元のURLをクエリパラメータとして保持（将来的な実装用）
     signInUrl.searchParams.set('from', pathname);
     return NextResponse.redirect(signInUrl);
