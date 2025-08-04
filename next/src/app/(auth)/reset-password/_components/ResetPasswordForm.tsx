@@ -75,7 +75,7 @@ export default function ResetPasswordForm() {
         </div>
         <div className="text-center">
           <Link 
-            href="/forgot_password" 
+            href="/forgot-password" 
             className="text-green-500 hover:underline text-sm"
           >
             パスワードリセットをもう一度行う
@@ -140,7 +140,7 @@ export default function ResetPasswordForm() {
 
       <div className="text-center mt-2">
         <Link 
-          href="/sign_in" 
+          href="/sign-in" 
           className="text-green-500 hover:underline text-sm"
         >
           サインインに戻る

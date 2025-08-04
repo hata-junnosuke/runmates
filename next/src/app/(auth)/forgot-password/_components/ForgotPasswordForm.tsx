@@ -26,7 +26,7 @@ export default function ForgotPasswordForm() {
         credentials: 'include',
         body: JSON.stringify({
           email,
-          redirect_url: `${process.env.NEXT_PUBLIC_BASE_URL}/reset_password`,
+          redirect_url: `${process.env.NEXT_PUBLIC_BASE_URL}/reset-password`,
         }),
       });
 
@@ -36,7 +36,7 @@ export default function ForgotPasswordForm() {
         setMessage('パスワードリセット用のメールを送信しました。メールボックスをご確認ください。');
         // 3秒後にサインインページへリダイレクト
         setTimeout(() => {
-          router.push('/sign_in');
+          router.push('/sign-in');
         }, 3000);
       } else {
         setError(data.errors?.full_messages?.join(' ') || 'メールの送信に失敗しました。');
@@ -90,7 +90,7 @@ export default function ForgotPasswordForm() {
 
       <div className="text-center mt-2">
         <Link 
-          href="/sign_in" 
+          href="/sign-in" 
           className="text-green-500 hover:underline text-sm"
         >
           サインインに戻る
