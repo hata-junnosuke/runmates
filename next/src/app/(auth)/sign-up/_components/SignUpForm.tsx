@@ -8,6 +8,7 @@ import { signUpAction } from "@/features/auth/actions/auth-actions";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 const signUpSchema = z.object({
   email: z.string().email("有効なメールアドレスを入力してください"),
@@ -52,7 +53,7 @@ export default function SignUpForm() {
           "確認メールを送信しました。メールを確認してアカウントを有効化してください。"
         );
         // サインインページへのリダイレクトを遅延
-        setTimeout(() => router.push("/sign_in"), 5000);
+        setTimeout(() => router.push("/sign-in"), 5000);
       } else {
         setError(result.error || "登録に失敗しました");
       }
@@ -134,9 +135,9 @@ export default function SignUpForm() {
           {isPending ? "送信中..." : "新規登録"}
         </Button>
       <div className="text-center mt-2">
-        <a href="/sign_in" className="text-green-500 hover:underline text-sm">
+        <Link href="/sign-in" className="text-green-500 hover:underline text-sm">
           すでにアカウントをお持ちの方はこちら
-        </a>
+        </Link>
       </div>
       </form>
     </Form>

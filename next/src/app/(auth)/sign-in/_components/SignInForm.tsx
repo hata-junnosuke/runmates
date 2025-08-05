@@ -103,10 +103,10 @@ export default function SignInForm() {
           {isPending ? "送信中..." : "サインイン"}
         </Button>
       <div className="text-center mt-2 space-y-2">
-        <Link href="/sign_up" className="text-green-500 hover:underline text-sm block">
+        <Link href="/sign-up" className="text-green-500 hover:underline text-sm block">
           アカウントをお持ちでない方はこちら
         </Link>
-        <Link href="/forgot_password" className="text-gray-600 hover:underline text-sm block">
+        <Link href="/forgot-password" className="text-gray-600 hover:underline text-sm block">
           パスワードをお忘れの方
         </Link>
       </div>
