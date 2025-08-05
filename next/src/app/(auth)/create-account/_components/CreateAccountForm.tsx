@@ -4,13 +4,13 @@ import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { signUpAction } from "@/features/auth/actions/auth-actions";
+import { createAccountAction } from "@/features/auth/actions/auth-actions";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 
-const signUpSchema = z.object({
+const createAccountSchema = z.object({
   email: z.string().email("有効なメールアドレスを入力してください"),
   password: z.string().min(6, "パスワードは6文字以上で入力してください"),
   passwordConfirmation: z.string().min(1, "確認パスワードを入力してください"),
@@ -19,16 +19,16 @@ const signUpSchema = z.object({
   path: ["passwordConfirmation"],
 });
 
-type SignUpFormData = z.infer<typeof signUpSchema>;
+type CreateAccountFormData = z.infer<typeof createAccountSchema>;
 
-export default function SignUpForm() {
+export default function CreateAccountForm() {
   const router = useRouter();
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [isPending, startTransition] = useTransition();
   
-  const form = useForm<SignUpFormData>({
-    resolver: zodResolver(signUpSchema),
+  const form = useForm<CreateAccountFormData>({
+    resolver: zodResolver(createAccountSchema),
     defaultValues: {
       email: '',
       password: '',
@@ -36,7 +36,7 @@ export default function SignUpForm() {
     },
   });
 
-  const onSubmit = async (data: SignUpFormData) => {
+  const onSubmit = async (data: CreateAccountFormData) => {
     setError("");
     setSuccess("");
 
@@ -46,14 +46,14 @@ export default function SignUpForm() {
       formData.append('password', data.password);
       formData.append('passwordConfirmation', data.passwordConfirmation);
       
-      const result = await signUpAction(formData);
+      const result = await createAccountAction(formData);
 
       if (result.success) {
         setSuccess(
           "確認メールを送信しました。メールを確認してアカウントを有効化してください。"
         );
         // サインインページへのリダイレクトを遅延
-        setTimeout(() => router.push("/sign-in"), 5000);
+        setTimeout(() => router.push("/login"), 5000);
       } else {
         setError(result.error || "登録に失敗しました");
       }
@@ -132,11 +132,11 @@ export default function SignUpForm() {
           className="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-2 rounded transition disabled:opacity-50"
           disabled={form.formState.isSubmitting}
         >
-          {isPending ? "送信中..." : "新規登録"}
+          {isPending ? "送信中..." : "アカウント作成"}
         </Button>
       <div className="text-center mt-2">
-        <Link href="/sign-in" className="text-green-500 hover:underline text-sm">
-          すでにアカウントをお持ちの方はこちら
+        <Link href="/login" className="text-green-500 hover:underline text-sm">
+          すでにアカウントをお持ちの方
         </Link>
       </div>
       </form>

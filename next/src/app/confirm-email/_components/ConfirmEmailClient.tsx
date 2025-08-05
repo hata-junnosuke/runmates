@@ -32,7 +32,7 @@ export default function ConfirmEmailClient() {
           setMessage('メールアドレスの確認が完了しました！');
           // 3秒後にログインページへリダイレクト
           setTimeout(() => {
-            router.push('/sign-in');
+            router.push('/login');
           }, 3000);
         } else {
           setStatus('error');
@@ -69,7 +69,7 @@ export default function ConfirmEmailClient() {
           ウェルカムメールをお送りしました。<br />
           3秒後にログインページへ移動します。
         </p>
-        <Link href="/sign-in" className="text-green-500 hover:underline text-sm">
+        <Link href="/login" className="text-green-500 hover:underline text-sm">
           今すぐログインする
         </Link>
       </div>
@@ -85,10 +85,10 @@ export default function ConfirmEmailClient() {
       </div>
       <p className="text-red-600 font-semibold mb-4">{message}</p>
       <div className="space-y-2">
-        <Link href="/sign-up" className="block text-green-500 hover:underline text-sm">
-          新規登録をやり直す
+        <Link href="/create-account" className="block text-green-500 hover:underline text-sm">
+          アカウント作成をやり直す
         </Link>
-        <Link href="/sign-in" className="block text-green-500 hover:underline text-sm">
+        <Link href="/login" className="block text-green-500 hover:underline text-sm">
           ログインページへ
         </Link>
       </div>

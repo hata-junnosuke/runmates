@@ -34,9 +34,9 @@ export default function ForgotPasswordForm() {
 
       if (response.ok && data.success) {
         setMessage('パスワードリセット用のメールを送信しました。メールボックスをご確認ください。');
-        // 3秒後にサインインページへリダイレクト
+        // 3秒後にログインページへリダイレクト
         setTimeout(() => {
-          router.push('/sign-in');
+          router.push('/login');
         }, 3000);
       } else {
         setError(data.errors?.full_messages?.join(' ') || 'メールの送信に失敗しました。');
@@ -90,10 +90,10 @@ export default function ForgotPasswordForm() {
 
       <div className="text-center mt-2">
         <Link 
-          href="/sign-in" 
+          href="/login" 
           className="text-green-500 hover:underline text-sm"
         >
-          サインインに戻る
+          ログインに戻る
         </Link>
       </div>
     </form>
