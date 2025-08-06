@@ -221,6 +221,9 @@ Style/MixinUsage:
 Style/NumericLiterals:
   MinDigits: 7
   Strict: true
+  Exclude:
+    - 'db/schema.rb'
+    - 'db/queue_schema.rb'
 
 Style/NumericPredicate:
   Enabled: false

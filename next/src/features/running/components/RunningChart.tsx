@@ -175,6 +175,20 @@ export default function RunningChart({
   // 表示月の累積距離を計算
   const viewMonthCumulative = cumulative;
 
+  // 日別距離の最大値を計算する関数
+  const calculateDailyMaxScale = (dailyData: (number | null)[]): number => {
+    // null を除いた実際の距離の最大値を取得
+    const maxDistance = Math.max(...dailyData.filter(d => d !== null) as number[], 0);
+
+    // デフォルトは20
+    if (maxDistance <= 20) {
+      return 20;
+    }
+
+    // 20を超えたら10単位で切り上げ
+    return Math.ceil(maxDistance / 10) * 10;
+  };
+
   // ラベル（日付）を準備 - 月全体の各日
   const labels = [];
   for (let day = 1; day <= daysInViewMonth; day++) {
@@ -339,6 +353,7 @@ export default function RunningChart({
           drawOnChartArea: false,
         },
         beginAtZero: true,
+        max: calculateDailyMaxScale(dailyData),
       },
     },
     elements: {
