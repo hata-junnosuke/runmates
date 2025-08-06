@@ -1,8 +1,8 @@
 import { redirect } from 'next/navigation';
 import { getAuthStatus } from '@/features/auth/lib/server';
-import SignUpForm from "./_components/SignUpForm";
+import CreateAccountForm from "./_components/CreateAccountForm";
 
-export default async function SignUpPage() {
+export default async function CreateAccountPage() {
   // 既にログイン済みの場合はダッシュボードへリダイレクト
   const isAuthenticated = await getAuthStatus();
   if (isAuthenticated) {
@@ -13,9 +13,9 @@ export default async function SignUpPage() {
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-100 to-blue-200">
       <div className="bg-white rounded-xl shadow-lg p-8 w-full max-w-md">
         <h2 className="text-3xl font-bold text-center text-green-700 mb-6">
-          新規登録
+          アカウント作成
         </h2>
-        <SignUpForm />
+        <CreateAccountForm />
       </div>
     </div>
   );

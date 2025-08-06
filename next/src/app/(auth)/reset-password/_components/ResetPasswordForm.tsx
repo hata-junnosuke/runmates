@@ -140,10 +140,10 @@ export default function ResetPasswordForm() {
 
       <div className="text-center mt-2">
         <Link 
-          href="/sign-in" 
+          href="/login" 
           className="text-green-500 hover:underline text-sm"
         >
-          サインインに戻る
+          ログインに戻る
         </Link>
       </div>
     </form>

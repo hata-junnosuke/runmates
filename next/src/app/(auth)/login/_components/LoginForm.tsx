@@ -5,33 +5,33 @@ import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { signInAction } from "@/features/auth/actions/auth-actions";
+import { loginAction } from "@/features/auth/actions/auth-actions";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
-const signInSchema = z.object({
+const loginSchema = z.object({
   email: z.string().email("有効なメールアドレスを入力してください"),
   password: z.string().min(1, "パスワードを入力してください"),
 });
 
-type SignInFormData = z.infer<typeof signInSchema>;
+type LoginFormData = z.infer<typeof loginSchema>;
 
-export default function SignInForm() {
+export default function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [error, setError] = useState("");
   const [isPending, startTransition] = useTransition();
   
-  const form = useForm<SignInFormData>({
-    resolver: zodResolver(signInSchema),
+  const form = useForm<LoginFormData>({
+    resolver: zodResolver(loginSchema),
     defaultValues: {
       email: '',
       password: '',
     },
   });
 
-  const onSubmit = async (data: SignInFormData) => {
+  const onSubmit = async (data: LoginFormData) => {
     setError("");
 
     startTransition(async () => {
@@ -39,7 +39,7 @@ export default function SignInForm() {
       formData.append('email', data.email);
       formData.append('password', data.password);
       
-      const result = await signInAction(formData);
+      const result = await loginAction(formData);
 
       if (result.success) {
         // リダイレクト元のURLがある場合はそこに戻る（middlewareと連携）
@@ -100,11 +100,11 @@ export default function SignInForm() {
           className="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-2 rounded transition disabled:opacity-50"
           disabled={form.formState.isSubmitting}
         >
-          {isPending ? "送信中..." : "サインイン"}
+          {isPending ? "送信中..." : "ログイン"}
         </Button>
       <div className="text-center mt-2 space-y-2">
-        <Link href="/sign-up" className="text-green-500 hover:underline text-sm block">
-          アカウントをお持ちでない方はこちら
+        <Link href="/create-account" className="text-green-500 hover:underline text-sm block">
+          アカウントをお持ちでない方
         </Link>
         <Link href="/forgot-password" className="text-gray-600 hover:underline text-sm block">
           パスワードをお忘れの方

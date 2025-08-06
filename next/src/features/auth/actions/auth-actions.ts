@@ -5,8 +5,8 @@ import { redirect } from 'next/navigation';
 
 const API_BASE_URL = process.env.INTERNAL_API_URL || 'http://rails:3000/api/v1';
 
-// サインイン
-export async function signInAction(formData: FormData) {
+// ログイン
+export async function loginAction(formData: FormData) {
   try {
     const email = formData.get('email') as string;
     const password = formData.get('password') as string;
@@ -53,7 +53,7 @@ export async function signInAction(formData: FormData) {
       };
     }
   } catch (error) {
-    console.error('Sign in error:', error);
+    console.error('Login error:', error);
     return {
       success: false,
       error: 'ログインに失敗しました',
@@ -61,8 +61,8 @@ export async function signInAction(formData: FormData) {
   }
 }
 
-// サインアップ
-export async function signUpAction(formData: FormData) {
+// アカウント作成
+export async function createAccountAction(formData: FormData) {
   try {
     const email = formData.get('email') as string;
     const password = formData.get('password') as string;
@@ -102,7 +102,7 @@ export async function signUpAction(formData: FormData) {
       };
     }
   } catch (error) {
-    console.error('Sign up error:', error);
+    console.error('Create account error:', error);
     return {
       success: false,
       error: '登録に失敗しました',
@@ -110,8 +110,8 @@ export async function signUpAction(formData: FormData) {
   }
 }
 
-// サインアウト
-export async function signOutAction() {
+// ログアウト
+export async function logoutAction() {
   try {
     const cookieStore = await cookies();
     
@@ -145,6 +145,6 @@ export async function signOutAction() {
     cookieStore.delete('uid');
   }
 
-  // サインインページへリダイレクト
-  redirect('/sign_in');
+  // ログインページへリダイレクト
+  redirect('/login');
 }
