@@ -1,23 +1,23 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { Line } from "react-chartjs-2";
 import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  LineController,
-  BarElement,
   BarController,
+  BarElement,
+  CategoryScale,
+  Chart as ChartJS,
+  ChartData,
+  ChartOptions,
+  Filler,
+  Legend,
+  LinearScale,
+  LineController,
+  LineElement,
+  PointElement,
   Title,
   Tooltip,
-  Legend,
-  Filler,
-  ChartOptions,
-  ChartData,
-} from "chart.js";
+} from 'chart.js';
+import { useState } from 'react';
+import { Line } from 'react-chartjs-2';
 
 ChartJS.register(
   CategoryScale,
@@ -30,7 +30,7 @@ ChartJS.register(
   Title,
   Tooltip,
   Legend,
-  Filler
+  Filler,
 );
 
 interface RunRecord {
@@ -72,21 +72,21 @@ export default function RunningChart({
   // 月移動の関数
   const goToPreviousMonth = () => {
     setCurrentViewDate(
-      (prev) => new Date(prev.getFullYear(), prev.getMonth() - 1, 1)
+      (prev) => new Date(prev.getFullYear(), prev.getMonth() - 1, 1),
     );
   };
 
   const goToNextMonth = () => {
     setCurrentViewDate(
-      (prev) => new Date(prev.getFullYear(), prev.getMonth() + 1, 1)
+      (prev) => new Date(prev.getFullYear(), prev.getMonth() + 1, 1),
     );
   };
 
   // タイムゾーン安全な日付文字列フォーマット関数
   const formatDateString = (date: Date): string => {
     const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, "0");
-    const day = String(date.getDate()).padStart(2, "0");
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
     return `${year}-${month}-${day}`;
   };
 
@@ -107,15 +107,15 @@ export default function RunningChart({
     const targetMonth = date.getMonth();
 
     if (targetYear === currentYear && targetMonth === currentMonth) {
-      return "今月";
+      return '今月';
     } else if (targetYear === currentYear && targetMonth === currentMonth - 1) {
-      return "先月";
+      return '先月';
     } else if (
       targetYear === currentYear - 1 &&
       targetMonth === 11 &&
       currentMonth === 0
     ) {
-      return "先月";
+      return '先月';
     } else {
       return `${targetYear}年${targetMonth + 1}月`;
     }
@@ -149,7 +149,10 @@ export default function RunningChart({
 
     // その日の全ての走行記録を集計
     const dayRecords = records.filter((record) => record.date === dateStr);
-    const dayDistance = dayRecords.reduce((sum, record) => sum + Number(record.distance || 0), 0);
+    const dayDistance = dayRecords.reduce(
+      (sum, record) => sum + Number(record.distance || 0),
+      0,
+    );
 
     // 累積距離を更新（今日までのデータのみ）
     if (day <= displayEndDay) {
@@ -178,7 +181,10 @@ export default function RunningChart({
   // 日別距離の最大値を計算する関数
   const calculateDailyMaxScale = (dailyData: (number | null)[]): number => {
     // null を除いた実際の距離の最大値を取得
-    const maxDistance = Math.max(...dailyData.filter(d => d !== null) as number[], 0);
+    const maxDistance = Math.max(
+      ...(dailyData.filter((d) => d !== null) as number[]),
+      0,
+    );
 
     // デフォルトは20
     if (maxDistance <= 20) {
@@ -198,18 +204,18 @@ export default function RunningChart({
   // 表示中の月の名前を取得
   const monthDisplayName = getMonthDisplayName(currentViewDate);
 
-  const data: ChartData<"line" | "bar"> = {
+  const data: ChartData<'line' | 'bar'> = {
     labels,
     datasets: [
       {
         label: `${monthDisplayName}の走行距離`,
         data: cumulativeData,
-        borderColor: "rgb(34, 197, 94)",
-        backgroundColor: "rgba(34, 197, 94, 0.1)",
+        borderColor: 'rgb(34, 197, 94)',
+        backgroundColor: 'rgba(34, 197, 94, 0.1)',
         fill: true,
         tension: 0,
-        pointBorderColor: "rgb(34, 197, 94)",
-        pointBackgroundColor: "white",
+        pointBorderColor: 'rgb(34, 197, 94)',
+        pointBackgroundColor: 'white',
         pointBorderWidth: 2,
         pointRadius: 4,
         pointHoverRadius: 6,
@@ -217,25 +223,25 @@ export default function RunningChart({
       {
         label: `${monthDisplayName}の目標ペース`,
         data: goalLineData,
-        borderColor: "rgb(239, 68, 68)",
-        backgroundColor: "rgba(239, 68, 68, 0.1)",
+        borderColor: 'rgb(239, 68, 68)',
+        backgroundColor: 'rgba(239, 68, 68, 0.1)',
         borderDash: [10, 5],
         borderWidth: 2,
         fill: false,
         tension: 0,
         pointRadius: 0,
         pointHoverRadius: 4,
-        pointBorderColor: "rgb(239, 68, 68)",
-        pointBackgroundColor: "rgb(239, 68, 68)",
+        pointBorderColor: 'rgb(239, 68, 68)',
+        pointBackgroundColor: 'rgb(239, 68, 68)',
       },
       {
-        label: "日別走行距離",
+        label: '日別走行距離',
         data: dailyData,
-        type: "bar" as const,
-        backgroundColor: "rgba(59, 130, 246, 0.7)",
-        borderColor: "rgb(59, 130, 246)",
+        type: 'bar' as const,
+        backgroundColor: 'rgba(59, 130, 246, 0.7)',
+        borderColor: 'rgb(59, 130, 246)',
         borderWidth: 1,
-        yAxisID: "y1",
+        yAxisID: 'y1',
         borderRadius: {
           topLeft: 4,
           topRight: 4,
@@ -247,12 +253,12 @@ export default function RunningChart({
     ],
   };
 
-  const options: ChartOptions<"line" | "bar"> = {
+  const options: ChartOptions<'line' | 'bar'> = {
     responsive: true,
     maintainAspectRatio: false,
     plugins: {
       legend: {
-        position: "top" as const,
+        position: 'top' as const,
         labels: {
           usePointStyle: true,
           padding: 20,
@@ -266,17 +272,17 @@ export default function RunningChart({
         text: `${viewYear}年${viewMonth + 1}月の走行記録`,
         font: {
           size: 16,
-          weight: "bold",
+          weight: 'bold',
         },
         padding: 20,
       },
       tooltip: {
-        mode: "index",
+        mode: 'index',
         intersect: false,
-        backgroundColor: "rgba(0, 0, 0, 0.8)",
-        titleColor: "white",
-        bodyColor: "white",
-        borderColor: "rgba(255, 255, 255, 0.2)",
+        backgroundColor: 'rgba(0, 0, 0, 0.8)',
+        titleColor: 'white',
+        bodyColor: 'white',
+        borderColor: 'rgba(255, 255, 255, 0.2)',
         borderWidth: 1,
         cornerRadius: 8,
         padding: 12,
@@ -288,24 +294,24 @@ export default function RunningChart({
               const status =
                 diff >= 0 ? `+${diff.toFixed(1)}km 🔥` : `${diff.toFixed(1)}km`;
               return `${monthDisplayName}の走行距離: ${context.parsed.y.toFixed(
-                1
+                1,
               )} km (目標比: ${status})`;
             } else if (context.datasetIndex === 1) {
               return `${monthDisplayName}の目標ペース: ${context.parsed.y.toFixed(
-                1
+                1,
               )} km`;
             } else {
               return context.parsed.y > 0
                 ? `その日: ${context.parsed.y.toFixed(1)} km`
-                : "";
+                : '';
             }
           },
         },
       },
     },
     interaction: {
-      mode: "nearest",
-      axis: "x",
+      mode: 'nearest',
+      axis: 'x',
       intersect: false,
     },
     scales: {
@@ -313,40 +319,40 @@ export default function RunningChart({
         display: true,
         title: {
           display: true,
-          text: "日付",
+          text: '日付',
           font: {
-            weight: "bold",
+            weight: 'bold',
           },
         },
         grid: {
-          color: "rgba(0, 0, 0, 0.1)",
+          color: 'rgba(0, 0, 0, 0.1)',
         },
       },
       y: {
-        type: "linear",
+        type: 'linear',
         display: true,
-        position: "left",
+        position: 'left',
         title: {
           display: true,
           text: `${monthDisplayName}の走行距離 (km)`,
           font: {
-            weight: "bold",
+            weight: 'bold',
           },
         },
         grid: {
-          color: "rgba(0, 0, 0, 0.1)",
+          color: 'rgba(0, 0, 0, 0.1)',
         },
         beginAtZero: true,
       },
       y1: {
-        type: "linear",
+        type: 'linear',
         display: true,
-        position: "right",
+        position: 'right',
         title: {
           display: true,
-          text: "日別距離 (km)",
+          text: '日別距離 (km)',
           font: {
-            weight: "bold",
+            weight: 'bold',
           },
         },
         grid: {
@@ -361,24 +367,24 @@ export default function RunningChart({
         borderWidth: 3,
       },
       point: {
-        hoverBackgroundColor: "white",
+        hoverBackgroundColor: 'white',
       },
     },
   };
 
   return (
-    <div className="bg-white rounded-xl shadow-lg p-6">
+    <div className="rounded-xl bg-white p-6 shadow-lg">
       <div className="h-80">
         <Line
-          data={data as ChartData<"line">}
-          options={options as ChartOptions<"line">}
+          data={data as ChartData<'line'>}
+          options={options as ChartOptions<'line'>}
         />
       </div>
       {/* 月移動ナビゲーション */}
-      <div className="mt-4 flex items-center justify-between mb-4">
+      <div className="mt-4 mb-4 flex items-center justify-between">
         <button
           onClick={goToPreviousMonth}
-          className="flex items-center px-3 py-2 text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded-lg transition-colors"
+          className="flex items-center rounded-lg px-3 py-2 text-gray-600 transition-colors hover:bg-gray-100 hover:text-gray-800"
         >
           <span className="mr-1">←</span>
           前の月
@@ -392,7 +398,7 @@ export default function RunningChart({
 
         <button
           onClick={goToNextMonth}
-          className="flex items-center px-3 py-2 text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded-lg transition-colors"
+          className="flex items-center rounded-lg px-3 py-2 text-gray-600 transition-colors hover:bg-gray-100 hover:text-gray-800"
         >
           次の月
           <span className="ml-1">→</span>
@@ -402,9 +408,7 @@ export default function RunningChart({
       {/* 統計表示 */}
       <div className="grid grid-cols-3 gap-4 text-sm text-gray-600">
         <div className="text-center">
-          <div className="font-semibold text-emerald-600">
-            月間走行距離
-          </div>
+          <div className="font-semibold text-emerald-600">月間走行距離</div>
           <div className="text-lg font-bold">
             {viewMonthCumulative.toFixed(1)} km
           </div>

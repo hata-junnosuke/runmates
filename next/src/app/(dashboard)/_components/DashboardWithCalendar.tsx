@@ -1,9 +1,10 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import ClientRunningCalendar from "@/features/running/components/ClientRunningCalendar";
-import ClientRecordForm from "@/features/running/components/ClientRecordForm";
-import RunningChartWrapper from "@/features/running/components/RunningChartWrapper";
+import { useState } from 'react';
+
+import ClientRecordForm from '@/features/running/components/ClientRecordForm';
+import ClientRunningCalendar from '@/features/running/components/ClientRunningCalendar';
+import RunningChartWrapper from '@/features/running/components/RunningChartWrapper';
 
 interface RunRecord {
   id: string;
@@ -12,7 +13,6 @@ interface RunRecord {
   created_at?: string;
   updated_at?: string;
 }
-
 
 interface MonthlyGoal {
   id?: string;
@@ -32,7 +32,7 @@ export default function DashboardWithCalendar({
   records,
   monthlyGoals,
 }: DashboardWithCalendarProps) {
-  const [selectedDate, setSelectedDate] = useState<string>("");
+  const [selectedDate, setSelectedDate] = useState<string>('');
   const [recordFormOpen, setRecordFormOpen] = useState(false);
 
   const handleDateClick = (date: string) => {
@@ -42,9 +42,8 @@ export default function DashboardWithCalendar({
 
   const handleFormClose = () => {
     setRecordFormOpen(false);
-    setSelectedDate("");
+    setSelectedDate('');
   };
-  
 
   return (
     <div className="space-y-6">

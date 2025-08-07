@@ -1,9 +1,10 @@
 'use client';
 
 import { useState } from 'react';
-import StatisticsCards from '@/features/running/components/StatisticsCards';
+
 import ClientGoalForm from '@/features/running/components/ClientGoalForm';
 import ClientYearlyGoalForm from '@/features/running/components/ClientYearlyGoalForm';
+import StatisticsCards from '@/features/running/components/StatisticsCards';
 
 interface DashboardStatisticsProps {
   thisYearDistance: number;
@@ -22,7 +23,7 @@ export default function DashboardStatistics({
   goal,
   yearGoal,
   yearGoalProgress,
-  monthlyRunDays
+  monthlyRunDays,
 }: DashboardStatisticsProps) {
   const [monthlyGoalModalOpen, setMonthlyGoalModalOpen] = useState(false);
   const [yearlyGoalModalOpen, setYearlyGoalModalOpen] = useState(false);
@@ -50,13 +51,13 @@ export default function DashboardStatistics({
       />
 
       {/* モーダル */}
-      <ClientGoalForm 
+      <ClientGoalForm
         currentGoal={goal}
         isOpen={monthlyGoalModalOpen}
         onClose={() => setMonthlyGoalModalOpen(false)}
       />
-      
-      <ClientYearlyGoalForm 
+
+      <ClientYearlyGoalForm
         currentGoal={yearGoal}
         isOpen={yearlyGoalModalOpen}
         onClose={() => setYearlyGoalModalOpen(false)}

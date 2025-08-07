@@ -1,5 +1,5 @@
-import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
+import { NextResponse } from 'next/server';
 
 // 認証が不要なパス（公開ページ）
 const publicPaths = [
@@ -23,12 +23,12 @@ export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   // 除外パスの場合は何もしない
-  if (excludePaths.some(path => pathname.startsWith(path))) {
+  if (excludePaths.some((path) => pathname.startsWith(path))) {
     return NextResponse.next();
   }
 
   // 公開パスの場合は何もしない
-  if (publicPaths.some(path => pathname === path)) {
+  if (publicPaths.some((path) => pathname === path)) {
     return NextResponse.next();
   }
 

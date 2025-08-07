@@ -1,4 +1,4 @@
-import { serverApiCall, type ApiResponse } from '@/lib/api/server-base';
+import { type ApiResponse, serverApiCall } from '@/lib/api/server-base';
 
 export interface MonthlyGoal {
   id?: string;
@@ -18,14 +18,14 @@ export interface YearlyGoal {
 }
 
 export const monthlyGoalsAPI = {
-  getCurrent: (): Promise<ApiResponse<MonthlyGoal>> => 
+  getCurrent: (): Promise<ApiResponse<MonthlyGoal>> =>
     serverApiCall<MonthlyGoal>('/current_monthly_goal'),
-  
-  getAll: (): Promise<ApiResponse<MonthlyGoal[]>> => 
+
+  getAll: (): Promise<ApiResponse<MonthlyGoal[]>> =>
     serverApiCall<MonthlyGoal[]>('/monthly_goals'),
 };
 
 export const yearlyGoalsAPI = {
-  getCurrent: (): Promise<ApiResponse<YearlyGoal>> => 
+  getCurrent: (): Promise<ApiResponse<YearlyGoal>> =>
     serverApiCall<YearlyGoal>('/current_yearly_goal'),
 };

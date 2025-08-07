@@ -1,6 +1,7 @@
 'use server';
 
 import { revalidatePath } from 'next/cache';
+
 import { serverApiCall } from '@/lib/api/server-base';
 
 export async function deleteAccount(password: string) {
@@ -8,7 +9,7 @@ export async function deleteAccount(password: string) {
     method: 'DELETE',
     body: JSON.stringify({ password }),
   });
-  
+
   if (!result.success) {
     return {
       success: false,
@@ -24,7 +25,7 @@ export async function deleteAccount(password: string) {
   cookieStore.delete('uid');
 
   revalidatePath('/');
-  
+
   return {
     success: true,
   };

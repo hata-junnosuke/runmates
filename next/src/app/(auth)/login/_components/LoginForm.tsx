@@ -1,18 +1,26 @@
-"use client";
-import { useState, useTransition } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
-import Link from "next/link";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
-import { loginAction } from "@/features/auth/actions/auth-actions";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
+'use client';
+import { zodResolver } from '@hookform/resolvers/zod';
+import Link from 'next/link';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { useState, useTransition } from 'react';
+import { useForm } from 'react-hook-form';
+import * as z from 'zod';
+
+import { Button } from '@/components/ui/button';
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { loginAction } from '@/features/auth/actions/auth-actions';
 
 const loginSchema = z.object({
-  email: z.string().email("有効なメールアドレスを入力してください"),
-  password: z.string().min(1, "パスワードを入力してください"),
+  email: z.string().email('有効なメールアドレスを入力してください'),
+  password: z.string().min(1, 'パスワードを入力してください'),
 });
 
 type LoginFormData = z.infer<typeof loginSchema>;
@@ -20,9 +28,9 @@ type LoginFormData = z.infer<typeof loginSchema>;
 export default function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const [error, setError] = useState("");
+  const [error, setError] = useState('');
   const [isPending, startTransition] = useTransition();
-  
+
   const form = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
@@ -32,21 +40,21 @@ export default function LoginForm() {
   });
 
   const onSubmit = async (data: LoginFormData) => {
-    setError("");
+    setError('');
 
     startTransition(async () => {
       const formData = new FormData();
       formData.append('email', data.email);
       formData.append('password', data.password);
-      
+
       const result = await loginAction(formData);
 
       if (result.success) {
         // リダイレクト元のURLがある場合はそこに戻る（middlewareと連携）
         const from = searchParams.get('from');
-        router.push(from || "/");
+        router.push(from || '/');
       } else {
-        setError(result.error || "ログインに失敗しました");
+        setError(result.error || 'ログインに失敗しました');
       }
     });
   };
@@ -59,13 +67,13 @@ export default function LoginForm() {
           name="email"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-gray-700 font-semibold">
+              <FormLabel className="font-semibold text-gray-700">
                 メールアドレス
               </FormLabel>
               <FormControl>
                 <Input
                   type="email"
-                  className="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-green-400"
+                  className="w-full rounded border px-4 py-2 focus:ring-2 focus:ring-green-400 focus:outline-none"
                   disabled={isPending || form.formState.isSubmitting}
                   {...field}
                 />
@@ -79,13 +87,13 @@ export default function LoginForm() {
           name="password"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-gray-700 font-semibold">
+              <FormLabel className="font-semibold text-gray-700">
                 パスワード
               </FormLabel>
               <FormControl>
                 <Input
                   type="password"
-                  className="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-green-400"
+                  className="w-full rounded border px-4 py-2 focus:ring-2 focus:ring-green-400 focus:outline-none"
                   disabled={isPending || form.formState.isSubmitting}
                   {...field}
                 />
@@ -94,22 +102,30 @@ export default function LoginForm() {
             </FormItem>
           )}
         />
-        {error && <div className="text-red-500 text-sm text-center">{error}</div>}
+        {error && (
+          <div className="text-center text-sm text-red-500">{error}</div>
+        )}
         <Button
           type="submit"
-          className="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-2 rounded transition disabled:opacity-50"
+          className="w-full rounded bg-green-600 py-2 font-bold text-white transition hover:bg-green-700 disabled:opacity-50"
           disabled={form.formState.isSubmitting}
         >
-          {isPending ? "送信中..." : "ログイン"}
+          {isPending ? '送信中...' : 'ログイン'}
         </Button>
-      <div className="text-center mt-2 space-y-2">
-        <Link href="/create-account" className="text-green-500 hover:underline text-sm block">
-          アカウントをお持ちでない方
-        </Link>
-        <Link href="/forgot-password" className="text-gray-600 hover:underline text-sm block">
-          パスワードをお忘れの方
-        </Link>
-      </div>
+        <div className="mt-2 space-y-2 text-center">
+          <Link
+            href="/create-account"
+            className="block text-sm text-green-500 hover:underline"
+          >
+            アカウントをお持ちでない方
+          </Link>
+          <Link
+            href="/forgot-password"
+            className="block text-sm text-gray-600 hover:underline"
+          >
+            パスワードをお忘れの方
+          </Link>
+        </div>
       </form>
     </Form>
   );

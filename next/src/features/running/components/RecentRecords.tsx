@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+
 import RecordDetailModal from './RecordDetailModal';
 
 interface RunRecord {
@@ -37,24 +38,39 @@ export default function RecentRecords({ statistics }: RecentRecordsProps) {
   };
 
   // 日付ごとにレコードをグループ化
-  const groupedRecords = (statistics?.recent_records || []).reduce((acc, record) => {
-    const date = record.date;
-    if (!acc[date]) {
-      acc[date] = {
-        date,
-        totalDistance: 0,
-        records: [],
-        latestCreatedAt: record.created_at || ''
-      };
-    }
-    acc[date].totalDistance += Number(record.distance || 0);
-    acc[date].records.push(record);
-    // 最新の作成時刻を保持
-    if (record.created_at && (!acc[date].latestCreatedAt || record.created_at > acc[date].latestCreatedAt)) {
-      acc[date].latestCreatedAt = record.created_at;
-    }
-    return acc;
-  }, {} as Record<string, { date: string; totalDistance: number; records: RunRecord[]; latestCreatedAt: string }>);
+  const groupedRecords = (statistics?.recent_records || []).reduce(
+    (acc, record) => {
+      const date = record.date;
+      if (!acc[date]) {
+        acc[date] = {
+          date,
+          totalDistance: 0,
+          records: [],
+          latestCreatedAt: record.created_at || '',
+        };
+      }
+      acc[date].totalDistance += Number(record.distance || 0);
+      acc[date].records.push(record);
+      // 最新の作成時刻を保持
+      if (
+        record.created_at &&
+        (!acc[date].latestCreatedAt ||
+          record.created_at > acc[date].latestCreatedAt)
+      ) {
+        acc[date].latestCreatedAt = record.created_at;
+      }
+      return acc;
+    },
+    {} as Record<
+      string,
+      {
+        date: string;
+        totalDistance: number;
+        records: RunRecord[];
+        latestCreatedAt: string;
+      }
+    >,
+  );
 
   // 日付順にソート（最新順）
   const sortedDates = Object.values(groupedRecords).sort((a, b) => {
@@ -67,14 +83,14 @@ export default function RecentRecords({ statistics }: RecentRecordsProps) {
 
   return (
     <>
-      <div className="bg-white rounded-xl shadow-lg p-6">
-        <h3 className="text-xl font-bold text-gray-800 mb-4 flex items-center">
+      <div className="rounded-xl bg-white p-6 shadow-lg">
+        <h3 className="mb-4 flex items-center text-xl font-bold text-gray-800">
           🏃‍♂️ 最近の記録
         </h3>
         <div className="space-y-3">
           {sortedDates.length === 0 ? (
-            <div className="text-center py-12 text-gray-500">
-              <div className="text-6xl text-gray-300 mb-4">🏃‍♂️</div>
+            <div className="py-12 text-center text-gray-500">
+              <div className="mb-4 text-6xl text-gray-300">🏃‍♂️</div>
               <p className="text-lg">まだ記録がありません</p>
               <p className="text-sm">
                 カレンダーから日付を選択して最初の走行記録を追加してみましょう！
@@ -84,16 +100,16 @@ export default function RecentRecords({ statistics }: RecentRecordsProps) {
             sortedDates.slice(0, 5).map((group) => (
               <div key={group.date} className="space-y-2">
                 {/* 日付ヘッダー */}
-                <div className="text-sm font-medium text-gray-600 px-2">
+                <div className="px-2 text-sm font-medium text-gray-600">
                   {group.date} ({group.totalDistance.toFixed(1)} km)
                 </div>
-                
+
                 {/* 同じ日の記録一覧 */}
                 {group.records.map((record) => (
                   <div
                     key={record.id}
                     onClick={() => handleRecordClick(record)}
-                    className="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 cursor-pointer transition-colors group"
+                    className="group flex cursor-pointer items-center justify-between rounded-lg bg-gray-50 p-3 transition-colors hover:bg-gray-100"
                   >
                     <div className="flex items-center space-x-3">
                       <div className="text-emerald-600 group-hover:animate-pulse">
@@ -109,8 +125,18 @@ export default function RecentRecords({ statistics }: RecentRecordsProps) {
                       </div>
                     </div>
                     <div className="text-gray-400 group-hover:text-gray-600">
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                      <svg
+                        className="h-4 w-4"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M9 5l7 7-7 7"
+                        />
                       </svg>
                     </div>
                   </div>

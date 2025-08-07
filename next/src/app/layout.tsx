@@ -1,47 +1,48 @@
-import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
-import "./globals.css";
+import './globals.css';
+
+import type { Metadata } from 'next';
+import { Geist, Geist_Mono } from 'next/font/google';
 
 // フォント設定: GeistSansとGeistMonoを使用
 const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
+  variable: '--font-geist-sans',
+  subsets: ['latin'],
 });
 
 const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
+  variable: '--font-geist-mono',
+  subsets: ['latin'],
 });
 
 // 本番環境とローカル環境に対応したベースURLを取得
 const getBaseUrl = () => {
-  if (process.env.NODE_ENV === "development") {
-    return process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:8000";
+  if (process.env.NODE_ENV === 'development') {
+    return process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:8000';
   }
-  return "https://runmates.net";
+  return 'https://runmates.net';
 };
 
 // アプリケーション全体のメタデータ設定
 // SEO、OGP、ファビコンなどの設定を含む
 export const metadata: Metadata = {
   // 基本的なメタデータ
-  title: "Runmates - ランニング記録管理アプリ",
+  title: 'Runmates - ランニング記録管理アプリ',
   description:
-    "ランニング記録の管理、目標設定、進捗追跡を行うアプリケーション。月間・年間目標を設定し、データ可視化でモチベーションを維持しましょう。",
+    'ランニング記録の管理、目標設定、進捗追跡を行うアプリケーション。月間・年間目標を設定し、データ可視化でモチベーションを維持しましょう。',
   keywords: [
-    "ランニング",
-    "記録",
-    "目標",
-    "健康",
-    "運動",
-    "トレーニング",
-    "データ可視化",
+    'ランニング',
+    '記録',
+    '目標',
+    '健康',
+    '運動',
+    'トレーニング',
+    'データ可視化',
   ],
 
   // 作成者情報
-  authors: [{ name: "Runmates Team" }],
-  creator: "Runmates Team",
-  publisher: "Runmates Team",
+  authors: [{ name: 'Runmates Team' }],
+  creator: 'Runmates Team',
+  publisher: 'Runmates Team',
 
   // 自動検出の無効化（セキュリティ向上）
   formatDetection: {
@@ -59,27 +60,27 @@ export const metadata: Metadata = {
 
   // OGP設定 - SNSでのシェア時に表示される情報
   openGraph: {
-    type: "website",
-    siteName: "Runmates",
-    title: "Runmates - ランニング記録管理アプリ",
+    type: 'website',
+    siteName: 'Runmates',
+    title: 'Runmates - ランニング記録管理アプリ',
     description:
-      "ランニング記録の管理、目標設定、進捗追跡を行うアプリケーション。月間・年間目標を設定し、データ可視化でモチベーションを維持しましょう。",
+      'ランニング記録の管理、目標設定、進捗追跡を行うアプリケーション。月間・年間目標を設定し、データ可視化でモチベーションを維持しましょう。',
     images: [
       {
         url: `${getBaseUrl()}/logo.png`, // 絶対URLで画像を指定（全ページで表示可能）
         width: 1200,
         height: 630,
-        alt: "Runmates アプリ",
+        alt: 'Runmates アプリ',
       },
     ],
   },
 
   // Twitter Card設定 - Twitterでのシェア時の表示
   twitter: {
-    card: "summary_large_image",
-    title: "Runmates - ランニング記録管理アプリ",
+    card: 'summary_large_image',
+    title: 'Runmates - ランニング記録管理アプリ',
     description:
-      "ランニング記録の管理、目標設定、進捗追跡を行うアプリケーション。",
+      'ランニング記録の管理、目標設定、進捗追跡を行うアプリケーション。',
     images: [`${getBaseUrl()}/logo.png`], // 絶対URLで画像を指定
   },
 

@@ -1,4 +1,4 @@
-import { serverApiCall, type ApiResponse } from '@/lib/api/server-base';
+import { type ApiResponse, serverApiCall } from '@/lib/api/server-base';
 
 export interface RunRecord {
   id: string;
@@ -16,9 +16,9 @@ export interface RunningStatistics {
 }
 
 export const runningRecordsAPI = {
-  getAll: (): Promise<ApiResponse<RunRecord[]>> => 
+  getAll: (): Promise<ApiResponse<RunRecord[]>> =>
     serverApiCall<RunRecord[]>('/running_records'),
 
-  getStatistics: (): Promise<ApiResponse<RunningStatistics>> => 
+  getStatistics: (): Promise<ApiResponse<RunningStatistics>> =>
     serverApiCall<RunningStatistics>('/running_statistics'),
 };

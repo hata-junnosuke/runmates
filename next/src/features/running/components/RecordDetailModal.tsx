@@ -1,8 +1,15 @@
 'use client';
 
 import { useState, useTransition } from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
+
 import { Button } from '@/components/ui/button';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
 import { deleteRunningRecord } from '@/features/running/actions/running-actions';
 
 interface RunRecord {
@@ -19,7 +26,11 @@ interface RecordDetailModalProps {
   onClose: () => void;
 }
 
-export default function RecordDetailModal({ record, isOpen, onClose }: RecordDetailModalProps) {
+export default function RecordDetailModal({
+  record,
+  isOpen,
+  onClose,
+}: RecordDetailModalProps) {
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
   const [isPending, startTransition] = useTransition();
 
@@ -52,15 +63,17 @@ export default function RecordDetailModal({ record, isOpen, onClose }: RecordDet
       year: 'numeric',
       month: 'long',
       day: 'numeric',
-      weekday: 'long'
+      weekday: 'long',
     });
   };
-
 
   return (
     <>
       {/* メインの詳細モーダル */}
-      <Dialog open={isOpen && !showConfirmDialog} onOpenChange={(open) => !open && onClose()}>
+      <Dialog
+        open={isOpen && !showConfirmDialog}
+        onOpenChange={(open) => !open && onClose()}
+      >
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
             <DialogTitle className="flex items-center text-gray-800">
@@ -70,11 +83,11 @@ export default function RecordDetailModal({ record, isOpen, onClose }: RecordDet
               記録の詳細情報を確認し、必要に応じて削除できます。
             </DialogDescription>
           </DialogHeader>
-          
+
           <div className="space-y-4">
             {/* 日付 */}
             <div className="border-b pb-3">
-              <h3 className="text-sm font-medium text-gray-500 mb-1">実行日</h3>
+              <h3 className="mb-1 text-sm font-medium text-gray-500">実行日</h3>
               <p className="text-lg font-semibold text-gray-800">
                 {formatDate(record.date)}
               </p>
@@ -82,17 +95,17 @@ export default function RecordDetailModal({ record, isOpen, onClose }: RecordDet
 
             {/* 距離 */}
             <div className="border-b pb-3">
-              <h3 className="text-sm font-medium text-gray-500 mb-1">走行距離</h3>
+              <h3 className="mb-1 text-sm font-medium text-gray-500">
+                走行距離
+              </h3>
               <p className="text-2xl font-bold text-emerald-600">
                 {Number(record.distance).toFixed(1)} km
               </p>
             </div>
 
             {/* 記録情報 */}
-            <div className="text-xs text-gray-500 space-y-1">
-              {record.created_at && (
-                <p>記録日時: {record.created_at}</p>
-              )}
+            <div className="space-y-1 text-xs text-gray-500">
+              {record.created_at && <p>記録日時: {record.created_at}</p>}
               {record.updated_at && record.updated_at !== record.created_at && (
                 <p>更新日時: {record.updated_at}</p>
               )}
@@ -100,11 +113,7 @@ export default function RecordDetailModal({ record, isOpen, onClose }: RecordDet
 
             {/* アクションボタン */}
             <div className="flex justify-end space-x-2 pt-4">
-              <Button
-                variant="outline"
-                onClick={onClose}
-                disabled={isPending}
-              >
+              <Button variant="outline" onClick={onClose} disabled={isPending}>
                 閉じる
               </Button>
               <Button
@@ -130,13 +139,13 @@ export default function RecordDetailModal({ record, isOpen, onClose }: RecordDet
               この操作は取り消すことができません。本当に削除してもよろしいですか？
             </DialogDescription>
           </DialogHeader>
-          
+
           <div className="space-y-4">
             <p className="text-gray-700">
               以下の記録を削除しますか？この操作は取り消すことができません。
             </p>
-            
-            <div className="bg-gray-50 rounded-lg p-3">
+
+            <div className="rounded-lg bg-gray-50 p-3">
               <p className="font-medium text-gray-800">
                 {formatDate(record.date)}
               </p>

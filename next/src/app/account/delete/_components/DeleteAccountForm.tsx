@@ -1,11 +1,12 @@
 'use client';
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Checkbox } from '@/components/ui/checkbox';
 import { AlertTriangle, Loader2 } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+
+import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Input } from '@/components/ui/input';
 import { deleteAccount } from '@/features/account/actions/delete-account-action';
 
 export default function DeleteAccountForm() {
@@ -17,7 +18,7 @@ export default function DeleteAccountForm() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!isConfirmed) {
       setError('データ削除への同意が必要です');
       return;
@@ -33,7 +34,7 @@ export default function DeleteAccountForm() {
 
     try {
       const result = await deleteAccount(password);
-      
+
       if (result.success) {
         router.push('/');
       } else {
@@ -48,16 +49,16 @@ export default function DeleteAccountForm() {
 
   return (
     <div className="space-y-6">
-      <div className="border border-red-200 bg-red-50 rounded-lg p-4 flex items-start space-x-3">
-        <AlertTriangle className="h-5 w-5 text-red-600 flex-shrink-0 mt-0.5" />
+      <div className="flex items-start space-x-3 rounded-lg border border-red-200 bg-red-50 p-4">
+        <AlertTriangle className="mt-0.5 h-5 w-5 flex-shrink-0 text-red-600" />
         <div className="text-red-800">
           <strong>警告:</strong> この操作は取り消すことができません。
         </div>
       </div>
 
-      <div className="bg-gray-50 p-6 rounded-lg border border-gray-200">
-        <h2 className="text-xl font-semibold mb-4">削除されるデータ</h2>
-        <ul className="list-disc list-inside space-y-2 text-gray-700">
+      <div className="rounded-lg border border-gray-200 bg-gray-50 p-6">
+        <h2 className="mb-4 text-xl font-semibold">削除されるデータ</h2>
+        <ul className="list-inside list-disc space-y-2 text-gray-700">
           <li>アカウント情報（メールアドレス、名前など）</li>
           <li>すべての走行記録</li>
           <li>月間目標設定</li>
@@ -68,7 +69,10 @@ export default function DeleteAccountForm() {
 
       <form onSubmit={handleSubmit} className="space-y-6">
         <div>
-          <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
+          <label
+            htmlFor="password"
+            className="mb-2 block text-sm font-medium text-gray-700"
+          >
             パスワードを入力して本人確認を行ってください
           </label>
           <Input
@@ -87,22 +91,22 @@ export default function DeleteAccountForm() {
           <Checkbox
             id="confirm"
             checked={isConfirmed}
-            onCheckedChange={(checked: boolean | "indeterminate") => setIsConfirmed(checked === true)}
+            onCheckedChange={(checked: boolean | 'indeterminate') =>
+              setIsConfirmed(checked === true)
+            }
             disabled={isDeleting}
           />
           <label
             htmlFor="confirm"
-            className="text-sm text-gray-700 cursor-pointer select-none"
+            className="cursor-pointer text-sm text-gray-700 select-none"
           >
             上記のデータがすべて完全に削除され、復旧できないことを理解しました
           </label>
         </div>
 
         {error && (
-          <div className="border border-red-200 bg-red-50 rounded-lg p-4">
-            <div className="text-red-800">
-              {error}
-            </div>
+          <div className="rounded-lg border border-red-200 bg-red-50 p-4">
+            <div className="text-red-800">{error}</div>
           </div>
         )}
 
