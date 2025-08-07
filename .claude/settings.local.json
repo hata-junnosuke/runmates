@@ -33,7 +33,8 @@
       "Bash(afplay:*)",
       "WebFetch(domain:nextjs.org)",
       "Bash(mkdir:*)",
-      "Bash(mv:*)"
+      "Bash(mv:*)",
+      "Bash(gh pr create:*)"
     ],
     "deny": []
   },
