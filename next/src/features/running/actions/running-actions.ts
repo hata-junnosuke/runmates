@@ -1,7 +1,7 @@
 'use server';
 
-import { cookies } from 'next/headers';
 import { revalidatePath } from 'next/cache';
+import { cookies } from 'next/headers';
 
 const API_BASE_URL = process.env.INTERNAL_API_URL || 'http://rails:3000/api/v1';
 
@@ -9,28 +9,30 @@ const API_BASE_URL = process.env.INTERNAL_API_URL || 'http://rails:3000/api/v1';
 async function apiCall(endpoint: string, options: RequestInit = {}) {
   const cookieStore = await cookies();
   const url = `${API_BASE_URL}${endpoint}`;
-  
+
   // クッキーから認証情報を取得
   const accessToken = cookieStore.get('access-token')?.value;
   const client = cookieStore.get('client')?.value;
   const uid = cookieStore.get('uid')?.value;
-  
+
   const defaultOptions: RequestInit = {
     headers: {
       'Content-Type': 'application/json',
-      ...(accessToken && client && uid && {
-        'access-token': accessToken,
-        'client': client,
-        'uid': uid,
-        'token-type': 'Bearer'
-      }),
+      ...(accessToken &&
+        client &&
+        uid && {
+          'access-token': accessToken,
+          client: client,
+          uid: uid,
+          'token-type': 'Bearer',
+        }),
       ...options.headers,
     },
     ...options,
   };
 
   const response = await fetch(url, defaultOptions);
-  
+
   if (!response.ok) {
     // デバッグ情報を追加
     console.error('API call failed:', {
@@ -38,18 +40,17 @@ async function apiCall(endpoint: string, options: RequestInit = {}) {
       status: response.status,
       hasAccessToken: !!accessToken,
       hasClient: !!client,
-      hasUid: !!uid
+      hasUid: !!uid,
     });
     throw new Error(`API Error: ${response.status} ${response.statusText}`);
   }
-  
+
   if (response.status === 204) {
     return null;
   }
-  
+
   return response.json();
 }
-
 
 // 走行記録を追加
 export async function createRunningRecord(formData: FormData) {
@@ -66,7 +67,7 @@ export async function createRunningRecord(formData: FormData) {
     await apiCall('/running_records', {
       method: 'POST',
       body: JSON.stringify({
-        running_record: { date, distance }
+        running_record: { date, distance },
       }),
     });
 
@@ -90,15 +91,15 @@ export async function updateMonthlyGoal(formData: FormData) {
     }
 
     const currentDate = new Date();
-    
+
     await apiCall('/current_monthly_goal', {
       method: 'POST',
       body: JSON.stringify({
         monthly_goal: {
           year: currentDate.getFullYear(),
           month: currentDate.getMonth() + 1, // getMonth()は0-11の範囲で返すので+1する
-          distance_goal: distanceGoal
-        }
+          distance_goal: distanceGoal,
+        },
       }),
     });
 
@@ -122,14 +123,14 @@ export async function updateYearlyGoal(formData: FormData) {
     }
 
     const currentDate = new Date();
-    
+
     await apiCall('/current_yearly_goal', {
       method: 'POST',
       body: JSON.stringify({
         yearly_goal: {
           year: currentDate.getFullYear(),
-          distance_goal: distanceGoal
-        }
+          distance_goal: distanceGoal,
+        },
       }),
     });
 

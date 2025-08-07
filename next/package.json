@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start -p 80",
     "lint": "next lint --dir src",
-    "format": "next lint --fix --dir src"
+    "format": "next lint --fix --dir src && prettier --write 'src/**/*.{js,jsx,ts,tsx}'"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.1.1",
@@ -36,6 +36,10 @@
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "15.3.1",
+    "eslint-plugin-simple-import-sort": "^12.1.1",
+    "eslint-plugin-unused-imports": "^4.1.4",
+    "prettier": "^3.4.2",
+    "prettier-plugin-tailwindcss": "^0.6.10",
     "tailwindcss": "^4",
     "typescript": "^5"
   }

@@ -1,8 +1,8 @@
 'use client';
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 
 export default function ForgotPasswordForm() {
   const [email, setEmail] = useState('');
@@ -18,28 +18,36 @@ export default function ForgotPasswordForm() {
     setError('');
 
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/password`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/auth/password`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          credentials: 'include',
+          body: JSON.stringify({
+            email,
+            redirect_url: `${process.env.NEXT_PUBLIC_BASE_URL}/reset-password`,
+          }),
         },
-        credentials: 'include',
-        body: JSON.stringify({
-          email,
-          redirect_url: `${process.env.NEXT_PUBLIC_BASE_URL}/reset-password`,
-        }),
-      });
+      );
 
       const data = await response.json();
 
       if (response.ok && data.success) {
-        setMessage('パスワードリセット用のメールを送信しました。メールボックスをご確認ください。');
+        setMessage(
+          'パスワードリセット用のメールを送信しました。メールボックスをご確認ください。',
+        );
         // 3秒後にログインページへリダイレクト
         setTimeout(() => {
           router.push('/login');
         }, 3000);
       } else {
-        setError(data.errors?.full_messages?.join(' ') || 'メールの送信に失敗しました。');
+        setError(
+          data.errors?.full_messages?.join(' ') ||
+            'メールの送信に失敗しました。',
+        );
       }
     } catch {
       setError('ネットワークエラーが発生しました。');
@@ -51,7 +59,10 @@ export default function ForgotPasswordForm() {
   return (
     <form className="space-y-5" onSubmit={handleSubmit}>
       <div>
-        <label htmlFor="email" className="block text-gray-700 font-semibold mb-2">
+        <label
+          htmlFor="email"
+          className="mb-2 block font-semibold text-gray-700"
+        >
           メールアドレス
         </label>
         <input
@@ -60,7 +71,7 @@ export default function ForgotPasswordForm() {
           type="email"
           autoComplete="email"
           required
-          className="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-green-400"
+          className="w-full rounded border px-4 py-2 focus:ring-2 focus:ring-green-400 focus:outline-none"
           placeholder="メールアドレスを入力"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
@@ -83,16 +94,13 @@ export default function ForgotPasswordForm() {
       <button
         type="submit"
         disabled={loading}
-        className="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-2 rounded transition disabled:opacity-50"
+        className="w-full rounded bg-green-600 py-2 font-bold text-white transition hover:bg-green-700 disabled:opacity-50"
       >
         {loading ? '送信中...' : 'リセットメールを送信'}
       </button>
 
-      <div className="text-center mt-2">
-        <Link 
-          href="/login" 
-          className="text-green-500 hover:underline text-sm"
-        >
+      <div className="mt-2 text-center">
+        <Link href="/login" className="text-sm text-green-500 hover:underline">
           ログインに戻る
         </Link>
       </div>

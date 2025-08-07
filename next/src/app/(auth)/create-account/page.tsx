@@ -1,6 +1,8 @@
 import { redirect } from 'next/navigation';
+
 import { getAuthStatus } from '@/features/auth/lib/server';
-import CreateAccountForm from "./_components/CreateAccountForm";
+
+import CreateAccountForm from './_components/CreateAccountForm';
 
 export default async function CreateAccountPage() {
   // 既にログイン済みの場合はダッシュボードへリダイレクト
@@ -10,9 +12,9 @@ export default async function CreateAccountPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-100 to-blue-200">
-      <div className="bg-white rounded-xl shadow-lg p-8 w-full max-w-md">
-        <h2 className="text-3xl font-bold text-center text-green-700 mb-6">
+    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-green-100 to-blue-200">
+      <div className="w-full max-w-md rounded-xl bg-white p-8 shadow-lg">
+        <h2 className="mb-6 text-center text-3xl font-bold text-green-700">
           アカウント作成
         </h2>
         <CreateAccountForm />

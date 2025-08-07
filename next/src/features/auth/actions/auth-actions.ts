@@ -12,7 +12,10 @@ export async function loginAction(formData: FormData) {
     const password = formData.get('password') as string;
 
     if (!email || !password) {
-      return { success: false, error: 'メールアドレスとパスワードを入力してください' };
+      return {
+        success: false,
+        error: 'メールアドレスとパスワードを入力してください',
+      };
     }
 
     const response = await fetch(`${API_BASE_URL}/auth/sign_in`, {
@@ -35,7 +38,10 @@ export async function loginAction(formData: FormData) {
         const cookieOptions = {
           httpOnly: true,
           secure: process.env.NODE_ENV === 'production',
-          sameSite: process.env.NODE_ENV === 'production' ? 'none' as const : 'lax' as const,
+          sameSite:
+            process.env.NODE_ENV === 'production'
+              ? ('none' as const)
+              : ('lax' as const),
           path: '/',
         };
 
@@ -85,7 +91,8 @@ export async function createAccountAction(formData: FormData) {
         email,
         password,
         password_confirmation: passwordConfirmation,
-        confirm_success_url: process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:8000/',
+        confirm_success_url:
+          process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:8000/',
       }),
     });
 
@@ -114,7 +121,7 @@ export async function createAccountAction(formData: FormData) {
 export async function logoutAction() {
   try {
     const cookieStore = await cookies();
-    
+
     // 認証情報を取得
     const accessToken = cookieStore.get('access-token')?.value;
     const client = cookieStore.get('client')?.value;
@@ -126,8 +133,8 @@ export async function logoutAction() {
         method: 'DELETE',
         headers: {
           'access-token': accessToken,
-          'client': client,
-          'uid': uid,
+          client: client,
+          uid: uid,
         },
       });
     }

@@ -34,7 +34,8 @@
       "WebFetch(domain:nextjs.org)",
       "Bash(mkdir:*)",
       "Bash(mv:*)",
-      "Bash(gh pr create:*)"
+      "Bash(gh pr create:*)",
+      "Bash(git diff:*)"
     ],
     "deny": []
   },
