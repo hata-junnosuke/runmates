@@ -81,4 +81,16 @@ Rails.application.configure do
   config.hosts << "rails"
   config.hosts << "rails:3000"
   config.hosts << /.*\.*/ # 開発環境では全てのホストを許可
+
+  # Bullet設定
+  config.after_initialize do
+    Bullet.enable = true
+    Bullet.alert = true # ブラウザにJavaScriptアラートを表示
+    Bullet.bullet_logger = true # Bulletログファイルに記録
+    Bullet.console = true # ブラウザコンソールにログ出力
+    Bullet.rails_logger = true # Railsログに出力
+    Bullet.add_footer = true # ページ下部に検出結果を表示
+    Bullet.skip_html_injection = false # HTMLへの注入を有効化
+    Bullet.raise = false # N+1検出時に例外を発生させない（開発中は推奨）
+  end
 end
