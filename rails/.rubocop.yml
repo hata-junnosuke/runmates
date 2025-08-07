@@ -22,6 +22,7 @@ Metrics/BlockLength:
   Exclude:
     - 'db/schema.rb'
     - 'config/environments/*.rb'
+    - 'lib/tasks/auto_annotate_models.rake'
 
 # マイグレーションファイルは既存のDeviseTokenAuthで修正不可
 Rails/ThreeStateBooleanColumn:
