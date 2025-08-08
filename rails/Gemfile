@@ -75,6 +75,9 @@ group :development, :test do
   gem "rubocop-faker"
   gem "rubocop-rails"
   gem "rubocop-rspec"
+
+  # テストカバレッジを測定・レポート生成
+  gem "simplecov", require: false
 end
 
 group :development do
