@@ -42,3 +42,10 @@ gh pr create --title "機能追加: ダークモード対応" --body "テンプ�
 - テンプレートは日本語で記載されているため、Issue/PRも日本語で作成すること
 - 関連するIssueがある場合は必ず紐付けること
 - スクリーンショットが必要な場合は添付すること
+- ライブラリを追加した場合はPRに用途と使い方を記載すること
+- 各操作（git add、git commit、git push、PR作成）の前に必ず通知音を鳴らすこと：
+```bash
+afplay /System/Library/Sounds/Submarine.aiff
+```
+
+これは`.claude/hooks/notification-sounds.md`の設定に従っています。

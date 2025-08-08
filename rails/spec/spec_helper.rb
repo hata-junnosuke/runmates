@@ -13,6 +13,51 @@
 # it.
 #
 # See https://rubydoc.info/gems/rspec-core/RSpec/Core/Configuration
+
+# SimpleCovを最初に起動する必要がある
+require "simplecov"
+SimpleCov.start "rails" do
+  # テストファイル自体はカバレッジから除外
+  add_filter "/spec/"
+  add_filter "/config/"
+  add_filter "/vendor/"
+
+  # グループ化して見やすくする
+  add_group "Models", "app/models"
+  add_group "Controllers", "app/controllers"
+  add_group "Mailers", "app/mailers"
+  add_group "Jobs", "app/jobs"
+  add_group "Serializers", "app/serializers"
+
+  # 最小カバレッジ率の設定（オプション）
+  # minimum_coverage 90
+end
+
+# テスト終了後にカバレッジサマリーを表示
+SimpleCov.at_exit do
+  SimpleCov.result.format!
+
+  # カバレッジサマリーをコンソールに表示
+  puts "\n\n========== Coverage Summary =========="
+  SimpleCov.result.groups.each do |name, files|
+    coverage = files.covered_percent.round(2)
+    puts "#{name.ljust(15)}: #{coverage}%"
+  end
+  puts "\n総合カバレッジ: #{SimpleCov.result.covered_percent.round(2)}%"
+  puts "======================================"
+
+  # 環境変数で詳細表示を制御
+  if ENV["COVERAGE_DETAIL"] == "true"
+    puts "\n========== File Details =========="
+    SimpleCov.result.files.sort_by(&:covered_percent).each do |file|
+      coverage = file.covered_percent.round(2)
+      filename = file.filename.gsub("/myapp/", "")
+      puts "#{coverage.to_s.rjust(6)}% : #{filename}"
+    end
+    puts "=================================="
+  end
+end
+
 RSpec.configure do |config|
   # rspec-expectations config goes here. You can use an alternate
   # assertion/expectation library such as wrong or the stdlib/minitest
