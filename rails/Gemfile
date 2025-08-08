@@ -78,6 +78,10 @@ group :development, :test do
 
   # テストカバレッジを測定・レポート生成
   gem "simplecov", require: false
+
+  # セキュリティ脆弱性チェックツール
+  gem "brakeman", require: false
+  gem "bundler-audit", require: false
 end
 
 group :development do

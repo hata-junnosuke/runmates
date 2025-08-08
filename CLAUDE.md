@@ -78,6 +78,11 @@ docker-compose exec rails bundle exec rubocop  # Rubyリント
 docker-compose exec rails bundle exec rubocop -a  # 自動修正
 docker-compose exec next npm run lint          # JS/TSリント
 docker-compose exec next npm run format        # 自動修正
+
+# セキュリティチェック
+docker-compose exec rails bundle exec bundle-audit check  # Gem脆弱性チェック
+docker-compose exec rails bundle exec brakeman           # Railsセキュリティスキャン
+docker-compose exec next npm audit                        # npm脆弱性チェック
 ```
 
 ## 主要なアーキテクチャパターン
