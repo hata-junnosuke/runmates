@@ -21,6 +21,7 @@ SimpleCov.start "rails" do
   add_filter "/spec/"
   add_filter "/config/"
   add_filter "/vendor/"
+  add_filter "/lib/tasks/" # 開発用ツールを除外
 
   # グループ化して見やすくする
   add_group "Models", "app/models"
