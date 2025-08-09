@@ -158,9 +158,21 @@ export default function ClientRunningCalendar({
           const isWeekend = date.getDay() === 0 || date.getDay() === 6;
 
           return (
-            <div
+            <button
               key={index}
               onClick={() => isCurrentMonth && handleDateClick(date)}
+              onKeyDown={(e) => {
+                if (isCurrentMonth && (e.key === 'Enter' || e.key === ' ')) {
+                  e.preventDefault();
+                  handleDateClick(date);
+                }
+              }}
+              disabled={!isCurrentMonth}
+              aria-label={`${date.getFullYear()}年${
+                date.getMonth() + 1
+              }月${date.getDate()}日${
+                hasRun ? `、${totalDistance.toFixed(1)}km走行済み` : ''
+              }${isToday ? '、今日' : ''}`}
               className={[
                 'relative flex h-12 items-center justify-center rounded-lg text-sm transition-all duration-200',
                 !isCurrentMonth
@@ -192,7 +204,7 @@ export default function ClientRunningCalendar({
                 className="absolute inset-0 rounded-lg bg-blue-400 opacity-20"
                 style={{ display: isToday && !hasRun ? 'block' : 'none' }}
               />
-            </div>
+            </button>
           );
         })}
       </div>
