@@ -24,9 +24,16 @@ export default function StatisticsCards({
   return (
     <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
       {/* 今年の総走行距離 - クリック可能 */}
-      <div
-        className="group transform cursor-pointer rounded-xl bg-gradient-to-br from-emerald-400 to-emerald-600 p-6 text-white shadow-lg transition-all duration-300 hover:scale-105"
+      <button
+        className="group transform cursor-pointer rounded-xl bg-gradient-to-br from-emerald-400 to-emerald-600 p-6 text-white shadow-lg transition-all duration-300 hover:scale-105 w-full text-left"
         onClick={onYearlyGoalClick}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            onYearlyGoalClick();
+          }
+        }}
+        aria-label={`今年の総走行距離: ${thisYearDistance.toFixed(1)}km、年間目標: ${yearGoal}km、達成率: ${yearGoalProgress.toFixed(0)}%`}
       >
         <div className="flex items-start justify-between">
           <div>
@@ -58,7 +65,7 @@ export default function StatisticsCards({
             </div>
           </div>
         </div>
-      </div>
+      </button>
 
       {/* 今月の走行距離 */}
       <div className="rounded-xl bg-gradient-to-br from-blue-400 to-blue-600 p-6 text-white shadow-lg">
@@ -85,9 +92,16 @@ export default function StatisticsCards({
       </div>
 
       {/* 目標達成率 - クリック可能 */}
-      <div
-        className="group transform cursor-pointer rounded-xl bg-gradient-to-br from-purple-400 to-purple-600 p-6 text-white shadow-lg transition-all duration-300 hover:scale-105"
+      <button
+        className="group transform cursor-pointer rounded-xl bg-gradient-to-br from-purple-400 to-purple-600 p-6 text-white shadow-lg transition-all duration-300 hover:scale-105 w-full text-left"
         onClick={onMonthlyGoalClick}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            onMonthlyGoalClick();
+          }
+        }}
+        aria-label={`月間目標達成率: ${goalAchievementRate.toFixed(0)}%、目標: ${goal}km、現在: ${thisMonthDistance.toFixed(1)}km`}
       >
         <div className="flex items-start justify-between">
           <div>
@@ -122,7 +136,7 @@ export default function StatisticsCards({
             </div>
           </div>
         </div>
-      </div>
+      </button>
     </div>
   );
 }

@@ -106,10 +106,19 @@ export default function RecentRecords({ statistics }: RecentRecordsProps) {
 
                 {/* 同じ日の記録一覧 */}
                 {group.records.map((record) => (
-                  <div
+                  <button
                     key={record.id}
                     onClick={() => handleRecordClick(record)}
-                    className="group flex cursor-pointer items-center justify-between rounded-lg bg-gray-50 p-3 transition-colors hover:bg-gray-100"
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        handleRecordClick(record);
+                      }
+                    }}
+                    aria-label={`${record.date}の${Number(
+                      record.distance,
+                    ).toFixed(1)}kmの記録を編集`}
+                    className="group flex w-full cursor-pointer items-center justify-between rounded-lg bg-gray-50 p-3 text-left transition-colors hover:bg-gray-100"
                   >
                     <div className="flex items-center space-x-3">
                       <div className="text-emerald-600 group-hover:animate-pulse">
@@ -139,7 +148,7 @@ export default function RecentRecords({ statistics }: RecentRecordsProps) {
                         />
                       </svg>
                     </div>
-                  </div>
+                  </button>
                 ))}
               </div>
             ))
