@@ -50,6 +50,9 @@ gem "rack-cors"
 # Solid Queue for job processing
 gem "solid_queue"
 
+# セキュリティ脆弱性対応 (CVE-2025-54314)
+gem "thor", ">= 1.4.0"
+
 # AWS SES for email delivery in production
 gem "aws-sdk-rails", "~> 4.0"
 gem "aws-sdk-sesv2", "~> 1.0"
