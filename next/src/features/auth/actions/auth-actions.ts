@@ -78,6 +78,8 @@ export async function createAccountAction(formData: FormData) {
       return { success: false, error: '必要な情報を入力してください' };
     }
 
+    // フロントエンドでの入力検証用の比較なのでタイミング攻撃のリスクは低い
+    // eslint-disable-next-line security/detect-possible-timing-attacks
     if (password !== passwordConfirmation) {
       return { success: false, error: 'パスワードが一致しません' };
     }
