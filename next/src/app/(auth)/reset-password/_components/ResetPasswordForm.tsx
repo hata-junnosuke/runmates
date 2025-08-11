@@ -29,6 +29,8 @@ export default function ResetPasswordForm() {
       return;
     }
 
+    // フロントエンドでの入力検証用の比較なのでタイミング攻撃のリスクは低い
+    // eslint-disable-next-line security/detect-possible-timing-attacks
     if (password !== passwordConfirmation) {
       setError('パスワードが一致しません。');
       return;

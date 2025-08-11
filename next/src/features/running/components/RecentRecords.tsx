@@ -37,31 +37,34 @@ export default function RecentRecords({ statistics }: RecentRecordsProps) {
     setSelectedRecord(null);
   };
 
-  // 日付ごとにレコードをグループ化
-  const groupedRecords = (statistics?.recent_records || []).reduce(
+  // 日付ごとにレコードをグループ化（Mapを使用してObject Injectionを回避）
+  const groupedRecordsMap = (statistics?.recent_records || []).reduce(
     (acc, record) => {
       const date = record.date;
-      if (!acc[date]) {
-        acc[date] = {
+      const existing = acc.get(date);
+      
+      if (!existing) {
+        acc.set(date, {
           date,
-          totalDistance: 0,
-          records: [],
+          totalDistance: Number(record.distance || 0),
+          records: [record],
           latestCreatedAt: record.created_at || '',
-        };
-      }
-      acc[date].totalDistance += Number(record.distance || 0);
-      acc[date].records.push(record);
-      // 最新の作成時刻を保持
-      if (
-        record.created_at &&
-        (!acc[date].latestCreatedAt ||
-          record.created_at > acc[date].latestCreatedAt)
-      ) {
-        acc[date].latestCreatedAt = record.created_at;
+        });
+      } else {
+        existing.totalDistance += Number(record.distance || 0);
+        existing.records.push(record);
+        // 最新の作成時刻を保持
+        if (
+          record.created_at &&
+          (!existing.latestCreatedAt ||
+            record.created_at > existing.latestCreatedAt)
+        ) {
+          existing.latestCreatedAt = record.created_at;
+        }
       }
       return acc;
     },
-    {} as Record<
+    new Map<
       string,
       {
         date: string;
@@ -69,11 +72,11 @@ export default function RecentRecords({ statistics }: RecentRecordsProps) {
         records: RunRecord[];
         latestCreatedAt: string;
       }
-    >,
+    >(),
   );
 
   // 日付順にソート（最新順）
-  const sortedDates = Object.values(groupedRecords).sort((a, b) => {
+  const sortedDates = Array.from(groupedRecordsMap.values()).sort((a, b) => {
     // まず日付で比較
     const dateCompare = new Date(b.date).getTime() - new Date(a.date).getTime();
     if (dateCompare !== 0) return dateCompare;
