@@ -44,7 +44,7 @@ RSpec.describe "Api::V1::CurrentMonthlyGoal", type: :request do
 
       context "過去月の目標のみ存在する場合" do
         let!(:past_goal) {
-          create(:monthly_goal, user: user, year: current_year, month: current_month - 1, distance_goal: 80.0)
+          create(:monthly_goal, :for_previous_month, :with_medium_low_goal, user: user)
         }
 
         it "今月のデフォルト値を返すこと" do
@@ -106,7 +106,7 @@ RSpec.describe "Api::V1::CurrentMonthlyGoal", type: :request do
 
       context "既存の目標を更新する場合" do
         let!(:existing_goal) {
-          create(:monthly_goal, user: user, year: current_year, month: current_month, distance_goal: 50.0)
+          create(:monthly_goal, :with_low_goal, user: user, year: current_year, month: current_month)
         }
 
         it "既存の目標を更新すること" do

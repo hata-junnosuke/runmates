@@ -80,7 +80,7 @@ RSpec.describe MonthlyGoal, type: :model do
   describe "スコープ" do
     let(:user) { create(:user) }
     let!(:current_month_goal) { create(:monthly_goal, user: user, year: Date.current.year, month: Date.current.month) }
-    let!(:previous_month_goal) { create(:monthly_goal, user: user, year: 1.month.ago.year, month: 1.month.ago.month) }
+    let!(:previous_month_goal) { create(:monthly_goal, :for_previous_month, user: user) }
 
     describe ".for_current_month" do
       it "現在の年月の目標のみを返す" do

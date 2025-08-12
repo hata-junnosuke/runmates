@@ -8,7 +8,7 @@ RSpec.describe "Api::V1::CurrentYearlyGoal", type: :request do
   describe "GET /api/v1/current_yearly_goal" do
     context "認証済みユーザーの場合" do
       context "今年の目標が存在する場合" do
-        let!(:yearly_goal) { create(:yearly_goal, user: user, year: current_year, distance_goal: 1000.0) }
+        let!(:yearly_goal) { create(:yearly_goal, :with_medium_goal, user: user, year: current_year) }
 
         it "今年の目標を返すこと" do
           get "/api/v1/current_yearly_goal", headers: headers
@@ -38,7 +38,7 @@ RSpec.describe "Api::V1::CurrentYearlyGoal", type: :request do
       end
 
       context "過去年の目標のみ存在する場合" do
-        let!(:past_goal) { create(:yearly_goal, user: user, year: current_year - 1, distance_goal: 800.0) }
+        let!(:past_goal) { create(:yearly_goal, :for_previous_year, :with_medium_low_goal_alt, user: user) }
 
         it "今年のデフォルト値を返すこと" do
           get "/api/v1/current_yearly_goal", headers: headers
@@ -95,7 +95,7 @@ RSpec.describe "Api::V1::CurrentYearlyGoal", type: :request do
       end
 
       context "既存の目標を更新する場合" do
-        let!(:existing_goal) { create(:yearly_goal, user: user, year: current_year, distance_goal: 500.0) }
+        let!(:existing_goal) { create(:yearly_goal, :with_medium_low_goal, user: user, year: current_year) }
 
         it "既存の目標を更新すること" do
           expect {
