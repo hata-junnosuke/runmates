@@ -8,19 +8,19 @@ RSpec.describe "Api::V1::RunningStatistics", type: :request do
     context "認証済みユーザーの場合" do
       before do
         # 今年のレコードを作成
-        create(:running_record, user: user, date: Date.current, distance: 5.0)
+        create(:running_record, user: user, date: Date.current) # デフォルト5.0km
         create(:running_record, user: user, date: Date.current - 1.day, distance: 3.0)
         create(:running_record, user: user, date: Date.current - 2.days, distance: 4.0)
 
         # 今月のレコード（上記3つ含む）
         create(:running_record, user: user, date: Date.current.beginning_of_month, distance: 2.0)
 
-        # 去年のレコード
-        create(:running_record, user: user, date: Date.current - 1.year, distance: 10.0)
+        # 去年のレコード（長距離）
+        create(:running_record, :with_long_distance, user: user, date: Date.current - 1.year) # 20.0km
 
         # 他のユーザーのレコード（含まれないはず）
         other_user = create(:user)
-        create(:running_record, user: other_user, date: Date.current, distance: 100.0)
+        create(:running_record, :with_extreme_distance, user: other_user, date: Date.current) # 100.0km
       end
 
       it "統計情報を返すこと" do
@@ -36,7 +36,7 @@ RSpec.describe "Api::V1::RunningStatistics", type: :request do
         # 今月の距離: 5.0 + 3.0 + 4.0 + 2.0 = 14.0
         expect(json_response["this_month_distance"]).to eq("14.0")
 
-        # 総レコード数: 5
+        # 総レコード数: 5（今年4件 + 去年1件）
         expect(json_response["total_records"]).to eq(5)
 
         # 最近のレコード（最大5件、日付の降順）

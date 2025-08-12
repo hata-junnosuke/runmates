@@ -10,12 +10,12 @@ FactoryBot.define do
       year { 1.month.ago.year }
     end
 
-    trait :with_high_goal do
-      distance_goal { 300.0 }
-    end
-
     trait :with_low_goal do
       distance_goal { 50.0 }
+    end
+
+    trait :with_medium_low_goal do
+      distance_goal { 80.0 }
     end
   end
 end
