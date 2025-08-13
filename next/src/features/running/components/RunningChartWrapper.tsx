@@ -7,8 +7,8 @@ import { Suspense } from 'react';
 const RunningChart = dynamic(() => import('./RunningChart'), {
   ssr: false,
   loading: () => (
-    <div className="rounded-xl bg-white p-6 shadow-lg">
-      <div className="flex h-80 items-center justify-center">
+    <div className="rounded-xl bg-white p-4 md:p-6 shadow-lg">
+      <div className="flex h-64 md:h-80 items-center justify-center">
         <div className="animate-pulse">
           <div className="mb-4 h-4 w-48 rounded bg-gray-300"></div>
           <div className="space-y-3">
@@ -18,7 +18,7 @@ const RunningChart = dynamic(() => import('./RunningChart'), {
           </div>
         </div>
       </div>
-      <div className="mt-4 grid grid-cols-3 gap-4">
+      <div className="mt-4 grid grid-cols-1 sm:grid-cols-3 gap-4">
         <div className="h-12 animate-pulse rounded bg-gray-200"></div>
         <div className="h-12 animate-pulse rounded bg-gray-200"></div>
         <div className="h-12 animate-pulse rounded bg-gray-200"></div>
@@ -54,8 +54,8 @@ export default function RunningChartWrapper({
   return (
     <Suspense
       fallback={
-        <div className="rounded-xl bg-white p-6 shadow-lg">
-          <div className="h-80 animate-pulse rounded bg-gray-200"></div>
+        <div className="rounded-xl bg-white p-4 md:p-6 shadow-lg">
+          <div className="h-64 md:h-80 animate-pulse rounded bg-gray-200"></div>
         </div>
       }
     >

@@ -373,8 +373,8 @@ export default function RunningChart({
   };
 
   return (
-    <div className="rounded-xl bg-white p-6 shadow-lg">
-      <div className="h-80">
+    <div className="rounded-xl bg-white p-4 md:p-6 shadow-lg">
+      <div className="h-64 md:h-80">
         <Line
           data={data as ChartData<'line'>}
           options={options as ChartOptions<'line'>}
@@ -384,42 +384,44 @@ export default function RunningChart({
       <div className="mt-4 mb-4 flex items-center justify-between">
         <button
           onClick={goToPreviousMonth}
-          className="flex items-center rounded-lg px-3 py-2 text-gray-600 transition-colors hover:bg-gray-100 hover:text-gray-800"
+          className="flex items-center rounded-lg px-2 py-1 md:px-3 md:py-2 text-sm md:text-base text-gray-600 transition-colors hover:bg-gray-100 hover:text-gray-800"
         >
           <span className="mr-1">←</span>
-          前の月
+          <span className="hidden sm:inline">前の月</span>
+          <span className="sm:hidden">前月</span>
         </button>
 
         <div className="flex items-center space-x-2">
-          <h3 className="text-lg font-bold text-gray-800">
+          <h3 className="text-base md:text-lg font-bold text-gray-800">
             {viewYear}年{viewMonth + 1}月
           </h3>
         </div>
 
         <button
           onClick={goToNextMonth}
-          className="flex items-center rounded-lg px-3 py-2 text-gray-600 transition-colors hover:bg-gray-100 hover:text-gray-800"
+          className="flex items-center rounded-lg px-2 py-1 md:px-3 md:py-2 text-sm md:text-base text-gray-600 transition-colors hover:bg-gray-100 hover:text-gray-800"
         >
-          次の月
+          <span className="hidden sm:inline">次の月</span>
+          <span className="sm:hidden">次月</span>
           <span className="ml-1">→</span>
         </button>
       </div>
 
       {/* 統計表示 */}
-      <div className="grid grid-cols-3 gap-4 text-sm text-gray-600">
+      <div className="grid grid-cols-3 gap-2 md:gap-4 text-xs md:text-sm text-gray-600">
         <div className="text-center">
           <div className="font-semibold text-emerald-600">月間走行距離</div>
-          <div className="text-lg font-bold">
+          <div className="text-base md:text-lg font-bold">
             {viewMonthCumulative.toFixed(1)} km
           </div>
         </div>
         <div className="text-center">
           <div className="font-semibold text-blue-600">月間目標</div>
-          <div className="text-lg font-bold">{monthlyGoal.toFixed(1)} km</div>
+          <div className="text-base md:text-lg font-bold">{monthlyGoal.toFixed(1)} km</div>
         </div>
         <div className="text-center">
           <div className="font-semibold text-purple-600">達成率</div>
-          <div className="text-lg font-bold">
+          <div className="text-base md:text-lg font-bold">
             {monthlyGoal > 0
               ? ((viewMonthCumulative / monthlyGoal) * 100).toFixed(0)
               : 0}

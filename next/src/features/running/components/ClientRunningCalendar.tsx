@@ -101,13 +101,13 @@ export default function ClientRunningCalendar({
   const weekDays = ['日', '月', '火', '水', '木', '金', '土'];
 
   return (
-    <div className="rounded-2xl border-l-4 border-blue-400 bg-white p-6 shadow-lg">
+    <div className="rounded-2xl border-l-4 border-blue-400 bg-white p-4 md:p-6 shadow-lg">
       {/* ヘッダー */}
-      <div className="mb-4 flex items-center justify-between">
-        <h2 className="flex items-center text-xl font-bold text-gray-800">
+      <div className="mb-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+        <h2 className="flex items-center text-lg md:text-xl font-bold text-gray-800">
           📅 ランニングカレンダー
         </h2>
-        <div className="flex items-center space-x-2">
+        <div className="flex items-center justify-center space-x-2">
           <Button
             variant="ghost"
             size="sm"
@@ -116,7 +116,7 @@ export default function ClientRunningCalendar({
           >
             ←
           </Button>
-          <h3 className="min-w-[120px] text-center text-lg font-bold text-gray-700">
+          <h3 className="min-w-[100px] md:min-w-[120px] text-center text-base md:text-lg font-bold text-gray-700">
             {year}年 {month + 1}月
           </h3>
           <Button
@@ -149,7 +149,7 @@ export default function ClientRunningCalendar({
       </div>
 
       {/* カレンダーグリッド */}
-      <div className="grid grid-cols-7 gap-1">
+      <div className="grid grid-cols-7 gap-0.5 sm:gap-1">
         {calendarDays.map((date, index) => {
           const isCurrentMonth = date.getMonth() === month;
           const isToday = today && date.toDateString() === today.toDateString();
@@ -174,7 +174,7 @@ export default function ClientRunningCalendar({
                 hasRun ? `、${totalDistance.toFixed(1)}km走行済み` : ''
               }${isToday ? '、今日' : ''}`}
               className={[
-                'relative flex h-12 items-center justify-center rounded-lg text-sm transition-all duration-200',
+                'relative flex h-10 sm:h-12 items-center justify-center rounded-md sm:rounded-lg text-xs sm:text-sm transition-all duration-200',
                 !isCurrentMonth
                   ? 'text-gray-300'
                   : 'cursor-pointer hover:bg-gray-100',
@@ -193,7 +193,7 @@ export default function ClientRunningCalendar({
               {/* 走った日のマーカー */}
               {hasRun && isCurrentMonth && (
                 <div className="absolute inset-0 flex items-center justify-center">
-                  <div className="absolute right-0 bottom-0 left-0 text-center text-[8px] text-white opacity-90">
+                  <div className="absolute right-0 bottom-0 left-0 text-center text-[7px] sm:text-[8px] text-white opacity-90">
                     {totalDistance.toFixed(1)}km
                   </div>
                 </div>
@@ -201,7 +201,7 @@ export default function ClientRunningCalendar({
 
               {/* 今日のマーカー */}
               <div
-                className="absolute inset-0 rounded-lg bg-blue-400 opacity-20"
+                className="absolute inset-0 rounded-md sm:rounded-lg bg-blue-400 opacity-20"
                 style={{ display: isToday && !hasRun ? 'block' : 'none' }}
               />
             </button>
