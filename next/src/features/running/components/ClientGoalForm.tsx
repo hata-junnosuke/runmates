@@ -29,16 +29,17 @@ import { updateMonthlyGoal } from '../actions/running-actions';
 const monthlyGoalSchema = z.object({
   distance_goal: z.union([
     z.number().min(1, '目標距離は1km以上で入力してください'),
-    z.literal('').transform(() => 0),
+    z.literal('').transform(() => null),
+    z.null(),
   ]),
 });
 
 type MonthlyGoalFormData = {
-  distance_goal: number | '';
+  distance_goal: number | '' | null;
 };
 
 interface ClientGoalFormProps {
-  currentGoal: number;
+  currentGoal: number | null;
   isOpen: boolean;
   onClose: () => void;
   showWelcomeMessage?: boolean;
@@ -71,8 +72,10 @@ export default function ClientGoalForm({
   const onSubmit = async (data: MonthlyGoalFormData) => {
     setError(null);
     const formData = new FormData();
-    const distance = data.distance_goal === '' ? 0 : data.distance_goal;
-    formData.append('distance_goal', distance.toString());
+    const distance = data.distance_goal === '' || data.distance_goal === null ? null : data.distance_goal;
+    if (distance !== null) {
+      formData.append('distance_goal', distance.toString());
+    }
 
     // 非同期処理をトランジションでラップすることで、この処理の間はisPendingがtrueになる
     startTransition(async () => {
@@ -135,7 +138,7 @@ export default function ClientGoalForm({
                       value={field.value || ''}
                     />
                   </FormControl>
-                  <FormDescription>現在の目標: {currentGoal}km</FormDescription>
+                  <FormDescription>現在の目標: {currentGoal ? `${currentGoal}km` : '未設定'}</FormDescription>
                   <FormMessage />
                   {error && <p className="text-sm text-red-500">{error}</p>}
                 </FormItem>

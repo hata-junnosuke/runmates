@@ -10,10 +10,9 @@ RSpec.describe MonthlyGoal, type: :model do
 
     it { should validate_presence_of(:year) }
     it { should validate_presence_of(:month) }
-    it { should validate_presence_of(:distance_goal) }
     it { should validate_numericality_of(:year).is_in(2020..2050) }
     it { should validate_numericality_of(:month).is_in(1..12) }
-    it { should validate_numericality_of(:distance_goal).is_greater_than(1.0).is_less_than_or_equal_to(500.0) }
+    it { should validate_numericality_of(:distance_goal).is_greater_than(0).allow_nil }
     it { should validate_uniqueness_of(:user_id).scoped_to([:year, :month]) }
 
     context "有効な値の場合" do
@@ -51,17 +50,21 @@ RSpec.describe MonthlyGoal, type: :model do
       end
     end
 
-    context "distance_goalが範囲外の場合" do
-      it "1.0以下の場合は無効になる" do
-        monthly_goal = build(:monthly_goal, distance_goal: 1.0)
+    context "distance_goalのバリデーション" do
+      it "0以下の場合は無効になる" do
+        monthly_goal = build(:monthly_goal, distance_goal: 0)
         expect(monthly_goal).not_to be_valid
         expect(monthly_goal.errors[:distance_goal]).to be_present
       end
 
-      it "500.0を超える場合は無効になる" do
-        monthly_goal = build(:monthly_goal, distance_goal: 501.0)
-        expect(monthly_goal).not_to be_valid
-        expect(monthly_goal.errors[:distance_goal]).to be_present
+      it "大きな値でも有効になる" do
+        monthly_goal = build(:monthly_goal, distance_goal: 1000.0)
+        expect(monthly_goal).to be_valid
+      end
+
+      it "nilの場合は有効になる" do
+        monthly_goal = build(:monthly_goal, distance_goal: nil)
+        expect(monthly_goal).to be_valid
       end
     end
 

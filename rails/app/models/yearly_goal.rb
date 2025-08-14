@@ -5,7 +5,7 @@
 #  id            :integer          not null, primary key
 #  user_id       :integer          not null
 #  year          :integer          not null
-#  distance_goal :decimal(6, 2)    not null
+#  distance_goal :decimal(6, 2)
 #  created_at    :datetime         not null
 #  updated_at    :datetime         not null
 #
@@ -20,8 +20,8 @@ class YearlyGoal < ApplicationRecord
 
   validates :year, presence: true,
                    numericality: { in: 2020..2050 }
-  validates :distance_goal, presence: true,
-                            numericality: { greater_than: 50.0, less_than_or_equal_to: 2000.0 }
+  validates :distance_goal, numericality: { greater_than_or_equal_to: 1 },
+                            allow_nil: true
   validates :user_id, uniqueness: { scope: :year }
 
   scope :for_current_year, -> { where(year: Date.current.year) }

@@ -10,12 +10,12 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_07_14_112405) do
+ActiveRecord::Schema[8.0].define(version: 2025_08_14_101224) do
   create_table "monthly_goals", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.bigint "user_id", null: false
     t.integer "year", null: false
     t.integer "month", null: false
-    t.decimal "distance_goal", precision: 5, scale: 2, null: false
+    t.decimal "distance_goal", precision: 5, scale: 2
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["user_id", "year", "month"], name: "index_monthly_goals_on_user_id_and_year_and_month", unique: true
@@ -182,7 +182,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_14_112405) do
   create_table "yearly_goals", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.bigint "user_id", null: false
     t.integer "year", null: false
-    t.decimal "distance_goal", precision: 6, scale: 2, null: false
+    t.decimal "distance_goal", precision: 6, scale: 2
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["user_id", "year"], name: "index_yearly_goals_on_user_id_and_year", unique: true

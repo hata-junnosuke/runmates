@@ -10,7 +10,7 @@ RSpec.describe RunningRecord, type: :model do
 
     it { should validate_presence_of(:date) }
     it { should validate_presence_of(:distance) }
-    it { should validate_numericality_of(:distance).is_greater_than(0.1).is_less_than_or_equal_to(100.0) }
+    it { should validate_numericality_of(:distance).is_greater_than(0) }
 
     context "有効な値の場合" do
       it "有効なレコードを作成できる" do
@@ -19,30 +19,24 @@ RSpec.describe RunningRecord, type: :model do
       end
     end
 
-    context "distanceが0.1未満の場合" do
+    context "distanceが0以下の場合" do
       it "無効になる" do
-        running_record = build(:running_record, :invalid_too_short)
+        running_record = build(:running_record, distance: 0)
         expect(running_record).not_to be_valid
         expect(running_record.errors[:distance]).to be_present
       end
     end
 
-    context "distanceが100.0を超える場合" do
-      it "無効になる" do
-        running_record = build(:running_record, :invalid_too_long)
-        expect(running_record).not_to be_valid
-        expect(running_record.errors[:distance]).to be_present
+    context "distanceが大きな値の場合" do
+      it "有効になる" do
+        running_record = build(:running_record, distance: 1000)
+        expect(running_record).to be_valid
       end
     end
 
     context "distanceが境界値付近の有効な値の場合" do
       it "最小値に近い値でも有効になる" do
-        running_record = build(:running_record, :with_minimum_distance)
-        expect(running_record).to be_valid
-      end
-
-      it "最大値に近い値でも有効になる" do
-        running_record = build(:running_record, :with_maximum_distance)
+        running_record = build(:running_record, distance: 0.01)
         expect(running_record).to be_valid
       end
     end

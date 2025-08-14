@@ -28,7 +28,7 @@ import { createRunningRecord } from '../actions/running-actions';
 const runningRecordSchema = z.object({
   date: z.string().min(1, '日付を入力してください'),
   distance: z.union([
-    z.number().min(0.1, '距離は0.1km以上で入力してください'),
+    z.number().min(0.01, '距離は0より大きい値を入力してください'),
     z.literal('').transform(() => 0),
   ]),
 });

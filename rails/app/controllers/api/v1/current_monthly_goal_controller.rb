@@ -12,7 +12,7 @@ class Api::V1::CurrentMonthlyGoalController < Api::V1::BaseController
         id: nil,
         year: Date.current.year,
         month: Date.current.month,
-        distance_goal: 50.0,
+        distance_goal: nil,
         created_at: nil,
         updated_at: nil,
       }, status: :ok

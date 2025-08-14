@@ -11,7 +11,7 @@ class Api::V1::CurrentYearlyGoalController < Api::V1::BaseController
       render json: {
         id: nil,
         year: Date.current.year,
-        distance_goal: 500.0,
+        distance_goal: nil,
         created_at: nil,
         updated_at: nil,
       }, status: :ok
