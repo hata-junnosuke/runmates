@@ -17,23 +17,11 @@ FactoryBot.define do
     end
 
     trait :with_minimum_distance do
-      distance { 0.2 } # バリデーションの下限に近い値
-    end
-
-    trait :with_maximum_distance do
-      distance { 99.0 } # バリデーションの上限に近い値
-    end
-
-    trait :invalid_too_short do
-      distance { 0.05 } # バリデーション下限より小さい
-    end
-
-    trait :invalid_too_long do
-      distance { 101.0 } # バリデーション上限より大きい
+      distance { 0.01 } # バリデーションの下限に近い値
     end
 
     trait :with_extreme_distance do
-      distance { 100.0 } # バリデーション上限ぎりぎり
+      distance { 100.0 } # 大きな値のテスト
     end
   end
 end

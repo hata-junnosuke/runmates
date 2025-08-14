@@ -36,7 +36,7 @@ RSpec.describe "Api::V1::CurrentMonthlyGoal", type: :request do
           expect(json_response["id"]).to be_nil
           expect(json_response["year"]).to eq(current_year)
           expect(json_response["month"]).to eq(current_month)
-          expect(json_response["distance_goal"]).to eq(50.0)
+          expect(json_response["distance_goal"]).to be_nil
           expect(json_response["created_at"]).to be_nil
           expect(json_response["updated_at"]).to be_nil
         end
@@ -56,7 +56,7 @@ RSpec.describe "Api::V1::CurrentMonthlyGoal", type: :request do
           expect(json_response["id"]).to be_nil
           expect(json_response["year"]).to eq(current_year)
           expect(json_response["month"]).to eq(current_month)
-          expect(json_response["distance_goal"]).to eq(50.0)
+          expect(json_response["distance_goal"]).to be_nil
         end
       end
     end

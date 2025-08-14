@@ -21,7 +21,7 @@ class RunningRecord < ApplicationRecord
 
   validates :date, presence: true
   validates :distance, presence: true,
-                       numericality: { greater_than: 0.1, less_than_or_equal_to: 100.0 }
+                       numericality: { greater_than: 0 }
 
   scope :for_year, ->(year) { where("YEAR(date) = ?", year) }
   scope :for_month, ->(year, month) { where("YEAR(date) = ? AND MONTH(date) = ?", year, month) }

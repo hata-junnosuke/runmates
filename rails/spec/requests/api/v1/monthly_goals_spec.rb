@@ -154,7 +154,7 @@ RSpec.describe "Api::V1::MonthlyGoals", type: :request do
         let(:invalid_params) do
           {
             monthly_goal: {
-              distance_goal: 0.5,
+              distance_goal: 0,
             },
           }
         end

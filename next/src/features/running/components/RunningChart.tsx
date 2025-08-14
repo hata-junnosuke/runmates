@@ -6,6 +6,7 @@ import {
   CategoryScale,
   Chart as ChartJS,
   ChartData,
+  ChartDataset,
   ChartOptions,
   Filler,
   Legend,
@@ -91,12 +92,12 @@ export default function RunningChart({
   };
 
   // 指定された日付の月間目標を取得するヘルパー関数
-  const getMonthlyGoalForDate = (date: Date): number => {
+  const getMonthlyGoalForDate = (date: Date): number | null => {
     const year = date.getFullYear();
     const month = date.getMonth() + 1; // JavaScript months are 0-indexed
 
     const goal = monthlyGoals.find((g) => g.year === year && g.month === month);
-    return goal ? Number(goal.distance_goal) : 50; // デフォルト50km
+    return goal?.distance_goal ? Number(goal.distance_goal) : null;
   };
 
   // 月の表示名を取得するヘルパー関数
@@ -139,7 +140,7 @@ export default function RunningChart({
 
   // 表示月の目標を取得
   const monthlyGoal = getMonthlyGoalForDate(firstDayOfViewMonth);
-  const dailyGoalPace = monthlyGoal / daysInViewMonth;
+  const dailyGoalPace = monthlyGoal ? monthlyGoal / daysInViewMonth : 0;
 
   // 表示月の各日のデータを処理
   let cumulative = 0;
@@ -204,53 +205,61 @@ export default function RunningChart({
   // 表示中の月の名前を取得
   const monthDisplayName = getMonthDisplayName(currentViewDate);
 
+  // datasetsを動的に構築
+  const datasets: ChartDataset<'line' | 'bar'>[] = [
+    {
+      label: `${monthDisplayName}の走行距離`,
+      data: cumulativeData,
+      borderColor: 'rgb(34, 197, 94)',
+      backgroundColor: 'rgba(34, 197, 94, 0.1)',
+      fill: true,
+      tension: 0,
+      pointBorderColor: 'rgb(34, 197, 94)',
+      pointBackgroundColor: 'white',
+      pointBorderWidth: 2,
+      pointRadius: 4,
+      pointHoverRadius: 6,
+    },
+  ];
+
+  // 目標が設定されている場合のみ目標ラインを追加
+  if (monthlyGoal && monthlyGoal > 0) {
+    datasets.push({
+      label: `${monthDisplayName}の目標ペース`,
+      data: goalLineData,
+      borderColor: 'rgb(239, 68, 68)',
+      backgroundColor: 'rgba(239, 68, 68, 0.1)',
+      borderDash: [10, 5],
+      borderWidth: 2,
+      fill: false,
+      tension: 0,
+      pointRadius: 0,
+      pointHoverRadius: 4,
+      pointBorderColor: 'rgb(239, 68, 68)',
+      pointBackgroundColor: 'rgb(239, 68, 68)',
+    });
+  }
+
+  datasets.push({
+    label: '日別走行距離',
+    data: dailyData,
+    type: 'bar' as const,
+    backgroundColor: 'rgba(59, 130, 246, 0.7)',
+    borderColor: 'rgb(59, 130, 246)',
+    borderWidth: 1,
+    yAxisID: 'y1',
+    borderRadius: {
+      topLeft: 4,
+      topRight: 4,
+      bottomLeft: 0,
+      bottomRight: 0,
+    },
+    borderSkipped: false,
+  });
+
   const data: ChartData<'line' | 'bar'> = {
     labels,
-    datasets: [
-      {
-        label: `${monthDisplayName}の走行距離`,
-        data: cumulativeData,
-        borderColor: 'rgb(34, 197, 94)',
-        backgroundColor: 'rgba(34, 197, 94, 0.1)',
-        fill: true,
-        tension: 0,
-        pointBorderColor: 'rgb(34, 197, 94)',
-        pointBackgroundColor: 'white',
-        pointBorderWidth: 2,
-        pointRadius: 4,
-        pointHoverRadius: 6,
-      },
-      {
-        label: `${monthDisplayName}の目標ペース`,
-        data: goalLineData,
-        borderColor: 'rgb(239, 68, 68)',
-        backgroundColor: 'rgba(239, 68, 68, 0.1)',
-        borderDash: [10, 5],
-        borderWidth: 2,
-        fill: false,
-        tension: 0,
-        pointRadius: 0,
-        pointHoverRadius: 4,
-        pointBorderColor: 'rgb(239, 68, 68)',
-        pointBackgroundColor: 'rgb(239, 68, 68)',
-      },
-      {
-        label: '日別走行距離',
-        data: dailyData,
-        type: 'bar' as const,
-        backgroundColor: 'rgba(59, 130, 246, 0.7)',
-        borderColor: 'rgb(59, 130, 246)',
-        borderWidth: 1,
-        yAxisID: 'y1',
-        borderRadius: {
-          topLeft: 4,
-          topRight: 4,
-          bottomLeft: 0,
-          bottomRight: 0,
-        },
-        borderSkipped: false,
-      },
-    ],
+    datasets,
   };
 
   const options: ChartOptions<'line' | 'bar'> = {
@@ -417,15 +426,16 @@ export default function RunningChart({
         </div>
         <div className="text-center">
           <div className="font-semibold text-blue-600">月間目標</div>
-          <div className="text-base md:text-lg font-bold">{monthlyGoal.toFixed(1)} km</div>
+          <div className="text-base md:text-lg font-bold">
+            {monthlyGoal ? `${monthlyGoal.toFixed(1)} km` : '未設定'}
+          </div>
         </div>
         <div className="text-center">
           <div className="font-semibold text-purple-600">達成率</div>
           <div className="text-base md:text-lg font-bold">
-            {monthlyGoal > 0
-              ? ((viewMonthCumulative / monthlyGoal) * 100).toFixed(0)
-              : 0}
-            %
+            {monthlyGoal && monthlyGoal > 0
+              ? `${((viewMonthCumulative / monthlyGoal) * 100).toFixed(0)}%`
+              : '-'}
           </div>
         </div>
       </div>

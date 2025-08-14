@@ -46,12 +46,12 @@ async function DashboardData() {
 
     const thisYearDistance = Number(statistics?.this_year_distance || 0);
     const thisMonthDistance = Number(statistics?.this_month_distance || 0);
-    const goal = Number(monthlyGoal?.distance_goal || 50);
+    const goal = monthlyGoal?.distance_goal ? Number(monthlyGoal.distance_goal) : null;
 
-    const goalAchievementRate = goal > 0 ? (thisMonthDistance / goal) * 100 : 0;
-    const yearGoal = Number(yearlyGoal?.distance_goal || 500);
+    const goalAchievementRate = goal && goal > 0 ? (thisMonthDistance / goal) * 100 : 0;
+    const yearGoal = yearlyGoal?.distance_goal ? Number(yearlyGoal.distance_goal) : null;
     const yearGoalProgress =
-      yearGoal > 0 ? (thisYearDistance / yearGoal) * 100 : 0;
+      yearGoal && yearGoal > 0 ? (thisYearDistance / yearGoal) * 100 : 0;
 
     // 今月走った日数と記録回数を計算
     const currentDate = new Date();

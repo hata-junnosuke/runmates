@@ -2,8 +2,8 @@ interface StatisticsCardsProps {
   thisYearDistance: number;
   thisMonthDistance: number;
   goalAchievementRate: number;
-  goal: number;
-  yearGoal: number;
+  goal: number | null;
+  yearGoal: number | null;
   yearGoalProgress: number;
   monthlyRunDays: number;
   onYearlyGoalClick: () => void;
@@ -53,7 +53,11 @@ export default function StatisticsCards({
               ></div>
             </div>
             <p className="mt-1 text-xs text-emerald-100">
-              🎯 年間目標: {yearGoal}km ({yearGoalProgress.toFixed(0)}%)
+              {yearGoal ? (
+                <>🎯 年間目標: {yearGoal}km ({yearGoalProgress.toFixed(0)}%)</>
+              ) : (
+                <>🎯 年間目標: 未設定</>
+              )}
             </p>
           </div>
           <div className="text-right">
@@ -61,7 +65,11 @@ export default function StatisticsCards({
               🏃
             </span>
             <div className="text-xs font-bold text-emerald-100">
-              残り{Math.max(0, yearGoal - thisYearDistance).toFixed(0)}km
+              {yearGoal && yearGoal > thisYearDistance
+                ? `残り${(yearGoal - thisYearDistance).toFixed(0)}km`
+                : yearGoal
+                ? '目標達成🎆'
+                : ''}
             </div>
           </div>
         </div>
@@ -101,7 +109,7 @@ export default function StatisticsCards({
             onMonthlyGoalClick();
           }
         }}
-        aria-label={`月間目標達成率: ${goalAchievementRate.toFixed(0)}%、目標: ${goal}km、現在: ${thisMonthDistance.toFixed(1)}km`}
+        aria-label={`月間目標達成率: ${goalAchievementRate.toFixed(0)}%、目標: ${goal ? `${goal}km` : '未設定'}、現在: ${thisMonthDistance.toFixed(1)}km`}
       >
         <div className="flex items-start justify-between">
           <div>
@@ -122,7 +130,7 @@ export default function StatisticsCards({
               ></div>
             </div>
             <p className="mt-1 text-xs text-purple-100">
-              目標: {goal}km / 現在: {thisMonthDistance.toFixed(1)}km
+              目標: {goal ? `${goal}km` : '未設定'} / 現在: {thisMonthDistance.toFixed(1)}km
             </p>
           </div>
           <div className="text-right">
@@ -132,7 +140,11 @@ export default function StatisticsCards({
               🏆
             </span>
             <div className="text-xs text-purple-100">
-              残り{Math.max(0, goal - thisMonthDistance).toFixed(1)}km
+              {goal && goal > thisMonthDistance
+                ? `残り${(goal - thisMonthDistance).toFixed(1)}km`
+                : goal
+                ? '目標達成🎉'
+                : ''}
             </div>
           </div>
         </div>

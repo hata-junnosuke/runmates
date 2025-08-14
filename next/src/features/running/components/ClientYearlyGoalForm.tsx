@@ -28,17 +28,18 @@ import { updateYearlyGoal } from '../actions/running-actions';
 
 const yearlyGoalSchema = z.object({
   distance_goal: z.union([
-    z.number().min(50, '年間目標距離は50km以上で入力してください'),
-    z.literal('').transform(() => 0),
+    z.number().min(1, '年間目標距離は1km以上で入力してください'),
+    z.literal('').transform(() => null),
+    z.null(),
   ]),
 });
 
 type YearlyGoalFormData = {
-  distance_goal: number | '';
+  distance_goal: number | '' | null;
 };
 
 interface ClientYearlyGoalFormProps {
-  currentGoal: number;
+  currentGoal: number | null;
   isOpen: boolean;
   onClose: () => void;
   showWelcomeMessage?: boolean;
@@ -71,8 +72,10 @@ export default function ClientYearlyGoalForm({
   const onSubmit = async (data: YearlyGoalFormData) => {
     setError(null);
     const formData = new FormData();
-    const distance = data.distance_goal === '' ? 0 : data.distance_goal;
-    formData.append('distance_goal', distance.toString());
+    const distance = data.distance_goal === '' || data.distance_goal === null ? null : data.distance_goal;
+    if (distance !== null) {
+      formData.append('distance_goal', distance.toString());
+    }
 
     startTransition(async () => {
       const result = await updateYearlyGoal(formData);
@@ -136,7 +139,7 @@ export default function ClientYearlyGoalForm({
                     />
                   </FormControl>
                   <FormDescription>
-                    現在の目標: {currentGoal}km (推奨: 300-1000km)
+                    現在の目標: {currentGoal ? `${currentGoal}km` : '未設定'} (推奨: 300-1000km)
                   </FormDescription>
                   <FormMessage />
                   {error && <p className="text-sm text-red-500">{error}</p>}

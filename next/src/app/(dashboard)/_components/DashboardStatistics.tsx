@@ -10,8 +10,8 @@ interface DashboardStatisticsProps {
   thisYearDistance: number;
   thisMonthDistance: number;
   goalAchievementRate: number;
-  goal: number;
-  yearGoal: number;
+  goal: number | null;
+  yearGoal: number | null;
   yearGoalProgress: number;
   monthlyRunDays: number;
 }

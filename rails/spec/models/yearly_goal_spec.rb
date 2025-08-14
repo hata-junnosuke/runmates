@@ -9,9 +9,8 @@ RSpec.describe YearlyGoal, type: :model do
     subject { build(:yearly_goal) }
 
     it { should validate_presence_of(:year) }
-    it { should validate_presence_of(:distance_goal) }
     it { should validate_numericality_of(:year).is_in(2020..2050) }
-    it { should validate_numericality_of(:distance_goal).is_greater_than(50.0).is_less_than_or_equal_to(2000.0) }
+    it { should validate_numericality_of(:distance_goal).is_greater_than_or_equal_to(1).allow_nil }
     it { should validate_uniqueness_of(:user_id).scoped_to(:year) }
 
     context "有効な値の場合" do
@@ -35,17 +34,26 @@ RSpec.describe YearlyGoal, type: :model do
       end
     end
 
-    context "distance_goalが範囲外の場合" do
-      it "50.0以下の場合は無効になる" do
-        yearly_goal = build(:yearly_goal, distance_goal: 50.0)
+    context "distance_goalのバリデーション" do
+      it "1未満の場合は無効になる" do
+        yearly_goal = build(:yearly_goal, distance_goal: 0.9)
         expect(yearly_goal).not_to be_valid
         expect(yearly_goal.errors[:distance_goal]).to be_present
       end
 
-      it "2000.0を超える場合は無効になる" do
-        yearly_goal = build(:yearly_goal, distance_goal: 2001.0)
-        expect(yearly_goal).not_to be_valid
-        expect(yearly_goal.errors[:distance_goal]).to be_present
+      it "1以上の場合は有効になる" do
+        yearly_goal = build(:yearly_goal, distance_goal: 1.0)
+        expect(yearly_goal).to be_valid
+      end
+
+      it "大きな値でも有効になる" do
+        yearly_goal = build(:yearly_goal, distance_goal: 5000.0)
+        expect(yearly_goal).to be_valid
+      end
+
+      it "nilの場合は有効になる" do
+        yearly_goal = build(:yearly_goal, distance_goal: nil)
+        expect(yearly_goal).to be_valid
       end
     end
 
