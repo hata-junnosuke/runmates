@@ -23,6 +23,7 @@ Metrics/BlockLength:
     - 'db/schema.rb'
     - 'config/environments/*.rb'
     - 'lib/tasks/auto_annotate_models.rake'
+    - 'lib/tasks/swagger.rake'
 
 # マイグレーションファイルは既存のDeviseTokenAuthで修正不可
 Rails/ThreeStateBooleanColumn:
