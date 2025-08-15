@@ -1,0 +1,1176 @@
+---
+openapi: 3.0.1
+info:
+  title: Runmates API
+  version: v1
+  description: Runmates - ランニング管理アプリケーションのAPI仕様書
+paths:
+  "/api/v1/auth":
+    post:
+      summary: User registration
+      tags:
+      - Authentication
+      description: 新規ユーザーアカウントを作成します。成功時には確認メールが送信されます。
+      parameters: []
+      responses:
+        '200':
+          description: 登録成功
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                      email:
+                        type: string
+                      name:
+                        type:
+                        - string
+                        - 'null'
+                      provider:
+                        type: string
+                      uid:
+                        type: string
+                      created_at:
+                        type: string
+                        format: datetime
+                      updated_at:
+                        type: string
+                        format: datetime
+        '422':
+          description: バリデーションエラー
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  errors:
+                    type: array
+                    items:
+                      type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  example: newuser@example.com
+                password:
+                  type: string
+                  example: password123
+                password_confirmation:
+                  type: string
+                  example: password123
+                name:
+                  type: string
+                  example: 田中太郎
+                confirm_success_url:
+                  type: string
+                  example: http://localhost:8000/sign_in
+              required:
+              - email
+              - password
+              - password_confirmation
+    delete:
+      summary: Account deletion
+      tags:
+      - Authentication
+      description: 現在ログイン中のユーザーアカウントを削除します。
+      security:
+      - bearer_auth: []
+        client_auth: []
+        uid_auth: []
+      responses:
+        '200':
+          description: アカウント削除成功
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  message:
+                    type: string
+        '404':
+          description: 認証失敗
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/error"
+    put:
+      summary: Account update
+      tags:
+      - Authentication
+      description: 現在ログイン中のユーザー情報を更新します。
+      security:
+      - bearer_auth: []
+        client_auth: []
+        uid_auth: []
+      parameters: []
+      responses:
+        '200':
+          description: 更新成功
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  data:
+                    "$ref": "#/components/schemas/user"
+        '422':
+          description: バリデーションエラー
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/error"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: 新しい名前
+                email:
+                  type: string
+                  example: newemail@example.com
+                current_password:
+                  type: string
+                  example: current_password
+  "/api/v1/auth/sign_in":
+    post:
+      summary: User login
+      tags:
+      - Authentication
+      description: ユーザーのログイン認証を行います。成功時にはHTTP-onlyクッキーに認証トークンが設定されます。
+      parameters: []
+      responses:
+        '200':
+          description: ログイン成功
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                      email:
+                        type: string
+                      name:
+                        type: string
+                      provider:
+                        type: string
+                      uid:
+                        type: string
+                      allow_password_change:
+                        type: boolean
+        '401':
+          description: 認証失敗
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  errors:
+                    type: array
+                    items:
+                      type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  example: user@example.com
+                password:
+                  type: string
+                  example: password123
+              required:
+              - email
+              - password
+  "/api/v1/auth/sign_out":
+    delete:
+      summary: User logout
+      tags:
+      - Authentication
+      description: ユーザーをログアウトさせ、認証トークンを無効化します。
+      security:
+      - bearer_auth: []
+        client_auth: []
+        uid_auth: []
+      responses:
+        '200':
+          description: ログアウト成功
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+        '404':
+          description: ユーザーが見つからない
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  errors:
+                    type: array
+                    items:
+                      type: string
+  "/api/v1/monthly_goals":
+    get:
+      summary: List monthly goals
+      tags:
+      - Monthly Goals
+      description: ログインユーザーの月間目標一覧を取得します。
+      security:
+      - bearer_auth: []
+        client_auth: []
+        uid_auth: []
+      parameters:
+      - name: year
+        in: query
+        required: false
+        description: '年でフィルタリング（例: 2024）'
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: 取得成功
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  monthly_goals:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/monthly_goal"
+        '401':
+          description: 認証エラー
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/error"
+    post:
+      summary: Create a monthly goal
+      tags:
+      - Monthly Goals
+      description: 新しい月間目標を作成します。同じ月の目標が既に存在する場合は更新されます。
+      security:
+      - bearer_auth: []
+        client_auth: []
+        uid_auth: []
+      parameters: []
+      responses:
+        '201':
+          description: 作成成功
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  monthly_goal:
+                    "$ref": "#/components/schemas/monthly_goal"
+        '422':
+          description: バリデーションエラー
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: object
+                    additionalProperties:
+                      type: array
+                      items:
+                        type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                monthly_goal:
+                  type: object
+                  properties:
+                    month:
+                      type: string
+                      format: date
+                      example: '2024-01-01'
+                    distance_goal:
+                      type: number
+                      format: float
+                      example: 100.0
+                  required:
+                  - month
+                  - distance_goal
+              required:
+              - monthly_goal
+  "/api/v1/monthly_goals/{id}":
+    parameters:
+    - name: id
+      in: path
+      description: 月間目標ID
+      required: true
+      schema:
+        type: integer
+    get:
+      summary: Show a monthly goal
+      tags:
+      - Monthly Goals
+      description: 特定の月間目標を取得します。
+      security:
+      - bearer_auth: []
+        client_auth: []
+        uid_auth: []
+      responses:
+        '200':
+          description: 取得成功
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  monthly_goal:
+                    "$ref": "#/components/schemas/monthly_goal"
+        '404':
+          description: 目標が見つからない
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/error"
+    put:
+      summary: Update a monthly goal
+      tags:
+      - Monthly Goals
+      description: 月間目標を更新します。
+      security:
+      - bearer_auth: []
+        client_auth: []
+        uid_auth: []
+      parameters: []
+      responses:
+        '200':
+          description: 更新成功
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  monthly_goal:
+                    "$ref": "#/components/schemas/monthly_goal"
+        '422':
+          description: バリデーションエラー
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/error"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                monthly_goal:
+                  type: object
+                  properties:
+                    distance_goal:
+                      type: number
+                      format: float
+              required:
+              - monthly_goal
+    delete:
+      summary: Delete a monthly goal
+      tags:
+      - Monthly Goals
+      description: 月間目標を削除します。
+      security:
+      - bearer_auth: []
+        client_auth: []
+        uid_auth: []
+      responses:
+        '204':
+          description: 削除成功
+        '404':
+          description: 目標が見つからない
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/error"
+  "/api/v1/current_monthly_goal":
+    get:
+      summary: Get current monthly goal
+      tags:
+      - Monthly Goals
+      description: 当月の月間目標を取得します。
+      security:
+      - bearer_auth: []
+        client_auth: []
+        uid_auth: []
+      responses:
+        '200':
+          description: 取得成功
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  monthly_goal:
+                    "$ref": "#/components/schemas/monthly_goal"
+        '404':
+          description: 当月の目標が設定されていない
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+  "/api/v1/running_records":
+    get:
+      summary: List running records
+      tags:
+      - Running Records
+      description: ログインユーザーのランニング記録一覧を取得します。日付の降順でソートされます。
+      security:
+      - bearer_auth: []
+        client_auth: []
+        uid_auth: []
+      parameters:
+      - name: year
+        in: query
+        required: false
+        description: '年でフィルタリング（例: 2024）'
+        schema:
+          type: integer
+      - name: month
+        in: query
+        required: false
+        description: '月でフィルタリング（例: 12）'
+        schema:
+          type: integer
+      - name: page
+        in: query
+        required: false
+        description: 'ページ番号（デフォルト: 1）'
+        schema:
+          type: integer
+      - name: per_page
+        in: query
+        required: false
+        description: '1ページあたりの件数（デフォルト: 20）'
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: 取得成功
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  running_records:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/running_record"
+                  meta:
+                    type: object
+                    properties:
+                      current_page:
+                        type: integer
+                      total_pages:
+                        type: integer
+                      total_count:
+                        type: integer
+        '401':
+          description: 認証エラー
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/error"
+    post:
+      summary: Create a running record
+      tags:
+      - Running Records
+      description: 新しいランニング記録を作成します。
+      security:
+      - bearer_auth: []
+        client_auth: []
+        uid_auth: []
+      parameters: []
+      responses:
+        '201':
+          description: 作成成功
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  running_record:
+                    "$ref": "#/components/schemas/running_record"
+        '422':
+          description: バリデーションエラー
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: object
+                    additionalProperties:
+                      type: array
+                      items:
+                        type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                running_record:
+                  type: object
+                  properties:
+                    date:
+                      type: string
+                      format: date
+                      example: '2024-01-15'
+                    distance:
+                      type: number
+                      format: float
+                      example: 5.5
+                  required:
+                  - date
+                  - distance
+              required:
+              - running_record
+  "/api/v1/running_records/{id}":
+    parameters:
+    - name: id
+      in: path
+      description: ランニング記録ID
+      required: true
+      schema:
+        type: integer
+    get:
+      summary: Show a running record
+      tags:
+      - Running Records
+      description: 特定のランニング記録を取得します。
+      security:
+      - bearer_auth: []
+        client_auth: []
+        uid_auth: []
+      responses:
+        '200':
+          description: 取得成功
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  running_record:
+                    "$ref": "#/components/schemas/running_record"
+        '404':
+          description: レコードが見つからない
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/error"
+    put:
+      summary: Update a running record
+      tags:
+      - Running Records
+      description: ランニング記録を更新します。
+      security:
+      - bearer_auth: []
+        client_auth: []
+        uid_auth: []
+      parameters: []
+      responses:
+        '200':
+          description: 更新成功
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  running_record:
+                    "$ref": "#/components/schemas/running_record"
+        '422':
+          description: バリデーションエラー
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/error"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                running_record:
+                  type: object
+                  properties:
+                    date:
+                      type: string
+                      format: date
+                    distance:
+                      type: number
+                      format: float
+              required:
+              - running_record
+    delete:
+      summary: Delete a running record
+      tags:
+      - Running Records
+      description: ランニング記録を削除します。
+      security:
+      - bearer_auth: []
+        client_auth: []
+        uid_auth: []
+      responses:
+        '204':
+          description: 削除成功
+        '404':
+          description: レコードが見つからない
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/error"
+  "/api/v1/running_statistics":
+    get:
+      summary: Get running statistics
+      tags:
+      - Statistics
+      description: ログインユーザーのランニング統計情報を取得します。
+      security:
+      - bearer_auth: []
+        client_auth: []
+        uid_auth: []
+      parameters:
+      - name: year
+        in: query
+        required: false
+        description: '年を指定（例: 2024）'
+        schema:
+          type: integer
+      - name: month
+        in: query
+        required: false
+        description: '月を指定（例: 12）'
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: 取得成功
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statistics:
+                    type: object
+                    properties:
+                      total_distance:
+                        type: number
+                        format: float
+                        description: 総走行距離（km）
+                      total_runs:
+                        type: integer
+                        description: 総ランニング回数
+                      average_distance:
+                        type: number
+                        format: float
+                        description: 平均走行距離（km）
+                      longest_run:
+                        type: number
+                        format: float
+                        description: 最長走行距離（km）
+                      current_month:
+                        type: object
+                        properties:
+                          total_distance:
+                            type: number
+                            format: float
+                          total_runs:
+                            type: integer
+                          goal:
+                            type: number
+                            format: float
+                          achievement_rate:
+                            type: number
+                            format: float
+                      current_year:
+                        type: object
+                        properties:
+                          total_distance:
+                            type: number
+                            format: float
+                          total_runs:
+                            type: integer
+                          goal:
+                            type: number
+                            format: float
+                          achievement_rate:
+                            type: number
+                            format: float
+                      monthly_breakdown:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            month:
+                              type: string
+                              format: date
+                            total_distance:
+                              type: number
+                              format: float
+                            total_runs:
+                              type: integer
+        '401':
+          description: 認証エラー
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/error"
+  "/api/v1/running_statistics/monthly":
+    get:
+      summary: Get monthly statistics
+      tags:
+      - Statistics
+      description: 月別のランニング統計情報を取得します。
+      security:
+      - bearer_auth: []
+        client_auth: []
+        uid_auth: []
+      parameters:
+      - name: year
+        in: query
+        required: true
+        description: '年を指定（例: 2024）'
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: 取得成功
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  monthly_statistics:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        month:
+                          type: string
+                          format: date
+                        total_distance:
+                          type: number
+                          format: float
+                        total_runs:
+                          type: integer
+                        average_distance:
+                          type: number
+                          format: float
+                        goal:
+                          type: number
+                          format: float
+                        achievement_rate:
+                          type: number
+                          format: float
+  "/api/v1/running_statistics/yearly":
+    get:
+      summary: Get yearly statistics
+      tags:
+      - Statistics
+      description: 年別のランニング統計情報を取得します。
+      security:
+      - bearer_auth: []
+        client_auth: []
+        uid_auth: []
+      responses:
+        '200':
+          description: 取得成功
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  yearly_statistics:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        year:
+                          type: integer
+                        total_distance:
+                          type: number
+                          format: float
+                        total_runs:
+                          type: integer
+                        average_distance:
+                          type: number
+                          format: float
+                        goal:
+                          type: number
+                          format: float
+                        achievement_rate:
+                          type: number
+                          format: float
+                        months_active:
+                          type: integer
+  "/api/v1/yearly_goals":
+    get:
+      summary: List yearly goals
+      tags:
+      - Yearly Goals
+      description: ログインユーザーの年間目標一覧を取得します。
+      security:
+      - bearer_auth: []
+        client_auth: []
+        uid_auth: []
+      responses:
+        '200':
+          description: 取得成功
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  yearly_goals:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/yearly_goal"
+        '401':
+          description: 認証エラー
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/error"
+    post:
+      summary: Create a yearly goal
+      tags:
+      - Yearly Goals
+      description: 新しい年間目標を作成します。同じ年の目標が既に存在する場合はエラーになります。
+      security:
+      - bearer_auth: []
+        client_auth: []
+        uid_auth: []
+      parameters: []
+      responses:
+        '201':
+          description: 作成成功
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  yearly_goal:
+                    "$ref": "#/components/schemas/yearly_goal"
+        '422':
+          description: バリデーションエラー
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: object
+                    additionalProperties:
+                      type: array
+                      items:
+                        type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                yearly_goal:
+                  type: object
+                  properties:
+                    year:
+                      type: integer
+                      example: 2024
+                    distance_goal:
+                      type: number
+                      format: float
+                      example: 1200.0
+                  required:
+                  - year
+                  - distance_goal
+              required:
+              - yearly_goal
+  "/api/v1/yearly_goals/{id}":
+    parameters:
+    - name: id
+      in: path
+      description: 年間目標ID
+      required: true
+      schema:
+        type: integer
+    get:
+      summary: Show a yearly goal
+      tags:
+      - Yearly Goals
+      description: 特定の年間目標を取得します。
+      security:
+      - bearer_auth: []
+        client_auth: []
+        uid_auth: []
+      responses:
+        '200':
+          description: 取得成功
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  yearly_goal:
+                    "$ref": "#/components/schemas/yearly_goal"
+        '404':
+          description: 目標が見つからない
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/error"
+    put:
+      summary: Update a yearly goal
+      tags:
+      - Yearly Goals
+      description: 年間目標を更新します。
+      security:
+      - bearer_auth: []
+        client_auth: []
+        uid_auth: []
+      parameters: []
+      responses:
+        '200':
+          description: 更新成功
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  yearly_goal:
+                    "$ref": "#/components/schemas/yearly_goal"
+        '422':
+          description: バリデーションエラー
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/error"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                yearly_goal:
+                  type: object
+                  properties:
+                    distance_goal:
+                      type: number
+                      format: float
+              required:
+              - yearly_goal
+    delete:
+      summary: Delete a yearly goal
+      tags:
+      - Yearly Goals
+      description: 年間目標を削除します。
+      security:
+      - bearer_auth: []
+        client_auth: []
+        uid_auth: []
+      responses:
+        '204':
+          description: 削除成功
+        '404':
+          description: 目標が見つからない
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/error"
+  "/api/v1/current_yearly_goal":
+    get:
+      summary: Get current yearly goal
+      tags:
+      - Yearly Goals
+      description: 当年の年間目標を取得します。
+      security:
+      - bearer_auth: []
+        client_auth: []
+        uid_auth: []
+      responses:
+        '200':
+          description: 取得成功
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  yearly_goal:
+                    "$ref": "#/components/schemas/yearly_goal"
+        '404':
+          description: 当年の目標が設定されていない
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+servers:
+- url: http://localhost:3000
+  description: Development server
+- url: https://runmates.net
+  description: Production server
+components:
+  securitySchemes:
+    bearer_auth:
+      type: apiKey
+      name: access-token
+      in: header
+      description: DeviseTokenAuth access token
+    client_auth:
+      type: apiKey
+      name: client
+      in: header
+      description: DeviseTokenAuth client token
+    uid_auth:
+      type: apiKey
+      name: uid
+      in: header
+      description: DeviseTokenAuth uid (email)
+  schemas:
+    user:
+      type: object
+      properties:
+        id:
+          type: integer
+        email:
+          type: string
+        name:
+          type: string
+        created_at:
+          type: string
+          format: datetime
+        updated_at:
+          type: string
+          format: datetime
+      required:
+      - id
+      - email
+    running_record:
+      type: object
+      properties:
+        id:
+          type: integer
+        date:
+          type: string
+          format: date
+        distance:
+          type: number
+          format: float
+        user_id:
+          type: integer
+        created_at:
+          type: string
+          format: datetime
+        updated_at:
+          type: string
+          format: datetime
+      required:
+      - id
+      - date
+      - distance
+      - user_id
+    monthly_goal:
+      type: object
+      properties:
+        id:
+          type: integer
+        month:
+          type: string
+          format: date
+        distance_goal:
+          type: number
+          format: float
+        user_id:
+          type: integer
+        created_at:
+          type: string
+          format: datetime
+        updated_at:
+          type: string
+          format: datetime
+      required:
+      - id
+      - month
+      - distance_goal
+      - user_id
+    yearly_goal:
+      type: object
+      properties:
+        id:
+          type: integer
+        year:
+          type: integer
+        distance_goal:
+          type: number
+          format: float
+        user_id:
+          type: integer
+        created_at:
+          type: string
+          format: datetime
+        updated_at:
+          type: string
+          format: datetime
+      required:
+      - id
+      - year
+      - distance_goal
+      - user_id
+    error:
+      type: object
+      properties:
+        error:
+          type: string
+        errors:
+          type: array
+          items:
+            type: string
+        success:
+          type: boolean
+        status:
+          type: string

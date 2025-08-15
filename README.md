@@ -27,6 +27,32 @@
 - インタラクティブなデータ可視化とプログレスチャート
 - レスポンシブUIとモダンなデザインパターン
 
+## API仕様書
+
+本アプリケーションのAPIは、OpenAPI (Swagger) 形式で文書化されています。
+
+### アクセス方法
+
+開発環境でRailsサーバーを起動後、以下のURLからSwagger UIにアクセスできます：
+
+- **Swagger UI**: [http://localhost:3000/api-docs](http://localhost:3000/api-docs)
+
+### 仕様書の生成・更新
+
+API仕様書は、RSpecテストから自動生成されます。テストを更新した後は、以下のコマンドで仕様書を再生成してください：
+
+```bash
+docker-compose exec rails bundle exec rake rswag:specs:swaggerize
+```
+
+### 提供されているAPI
+
+- **認証 (Authentication)**: ユーザー登録、ログイン、ログアウト、パスワードリセット
+- **ランニング記録 (Running Records)**: 記録のCRUD操作
+- **月間目標 (Monthly Goals)**: 月間目標の設定・管理
+- **年間目標 (Yearly Goals)**: 年間目標の設定・管理
+- **統計情報 (Statistics)**: ランニング統計の取得
+
 ## 開発環境セットアップ
 
 ### 初回セットアップ

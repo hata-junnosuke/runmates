@@ -85,6 +85,11 @@ group :development, :test do
   # セキュリティ脆弱性チェックツール
   gem "brakeman", require: false
   gem "bundler-audit", require: false
+
+  # API仕様書生成 (OpenAPI/Swagger)
+  gem "rswag-api"
+  gem "rswag-specs"
+  gem "rswag-ui"
 end
 
 group :development do
