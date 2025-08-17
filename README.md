@@ -29,13 +29,14 @@ Runmatesは、ランニング愛好家のための包括的な記録管理・目
 
 ### Frontend (Next.js)
 - **Framework**: Next.js 15.3.1 with TypeScript
-- **Styling**: Tailwind CSS + Material-UI (MUI)
+- **Styling**: Tailwind CSS + shadcn/ui
 - **主要パッケージ**:
   - `react-hook-form` - フォーム管理とバリデーション
   - `date-fns` - 日付処理ユーティリティ
   - `axios` - HTTP通信
   - `chart.js` + `react-chartjs-2` - データ可視化
   - `js-cookie` - クッキー管理
+  - `@radix-ui` - UIプリミティブコンポーネント
 
 ### Infrastructure
 - **Container**: Docker & Docker Compose
