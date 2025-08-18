@@ -11,7 +11,6 @@ AllCops:
   NewCops: enable
   Exclude:
     - 'db/schema.rb'
-    - 'db/queue_schema.rb'
     - 'vendor/**/*'
     - 'tmp/**/*'
     - 'config/environments/production.rb'
