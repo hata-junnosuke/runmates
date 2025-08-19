@@ -9,10 +9,12 @@ RSpec.describe UserMailerJob, type: :job do
   describe "#perform" do
     context "ウェルカムメール送信" do
       it "ウェルカムメールを送信すること" do
+        # モックを使って、メソッドの呼び出しだけを検証
         # ActionMailer::MessageDeliveryは、メール送信を遅延実行するためのラッパークラス
-        # deliver_nowメソッドが呼ばれることで、実際にメールが送信される
         mail_delivery = instance_double(ActionMailer::MessageDelivery)
+        # メソッドが呼ばれたら、先に定義したmail_deliveryを返す
         allow(UserMailer).to receive(:welcome_email).and_return(mail_delivery)
+        # deliver_nowメソッドが呼ばれることで、実際にメールが送信される
         allow(mail_delivery).to receive(:deliver_now)
 
         # ジョブを実行
