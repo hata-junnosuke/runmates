@@ -1,7 +1,7 @@
 import { Metadata } from 'next';
 import { Suspense } from 'react';
 
-import ConfirmEmailClient from './_components/ConfirmEmailClient';
+import ConfirmEmailClient from '@/features/auth/components/email/ConfirmEmailClient';
 
 export const metadata: Metadata = {
   title: 'メールアドレスの確認 | Runmates',

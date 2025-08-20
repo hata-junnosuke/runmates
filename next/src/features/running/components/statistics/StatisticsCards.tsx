@@ -25,7 +25,7 @@ export default function StatisticsCards({
     <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
       {/* 今年の総走行距離 - クリック可能 */}
       <button
-        className="group transform cursor-pointer rounded-xl bg-gradient-to-br from-emerald-400 to-emerald-600 p-6 text-white shadow-lg transition-all duration-300 hover:scale-105 w-full text-left"
+        className="group w-full transform cursor-pointer rounded-xl bg-gradient-to-br from-emerald-400 to-emerald-600 p-6 text-left text-white shadow-lg transition-all duration-300 hover:scale-105"
         onClick={onYearlyGoalClick}
         onKeyDown={(e) => {
           if (e.key === 'Enter' || e.key === ' ') {
@@ -54,7 +54,9 @@ export default function StatisticsCards({
             </div>
             <p className="mt-1 text-xs text-emerald-100">
               {yearGoal ? (
-                <>🎯 年間目標: {yearGoal}km ({yearGoalProgress.toFixed(0)}%)</>
+                <>
+                  🎯 年間目標: {yearGoal}km ({yearGoalProgress.toFixed(0)}%)
+                </>
               ) : (
                 <>🎯 年間目標: 未設定</>
               )}
@@ -68,8 +70,8 @@ export default function StatisticsCards({
               {yearGoal && yearGoal > thisYearDistance
                 ? `残り${(yearGoal - thisYearDistance).toFixed(0)}km`
                 : yearGoal
-                ? '目標達成🎆'
-                : ''}
+                  ? '目標達成🎆'
+                  : ''}
             </div>
           </div>
         </div>
@@ -101,7 +103,7 @@ export default function StatisticsCards({
 
       {/* 目標達成率 - クリック可能 */}
       <button
-        className="group transform cursor-pointer rounded-xl bg-gradient-to-br from-purple-400 to-purple-600 p-6 text-white shadow-lg transition-all duration-300 hover:scale-105 w-full text-left"
+        className="group w-full transform cursor-pointer rounded-xl bg-gradient-to-br from-purple-400 to-purple-600 p-6 text-left text-white shadow-lg transition-all duration-300 hover:scale-105"
         onClick={onMonthlyGoalClick}
         onKeyDown={(e) => {
           if (e.key === 'Enter' || e.key === ' ') {
@@ -130,7 +132,8 @@ export default function StatisticsCards({
               ></div>
             </div>
             <p className="mt-1 text-xs text-purple-100">
-              目標: {goal ? `${goal}km` : '未設定'} / 現在: {thisMonthDistance.toFixed(1)}km
+              目標: {goal ? `${goal}km` : '未設定'} / 現在:{' '}
+              {thisMonthDistance.toFixed(1)}km
             </p>
           </div>
           <div className="text-right">
@@ -143,8 +146,8 @@ export default function StatisticsCards({
               {goal && goal > thisMonthDistance
                 ? `残り${(goal - thisMonthDistance).toFixed(1)}km`
                 : goal
-                ? '目標達成🎉'
-                : ''}
+                  ? '目標達成🎉'
+                  : ''}
             </div>
           </div>
         </div>

@@ -42,7 +42,7 @@ export default function RecentRecords({ statistics }: RecentRecordsProps) {
     (acc, record) => {
       const date = record.date;
       const existing = acc.get(date);
-      
+
       if (!existing) {
         acc.set(date, {
           date,
