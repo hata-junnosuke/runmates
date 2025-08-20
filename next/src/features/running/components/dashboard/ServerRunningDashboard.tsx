@@ -9,8 +9,8 @@ import {
   runningRecordsAPI,
   type RunRecord,
 } from '@/features/running/api/running-records';
-import RecentRecords from '@/features/running/components/RecentRecords';
 
+import RecentRecords from '../statistics/RecentRecords';
 import DashboardStatistics from './DashboardStatistics';
 import DashboardWithCalendar from './DashboardWithCalendar';
 
@@ -46,10 +46,15 @@ async function DashboardData() {
 
     const thisYearDistance = Number(statistics?.this_year_distance || 0);
     const thisMonthDistance = Number(statistics?.this_month_distance || 0);
-    const goal = monthlyGoal?.distance_goal ? Number(monthlyGoal.distance_goal) : null;
+    const goal = monthlyGoal?.distance_goal
+      ? Number(monthlyGoal.distance_goal)
+      : null;
 
-    const goalAchievementRate = goal && goal > 0 ? (thisMonthDistance / goal) * 100 : 0;
-    const yearGoal = yearlyGoal?.distance_goal ? Number(yearlyGoal.distance_goal) : null;
+    const goalAchievementRate =
+      goal && goal > 0 ? (thisMonthDistance / goal) * 100 : 0;
+    const yearGoal = yearlyGoal?.distance_goal
+      ? Number(yearlyGoal.distance_goal)
+      : null;
     const yearGoalProgress =
       yearGoal && yearGoal > 0 ? (thisYearDistance / yearGoal) * 100 : 0;
 

@@ -2,9 +2,9 @@
 
 import { useState } from 'react';
 
-import ClientRecordForm from '@/features/running/components/ClientRecordForm';
-import ClientRunningCalendar from '@/features/running/components/ClientRunningCalendar';
-import RunningChartWrapper from '@/features/running/components/RunningChartWrapper';
+import ClientRunningCalendar from '../calendar/ClientRunningCalendar';
+import RunningChartWrapper from '../charts/RunningChartWrapper';
+import ClientRecordForm from '../forms/ClientRecordForm';
 
 interface RunRecord {
   id: string;

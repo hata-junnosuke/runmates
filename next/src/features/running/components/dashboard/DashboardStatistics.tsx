@@ -2,9 +2,9 @@
 
 import { useState } from 'react';
 
-import ClientGoalForm from '@/features/running/components/ClientGoalForm';
-import ClientYearlyGoalForm from '@/features/running/components/ClientYearlyGoalForm';
-import StatisticsCards from '@/features/running/components/StatisticsCards';
+import ClientGoalForm from '../forms/ClientGoalForm';
+import ClientYearlyGoalForm from '../forms/ClientYearlyGoalForm';
+import StatisticsCards from '../statistics/StatisticsCards';
 
 interface DashboardStatisticsProps {
   thisYearDistance: number;

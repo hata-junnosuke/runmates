@@ -1,7 +1,7 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useCallback, useEffect, useState, useTransition } from 'react';
+import { useCallback, useState, useTransition } from 'react';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
 
@@ -16,6 +16,7 @@ import {
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -23,79 +24,69 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 
-import { createRunningRecord } from '../actions/running-actions';
+import { updateYearlyGoal } from '../../actions/running-actions';
 
-const runningRecordSchema = z.object({
-  date: z.string().min(1, '日付を入力してください'),
-  distance: z.union([
-    z.number().min(0.01, '距離は0より大きい値を入力してください'),
-    z.literal('').transform(() => 0),
+const yearlyGoalSchema = z.object({
+  distance_goal: z.union([
+    z.number().min(1, '年間目標距離は1km以上で入力してください'),
+    z.literal('').transform(() => null),
+    z.null(),
   ]),
 });
 
-type RunningRecordFormData = {
-  date: string;
-  distance: number | '';
+type YearlyGoalFormData = {
+  distance_goal: number | '' | null;
 };
 
-interface ClientRecordFormProps {
-  selectedDate?: string;
+interface ClientYearlyGoalFormProps {
+  currentGoal: number | null;
   isOpen: boolean;
   onClose: () => void;
+  showWelcomeMessage?: boolean;
 }
 
-export default function ClientRecordForm({
-  selectedDate,
+export default function ClientYearlyGoalForm({
+  currentGoal,
   isOpen,
   onClose,
-}: ClientRecordFormProps) {
-  const form = useForm<RunningRecordFormData>({
-    resolver: zodResolver(runningRecordSchema),
+  showWelcomeMessage = false,
+}: ClientYearlyGoalFormProps) {
+  const form = useForm<YearlyGoalFormData>({
+    resolver: zodResolver(yearlyGoalSchema),
     defaultValues: {
-      date: selectedDate || '',
-      distance: '',
+      distance_goal: '',
     },
   });
-
-  // モーダルが開かれたときに日付を設定
-  useEffect(() => {
-    if (isOpen) {
-      if (selectedDate) {
-        form.setValue('date', selectedDate);
-      } else {
-        form.setValue('date', new Date().toISOString().split('T')[0]);
-      }
-    }
-  }, [isOpen, selectedDate, form]);
 
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
 
   const handleClose = useCallback(() => {
-    form.reset({
-      date: '',
-      distance: '',
-    });
+    form.reset();
     setError(null);
     if (onClose) {
       onClose();
     }
   }, [form, onClose]);
 
-  const onSubmit = async (data: RunningRecordFormData) => {
+  const onSubmit = async (data: YearlyGoalFormData) => {
     setError(null);
     const formData = new FormData();
-    formData.append('date', data.date);
-    const distance = data.distance === '' ? 0 : data.distance;
-    formData.append('distance', distance.toString());
+    const distance =
+      data.distance_goal === '' || data.distance_goal === null
+        ? null
+        : data.distance_goal;
+    if (distance !== null) {
+      formData.append('distance_goal', distance.toString());
+    }
 
     startTransition(async () => {
-      const result = await createRunningRecord(formData);
+      const result = await updateYearlyGoal(formData);
       if (result.success) {
         form.reset();
         handleClose();
       } else {
-        setError(result.error || '記録の保存に失敗しました');
+        setError(result.error || '年間目標の設定に失敗しました');
       }
     });
   };
@@ -105,41 +96,38 @@ export default function ClientRecordForm({
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle className="text-xl font-bold text-gray-800">
-            🏃‍♂️ 新しい走行記録
+            {showWelcomeMessage
+              ? '🎯 年間目標を設定しましょう！'
+              : '🏃‍♂️ 年間目標を変更'}
           </DialogTitle>
           <DialogDescription>
-            本日の走行距離を記録しましょう。
+            {showWelcomeMessage
+              ? '1年間の走行距離目標を設定して、長期的なモチベーションを保ちましょう。'
+              : '現在の年間走行距離の目標を変更します。'}
           </DialogDescription>
         </DialogHeader>
+
+        {showWelcomeMessage && (
+          <p className="mb-4 text-gray-600">
+            1年間の走行距離目標を設定して、長期的なランニング習慣を身につけましょう！
+          </p>
+        )}
 
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <FormField
               control={form.control}
-              name="date"
+              name="distance_goal"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>日付</FormLabel>
-                  <FormControl>
-                    <Input type="date" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="distance"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>距離 (km)</FormLabel>
+                  <FormLabel>年間目標距離 (km)</FormLabel>
                   <FormControl>
                     <Input
                       type="number"
                       step="0.1"
-                      min="0.1"
-                      placeholder="5.0"
+                      min="50"
+                      max="2000"
+                      placeholder="500.0"
                       {...field}
                       onChange={(e) => {
                         const value = e.target.value;
@@ -153,6 +141,10 @@ export default function ClientRecordForm({
                       value={field.value || ''}
                     />
                   </FormControl>
+                  <FormDescription>
+                    現在の目標: {currentGoal ? `${currentGoal}km` : '未設定'}{' '}
+                    (推奨: 300-1000km)
+                  </FormDescription>
                   <FormMessage />
                   {error && <p className="text-sm text-red-500">{error}</p>}
                 </FormItem>
@@ -167,7 +159,9 @@ export default function ClientRecordForm({
               >
                 {isPending || form.formState.isSubmitting
                   ? '保存中...'
-                  : '記録を保存'}
+                  : showWelcomeMessage
+                    ? '年間目標を設定'
+                    : '目標を変更'}
               </Button>
               <Button
                 type="button"
@@ -176,7 +170,7 @@ export default function ClientRecordForm({
                 disabled={isPending || form.formState.isSubmitting}
                 className="flex-1"
               >
-                キャンセル
+                {showWelcomeMessage ? '後で設定' : 'キャンセル'}
               </Button>
             </div>
           </form>

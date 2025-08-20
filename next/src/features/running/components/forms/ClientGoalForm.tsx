@@ -24,35 +24,35 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 
-import { updateYearlyGoal } from '../actions/running-actions';
+import { updateMonthlyGoal } from '../../actions/running-actions';
 
-const yearlyGoalSchema = z.object({
+const monthlyGoalSchema = z.object({
   distance_goal: z.union([
-    z.number().min(1, '年間目標距離は1km以上で入力してください'),
+    z.number().min(1, '目標距離は1km以上で入力してください'),
     z.literal('').transform(() => null),
     z.null(),
   ]),
 });
 
-type YearlyGoalFormData = {
+type MonthlyGoalFormData = {
   distance_goal: number | '' | null;
 };
 
-interface ClientYearlyGoalFormProps {
+interface ClientGoalFormProps {
   currentGoal: number | null;
   isOpen: boolean;
   onClose: () => void;
   showWelcomeMessage?: boolean;
 }
 
-export default function ClientYearlyGoalForm({
+export default function ClientGoalForm({
   currentGoal,
   isOpen,
   onClose,
   showWelcomeMessage = false,
-}: ClientYearlyGoalFormProps) {
-  const form = useForm<YearlyGoalFormData>({
-    resolver: zodResolver(yearlyGoalSchema),
+}: ClientGoalFormProps) {
+  const form = useForm<MonthlyGoalFormData>({
+    resolver: zodResolver(monthlyGoalSchema),
     defaultValues: {
       distance_goal: '',
     },
@@ -69,21 +69,25 @@ export default function ClientYearlyGoalForm({
     }
   }, [form, onClose]);
 
-  const onSubmit = async (data: YearlyGoalFormData) => {
+  const onSubmit = async (data: MonthlyGoalFormData) => {
     setError(null);
     const formData = new FormData();
-    const distance = data.distance_goal === '' || data.distance_goal === null ? null : data.distance_goal;
+    const distance =
+      data.distance_goal === '' || data.distance_goal === null
+        ? null
+        : data.distance_goal;
     if (distance !== null) {
       formData.append('distance_goal', distance.toString());
     }
 
+    // 非同期処理をトランジションでラップすることで、この処理の間はisPendingがtrueになる
     startTransition(async () => {
-      const result = await updateYearlyGoal(formData);
+      const result = await updateMonthlyGoal(formData);
       if (result.success) {
         form.reset();
         handleClose();
       } else {
-        setError(result.error || '年間目標の設定に失敗しました');
+        setError(result.error || '目標の設定に失敗しました');
       }
     });
   };
@@ -94,19 +98,19 @@ export default function ClientYearlyGoalForm({
         <DialogHeader>
           <DialogTitle className="text-xl font-bold text-gray-800">
             {showWelcomeMessage
-              ? '🎯 年間目標を設定しましょう！'
-              : '🏃‍♂️ 年間目標を変更'}
+              ? '🎉 ランニングを始めましょう！'
+              : '🎯 今月の目標を変更'}
           </DialogTitle>
           <DialogDescription>
             {showWelcomeMessage
-              ? '1年間の走行距離目標を設定して、長期的なモチベーションを保ちましょう。'
-              : '現在の年間走行距離の目標を変更します。'}
+              ? '初めての目標を設定して、健康的な習慣を始めましょう。'
+              : '今月の走行距離の目標を変更します。'}
           </DialogDescription>
         </DialogHeader>
 
         {showWelcomeMessage && (
           <p className="mb-4 text-gray-600">
-            1年間の走行距離目標を設定して、長期的なランニング習慣を身につけましょう！
+            まずは今月の走行距離目標を設定して、モチベーションを高めましょう！
           </p>
         )}
 
@@ -117,14 +121,13 @@ export default function ClientYearlyGoalForm({
               name="distance_goal"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>年間目標距離 (km)</FormLabel>
+                  <FormLabel>目標距離 (km)</FormLabel>
                   <FormControl>
                     <Input
                       type="number"
                       step="0.1"
-                      min="50"
-                      max="2000"
-                      placeholder="500.0"
+                      min="1"
+                      placeholder="50.0"
                       {...field}
                       onChange={(e) => {
                         const value = e.target.value;
@@ -139,7 +142,7 @@ export default function ClientYearlyGoalForm({
                     />
                   </FormControl>
                   <FormDescription>
-                    現在の目標: {currentGoal ? `${currentGoal}km` : '未設定'} (推奨: 300-1000km)
+                    現在の目標: {currentGoal ? `${currentGoal}km` : '未設定'}
                   </FormDescription>
                   <FormMessage />
                   {error && <p className="text-sm text-red-500">{error}</p>}
@@ -151,12 +154,12 @@ export default function ClientYearlyGoalForm({
               <Button
                 type="submit"
                 disabled={isPending || form.formState.isSubmitting}
-                className="flex-1 bg-emerald-500 hover:bg-emerald-600"
+                className="flex-1 bg-purple-500 hover:bg-purple-600"
               >
                 {isPending || form.formState.isSubmitting
                   ? '保存中...'
                   : showWelcomeMessage
-                    ? '年間目標を設定'
+                    ? '目標を設定'
                     : '目標を変更'}
               </Button>
               <Button
