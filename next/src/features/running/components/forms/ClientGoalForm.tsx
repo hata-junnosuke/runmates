@@ -25,6 +25,7 @@ import {
 import { Input } from '@/components/ui/input';
 
 import { updateMonthlyGoal } from '../../actions/running-actions';
+import type { GoalFormProps } from '../../types';
 
 const monthlyGoalSchema = z.object({
   distance_goal: z.union([
@@ -38,19 +39,12 @@ type MonthlyGoalFormData = {
   distance_goal: number | '' | null;
 };
 
-interface ClientGoalFormProps {
-  currentGoal: number | null;
-  isOpen: boolean;
-  onClose: () => void;
-  showWelcomeMessage?: boolean;
-}
-
 export default function ClientGoalForm({
   currentGoal,
   isOpen,
   onClose,
   showWelcomeMessage = false,
-}: ClientGoalFormProps) {
+}: GoalFormProps) {
   const form = useForm<MonthlyGoalFormData>({
     resolver: zodResolver(monthlyGoalSchema),
     defaultValues: {

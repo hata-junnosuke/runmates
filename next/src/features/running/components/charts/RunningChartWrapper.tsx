@@ -3,7 +3,7 @@
 import dynamic from 'next/dynamic';
 import { Suspense } from 'react';
 
-import type { RunningChartWrapperProps } from '../../types';
+import type { RunningChartProps } from '../../types';
 
 // チャートライブラリは重いので、必要な時だけ読み込む
 const RunningChart = dynamic(() => import('./RunningChart'), {
@@ -32,7 +32,7 @@ const RunningChart = dynamic(() => import('./RunningChart'), {
 export default function RunningChartWrapper({
   records,
   monthlyGoals,
-}: RunningChartWrapperProps) {
+}: RunningChartProps) {
   return (
     <Suspense
       fallback={

@@ -2,10 +2,14 @@
 
 import { useState } from 'react';
 
-import type { RecentRecordsProps, RunRecord } from '../../types';
+import type { RunningStatistics, RunRecord } from '../../types';
 import RecordDetailModal from './RecordDetailModal';
 
-export default function RecentRecords({ statistics }: RecentRecordsProps) {
+export default function RecentRecords({
+  statistics,
+}: {
+  statistics: RunningStatistics;
+}) {
   const [selectedRecord, setSelectedRecord] = useState<RunRecord | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
 

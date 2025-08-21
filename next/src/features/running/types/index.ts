@@ -1,3 +1,7 @@
+// ========================================
+// データモデル型定義
+// ========================================
+
 /**
  * ランニング記録の型定義
  */
@@ -42,13 +46,9 @@ export interface RunningStatistics {
   recent_records: RunRecord[];
 }
 
-/**
- * ダッシュボードプロパティの型定義
- */
-export interface DashboardWithCalendarProps {
-  records: RunRecord[];
-  monthlyGoals: MonthlyGoal[];
-}
+// ========================================
+// コンポーネントProps型定義
+// ========================================
 
 /**
  * ダッシュボード統計プロパティの型定義
@@ -61,28 +61,6 @@ export interface DashboardStatisticsProps {
   yearGoal: number | null;
   yearGoalProgress: number;
   monthlyRunDays: number;
-}
-
-/**
- * 統計カードプロパティの型定義
- */
-export interface StatisticsCardsProps {
-  thisYearDistance: number;
-  thisMonthDistance: number;
-  goalAchievementRate: number;
-  goal: number | null;
-  yearGoal: number | null;
-  yearGoalProgress: number;
-  monthlyRunDays: number;
-  onYearlyGoalClick: () => void;
-  onMonthlyGoalClick: () => void;
-}
-
-/**
- * 最近の記録プロパティの型定義
- */
-export interface RecentRecordsProps {
-  statistics: RunningStatistics;
 }
 
 /**
@@ -103,18 +81,20 @@ export interface RunningChartProps {
 }
 
 /**
- * ランニングチャートラッパープロパティの型定義
- */
-export interface RunningChartWrapperProps {
-  records: RunRecord[];
-  monthlyGoals: MonthlyGoal[];
-}
-
-/**
  * カレンダープロパティの型定義
  */
 export interface ClientRunningCalendarProps {
   records: RunRecord[];
   onDateClick?: (date: string) => void;
   currentDate?: Date;
+}
+
+/**
+ * 目標設定フォームプロパティの型定義
+ */
+export interface GoalFormProps {
+  currentGoal: number | null;
+  isOpen: boolean;
+  onClose: () => void;
+  showWelcomeMessage?: boolean;
 }

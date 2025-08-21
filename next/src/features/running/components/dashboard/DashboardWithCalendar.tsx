@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 
-import type { DashboardWithCalendarProps } from '../../types';
+import type { MonthlyGoal, RunRecord } from '../../types';
 import ClientRunningCalendar from '../calendar/ClientRunningCalendar';
 import RunningChartWrapper from '../charts/RunningChartWrapper';
 import ClientRecordForm from '../forms/ClientRecordForm';
@@ -10,7 +10,10 @@ import ClientRecordForm from '../forms/ClientRecordForm';
 export default function DashboardWithCalendar({
   records,
   monthlyGoals,
-}: DashboardWithCalendarProps) {
+}: {
+  records: RunRecord[];
+  monthlyGoals: MonthlyGoal[];
+}) {
   const [selectedDate, setSelectedDate] = useState<string>('');
   const [recordFormOpen, setRecordFormOpen] = useState(false);
 
