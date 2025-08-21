@@ -12,19 +12,7 @@ import {
 } from '@/components/ui/dialog';
 import { deleteRunningRecord } from '@/features/running/actions/running-actions';
 
-interface RunRecord {
-  id: string;
-  date: string;
-  distance: number;
-  created_at?: string;
-  updated_at?: string;
-}
-
-interface RecordDetailModalProps {
-  record: RunRecord | null;
-  isOpen: boolean;
-  onClose: () => void;
-}
+import type { RecordDetailModalProps } from '../../types';
 
 export default function RecordDetailModal({
   record,

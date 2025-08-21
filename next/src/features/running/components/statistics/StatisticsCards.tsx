@@ -1,14 +1,4 @@
-interface StatisticsCardsProps {
-  thisYearDistance: number;
-  thisMonthDistance: number;
-  goalAchievementRate: number;
-  goal: number | null;
-  yearGoal: number | null;
-  yearGoalProgress: number;
-  monthlyRunDays: number;
-  onYearlyGoalClick: () => void;
-  onMonthlyGoalClick: () => void;
-}
+import type { StatisticsCardsProps } from '../../types';
 
 export default function StatisticsCards({
   thisYearDistance,

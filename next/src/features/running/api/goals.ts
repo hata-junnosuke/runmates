@@ -1,21 +1,6 @@
 import { type ApiResponse, serverApiCall } from '@/lib/api/server-base';
 
-export interface MonthlyGoal {
-  id?: string;
-  year: number;
-  month: number;
-  distance_goal: number;
-  created_at?: string;
-  updated_at?: string;
-}
-
-export interface YearlyGoal {
-  id?: string;
-  year: number;
-  distance_goal: number;
-  created_at?: string;
-  updated_at?: string;
-}
+import type { MonthlyGoal, YearlyGoal } from '../types';
 
 export const monthlyGoalsAPI = {
   getCurrent: (): Promise<ApiResponse<MonthlyGoal>> =>

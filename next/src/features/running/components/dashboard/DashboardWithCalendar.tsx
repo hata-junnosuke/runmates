@@ -2,31 +2,10 @@
 
 import { useState } from 'react';
 
+import type { DashboardWithCalendarProps } from '../../types';
 import ClientRunningCalendar from '../calendar/ClientRunningCalendar';
 import RunningChartWrapper from '../charts/RunningChartWrapper';
 import ClientRecordForm from '../forms/ClientRecordForm';
-
-interface RunRecord {
-  id: string;
-  date: string;
-  distance: number;
-  created_at?: string;
-  updated_at?: string;
-}
-
-interface MonthlyGoal {
-  id?: string;
-  year: number;
-  month: number;
-  distance_goal: number;
-  created_at?: string;
-  updated_at?: string;
-}
-
-interface DashboardWithCalendarProps {
-  records: RunRecord[];
-  monthlyGoals: MonthlyGoal[];
-}
 
 export default function DashboardWithCalendar({
   records,
