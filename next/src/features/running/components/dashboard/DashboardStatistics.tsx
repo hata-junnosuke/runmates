@@ -2,19 +2,10 @@
 
 import { useState } from 'react';
 
+import type { DashboardStatisticsProps } from '../../types';
 import ClientGoalForm from '../forms/ClientGoalForm';
 import ClientYearlyGoalForm from '../forms/ClientYearlyGoalForm';
 import StatisticsCards from '../statistics/StatisticsCards';
-
-interface DashboardStatisticsProps {
-  thisYearDistance: number;
-  thisMonthDistance: number;
-  goalAchievementRate: number;
-  goal: number | null;
-  yearGoal: number | null;
-  yearGoalProgress: number;
-  monthlyRunDays: number;
-}
 
 export default function DashboardStatistics({
   thisYearDistance,

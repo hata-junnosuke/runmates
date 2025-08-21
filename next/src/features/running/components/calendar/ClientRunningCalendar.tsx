@@ -4,17 +4,7 @@ import { useEffect, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 
-interface RunRecord {
-  id: string;
-  date: string;
-  distance: number;
-}
-
-interface ClientRunningCalendarProps {
-  records: RunRecord[];
-  onDateClick?: (date: string) => void;
-  currentDate?: Date;
-}
+import type { ClientRunningCalendarProps } from '../../types';
 
 export default function ClientRunningCalendar({
   records,

@@ -1,14 +1,4 @@
-interface StatisticsCardsProps {
-  thisYearDistance: number;
-  thisMonthDistance: number;
-  goalAchievementRate: number;
-  goal: number | null;
-  yearGoal: number | null;
-  yearGoalProgress: number;
-  monthlyRunDays: number;
-  onYearlyGoalClick: () => void;
-  onMonthlyGoalClick: () => void;
-}
+import type { DashboardStatisticsProps } from '../../types';
 
 export default function StatisticsCards({
   thisYearDistance,
@@ -20,7 +10,10 @@ export default function StatisticsCards({
   monthlyRunDays,
   onYearlyGoalClick,
   onMonthlyGoalClick,
-}: StatisticsCardsProps) {
+}: DashboardStatisticsProps & {
+  onYearlyGoalClick: () => void;
+  onMonthlyGoalClick: () => void;
+}) {
   return (
     <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
       {/* 今年の総走行距離 - クリック可能 */}

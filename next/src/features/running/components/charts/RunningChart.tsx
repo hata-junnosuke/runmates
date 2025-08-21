@@ -20,6 +20,8 @@ import {
 import { useState } from 'react';
 import { Line } from 'react-chartjs-2';
 
+import type { RunningChartProps } from '../../types';
+
 ChartJS.register(
   CategoryScale,
   LinearScale,
@@ -33,26 +35,6 @@ ChartJS.register(
   Legend,
   Filler,
 );
-
-interface RunRecord {
-  id: string;
-  date: string;
-  distance: number;
-}
-
-interface MonthlyGoal {
-  id?: string;
-  year: number;
-  month: number;
-  distance_goal: number;
-  created_at?: string;
-  updated_at?: string;
-}
-
-interface RunningChartProps {
-  records: RunRecord[];
-  monthlyGoals: MonthlyGoal[];
-}
 
 export default function RunningChart({
   records,

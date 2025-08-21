@@ -1,19 +1,6 @@
 import { type ApiResponse, serverApiCall } from '@/lib/api/server-base';
 
-export interface RunRecord {
-  id: string;
-  date: string;
-  distance: number;
-  created_at?: string;
-  updated_at?: string;
-}
-
-export interface RunningStatistics {
-  this_year_distance: number;
-  this_month_distance: number;
-  total_records: number;
-  recent_records: RunRecord[];
-}
+import type { RunningStatistics, RunRecord } from '../types';
 
 export const runningRecordsAPI = {
   getAll: (): Promise<ApiResponse<RunRecord[]>> =>

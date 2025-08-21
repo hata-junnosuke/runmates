@@ -1,14 +1,8 @@
 import { Suspense } from 'react';
 
-import {
-  type MonthlyGoal,
-  monthlyGoalsAPI,
-  yearlyGoalsAPI,
-} from '@/features/running/api/goals';
-import {
-  runningRecordsAPI,
-  type RunRecord,
-} from '@/features/running/api/running-records';
+import { monthlyGoalsAPI, yearlyGoalsAPI } from '@/features/running/api/goals';
+import { runningRecordsAPI } from '@/features/running/api/running-records';
+import type { MonthlyGoal, RunRecord } from '@/features/running/types';
 
 import RecentRecords from '../statistics/RecentRecords';
 import DashboardStatistics from './DashboardStatistics';

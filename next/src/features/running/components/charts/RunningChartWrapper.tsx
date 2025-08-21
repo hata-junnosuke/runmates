@@ -3,6 +3,8 @@
 import dynamic from 'next/dynamic';
 import { Suspense } from 'react';
 
+import type { RunningChartProps } from '../../types';
+
 // チャートライブラリは重いので、必要な時だけ読み込む
 const RunningChart = dynamic(() => import('./RunningChart'), {
   ssr: false,
@@ -27,30 +29,10 @@ const RunningChart = dynamic(() => import('./RunningChart'), {
   ),
 });
 
-interface RunRecord {
-  id: string;
-  date: string;
-  distance: number;
-}
-
-interface MonthlyGoal {
-  id?: string;
-  year: number;
-  month: number;
-  distance_goal: number;
-  created_at?: string;
-  updated_at?: string;
-}
-
-interface RunningChartWrapperProps {
-  records: RunRecord[];
-  monthlyGoals: MonthlyGoal[];
-}
-
 export default function RunningChartWrapper({
   records,
   monthlyGoals,
-}: RunningChartWrapperProps) {
+}: RunningChartProps) {
   return (
     <Suspense
       fallback={

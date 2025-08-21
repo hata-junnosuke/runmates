@@ -2,28 +2,14 @@
 
 import { useState } from 'react';
 
+import type { RunningStatistics, RunRecord } from '../../types';
 import RecordDetailModal from './RecordDetailModal';
 
-interface RunRecord {
-  id: string;
-  date: string;
-  distance: number;
-  created_at?: string;
-  updated_at?: string;
-}
-
-interface RunningStatistics {
-  this_year_distance: number;
-  this_month_distance: number;
-  total_records: number;
-  recent_records: RunRecord[];
-}
-
-interface RecentRecordsProps {
+export default function RecentRecords({
+  statistics,
+}: {
   statistics: RunningStatistics;
-}
-
-export default function RecentRecords({ statistics }: RecentRecordsProps) {
+}) {
   const [selectedRecord, setSelectedRecord] = useState<RunRecord | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
 
