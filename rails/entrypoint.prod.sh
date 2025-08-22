@@ -7,11 +7,11 @@ echo "rm -f /myapp/tmp/pids/server.pid"
 rm -f /myapp/tmp/pids/server.pid
 
 # データベースが起動するまで待機
-echo "Waiting for database..."
-until bundle exec rails db:version RAILS_ENV=production 2>/dev/null; do
-  >&2 echo "Database is unavailable - sleeping"
-  sleep 1
-done
+# echo "Waiting for database..."
+# until bundle exec rails db:version RAILS_ENV=production 2>/dev/null; do
+#   >&2 echo "Database is unavailable - sleeping"
+#   sleep 1
+# done
 
 # データベースのセットアップ（作成とマイグレーション）
 # SolidQueueテーブルもマイグレーションファイルから作成される
