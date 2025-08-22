@@ -23,6 +23,16 @@ Metrics/BlockLength:
     - 'config/environments/*.rb'
     - 'lib/tasks/auto_annotate_models.rake'
     - 'lib/tasks/swagger.rake'
+    - 'db/migrate/20250822164111_create_solid_queue_tables.rb'
+
+# SolidQueueマイグレーションファイルのメトリクスを除外
+Metrics/ClassLength:
+  Exclude:
+    - 'db/migrate/20250822164111_create_solid_queue_tables.rb'
+
+Metrics/AbcSize:
+  Exclude:
+    - 'db/migrate/20250822164111_create_solid_queue_tables.rb'
 
 # マイグレーションファイルは既存のDeviseTokenAuthで修正不可
 Rails/ThreeStateBooleanColumn:
