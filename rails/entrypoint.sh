@@ -10,15 +10,9 @@ until bundle exec rails db:version 2>/dev/null; do
   sleep 1
 done
 
-# マイグレーション実行
-echo "Running database migrations..."
-bundle exec rails db:migrate
-
-# SolidQueueのテーブルが存在しない場合は作成
-echo "Checking SolidQueue tables..."
-if ! bundle exec rails runner "SolidQueue::Job.table_exists?" 2>/dev/null; then
-  echo "Creating SolidQueue tables..."
-  bundle exec rails db:queue:prepare
-fi
+# 開発環境では手動でマイグレーションを管理するため、自動実行はしない
+# 必要に応じて以下のコマンドを手動で実行:
+# docker-compose exec rails bundle exec rails db:migrate
+echo "Database connection established."
 
 exec "$@"
