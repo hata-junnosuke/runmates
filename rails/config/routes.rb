@@ -1,6 +1,9 @@
 Rails.application.routes.draw do
-  mount Rswag::Ui::Engine => "/api-docs"
-  mount Rswag::Api::Engine => "/api-docs"
+  # Rswagは開発/テスト環境でのみ使用
+  if defined?(Rswag)
+    mount Rswag::Ui::Engine => "/api-docs"
+    mount Rswag::Api::Engine => "/api-docs"
+  end
   mount LetterOpenerWeb::Engine, at: "/letter_opener" if Rails.env.development?
   namespace :api do
     namespace :v1 do
