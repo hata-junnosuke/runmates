@@ -18,13 +18,36 @@ RSpec.describe "Api::V1::RunningRecords", type: :request do
         expect(json.length).to eq(3)
       end
 
-      it "最大50件まで返す" do
-        create_list(:running_record, 60, user: user)
+      it "デフォルトで現在月のデータを返す" do
+        # 既存のデータをすべて削除
+        user.running_records.destroy_all
+
+        # 先月のデータ
+        create(:running_record, user: user, date: Date.current.prev_month)
+        # 今月のデータ
+        create(:running_record, user: user, date: Date.current.beginning_of_month)
+        create(:running_record, user: user, date: Date.current)
+
         get "/api/v1/running_records", headers: headers
 
         expect(response).to have_http_status(:ok)
         json = response.parsed_body
-        expect(json.length).to eq(50)
+        expect(json.length).to eq(2) # 今月の2件のみ
+      end
+
+      it "yearとmonthパラメータで特定月のデータを取得" do
+        # 既存のデータをすべて削除
+        user.running_records.destroy_all
+
+        create(:running_record, user: user, date: Date.new(2025, 1, 1))
+        create(:running_record, user: user, date: Date.new(2025, 1, 15))
+        create(:running_record, user: user, date: Date.new(2025, 2, 1))
+
+        get "/api/v1/running_records", params: { year: 2025, month: 1 }, headers: headers
+
+        expect(response).to have_http_status(:ok)
+        json = response.parsed_body
+        expect(json.length).to eq(2)
       end
     end
 

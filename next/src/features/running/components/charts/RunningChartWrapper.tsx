@@ -32,6 +32,8 @@ const RunningChart = dynamic(() => import('./RunningChart'), {
 export default function RunningChartWrapper({
   records,
   monthlyGoals,
+  currentDate,
+  onMonthChange,
 }: RunningChartProps) {
   return (
     <Suspense
@@ -41,7 +43,12 @@ export default function RunningChartWrapper({
         </div>
       }
     >
-      <RunningChart records={records} monthlyGoals={monthlyGoals} />
+      <RunningChart 
+        records={records} 
+        monthlyGoals={monthlyGoals}
+        currentDate={currentDate}
+        onMonthChange={onMonthChange}
+      />
     </Suspense>
   );
 }

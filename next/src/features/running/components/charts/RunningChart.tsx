@@ -17,7 +17,7 @@ import {
   Title,
   Tooltip,
 } from 'chart.js';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Line } from 'react-chartjs-2';
 
 import type { RunningChartProps } from '../../types';
@@ -39,9 +39,18 @@ ChartJS.register(
 export default function RunningChart({
   records,
   monthlyGoals,
+  currentDate,
+  onMonthChange,
 }: RunningChartProps) {
-  // 現在表示中の月を管理するstate
-  const [currentViewDate, setCurrentViewDate] = useState(new Date());
+  // カレンダーと同期した日付を使用
+  const [currentViewDate, setCurrentViewDate] = useState(currentDate || new Date());
+
+  // currentDateが変更されたら同期
+  useEffect(() => {
+    if (currentDate) {
+      setCurrentViewDate(currentDate);
+    }
+  }, [currentDate]);
 
   // 表示中の月の1日と最終日を取得
   const viewYear = currentViewDate.getFullYear();
@@ -52,17 +61,17 @@ export default function RunningChart({
   const today = new Date();
   today.setHours(0, 0, 0, 0);
 
-  // 月移動の関数
+  // 月移動の関数（カレンダーと同期）
   const goToPreviousMonth = () => {
-    setCurrentViewDate(
-      (prev) => new Date(prev.getFullYear(), prev.getMonth() - 1, 1),
-    );
+    const newDate = new Date(viewYear, viewMonth - 1, 1);
+    setCurrentViewDate(newDate);
+    onMonthChange?.(newDate);
   };
 
   const goToNextMonth = () => {
-    setCurrentViewDate(
-      (prev) => new Date(prev.getFullYear(), prev.getMonth() + 1, 1),
-    );
+    const newDate = new Date(viewYear, viewMonth + 1, 1);
+    setCurrentViewDate(newDate);
+    onMonthChange?.(newDate);
   };
 
   // タイムゾーン安全な日付文字列フォーマット関数

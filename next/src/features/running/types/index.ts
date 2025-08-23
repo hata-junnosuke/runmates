@@ -56,10 +56,10 @@ export interface RunningStatistics {
 export interface DashboardStatisticsProps {
   thisYearDistance: number;
   thisMonthDistance: number;
-  goalAchievementRate: number;
-  goal: number | null;
-  yearGoal: number | null;
-  yearGoalProgress: number;
+  monthlyGoalProgress: number;
+  monthlyGoal: number | null;
+  yearlyGoal: number | null;
+  yearlyGoalProgress: number;
   monthlyRunDays: number;
 }
 
@@ -78,6 +78,8 @@ export interface RecordDetailModalProps {
 export interface RunningChartProps {
   records: RunRecord[];
   monthlyGoals: MonthlyGoal[];
+  currentDate?: Date;
+  onMonthChange?: (date: Date) => void;
 }
 
 /**
@@ -87,6 +89,7 @@ export interface ClientRunningCalendarProps {
   records: RunRecord[];
   onDateClick?: (date: string) => void;
   currentDate?: Date;
+  onMonthChange?: (date: Date) => void;
 }
 
 /**

@@ -11,6 +11,11 @@ import DashboardWithCalendar from './DashboardWithCalendar';
 // データ取得コンポーネント
 async function DashboardData() {
   try {
+    // 現在の年月を取得
+    const currentDate = new Date();
+    const currentYear = currentDate.getFullYear();
+    const currentMonth = currentDate.getMonth() + 1; // getMonth()は0-11なので+1
+    
     const [
       recordsResult,
       statisticsResult,
@@ -18,7 +23,7 @@ async function DashboardData() {
       yearlyGoalResult,
       monthlyGoalsResult,
     ] = await Promise.all([
-      runningRecordsAPI.getAll(),
+      runningRecordsAPI.getAll(currentYear, currentMonth), // 現在月のデータを取得
       runningRecordsAPI.getStatistics(),
       monthlyGoalsAPI.getCurrent(),
       yearlyGoalsAPI.getCurrent(),
@@ -40,33 +45,26 @@ async function DashboardData() {
 
     const thisYearDistance = Number(statistics?.this_year_distance || 0);
     const thisMonthDistance = Number(statistics?.this_month_distance || 0);
-    const goal = monthlyGoal?.distance_goal
+    
+    // 今月の目標を取得(設定してなければnull)
+    const monthlyGoalValue = monthlyGoal?.distance_goal
       ? Number(monthlyGoal.distance_goal)
       : null;
+    // 月間目標達成率を計算
+    const monthlyGoalProgress =
+      monthlyGoalValue && monthlyGoalValue > 0 ? (thisMonthDistance / monthlyGoalValue) * 100 : 0;
 
-    const goalAchievementRate =
-      goal && goal > 0 ? (thisMonthDistance / goal) * 100 : 0;
-    const yearGoal = yearlyGoal?.distance_goal
+    // 今年の目標を取得(設定してなければnull)
+    const yearlyGoalValue = yearlyGoal?.distance_goal
       ? Number(yearlyGoal.distance_goal)
       : null;
-    const yearGoalProgress =
-      yearGoal && yearGoal > 0 ? (thisYearDistance / yearGoal) * 100 : 0;
+    // 年間目標達成率を計算
+    const yearlyGoalProgress =
+      yearlyGoalValue && yearlyGoalValue > 0 ? (thisYearDistance / yearlyGoalValue) * 100 : 0;
 
-    // 今月走った日数と記録回数を計算
-    const currentDate = new Date();
-    const currentMonth = currentDate.getMonth();
-    const currentYear = currentDate.getFullYear();
-
-    const monthlyRecords = records.filter((record) => {
-      const recordDate = new Date(record.date);
-      return (
-        recordDate.getMonth() === currentMonth &&
-        recordDate.getFullYear() === currentYear
-      );
-    });
-
-    const monthlyRunDays = new Set(monthlyRecords.map((record) => record.date))
-      .size;
+    // 今月走った日数を計算
+    // recordsはすでに現在月のデータのみなのでフィルタ不要
+    const monthlyRunDays = new Set(records.map((record) => record.date)).size;
 
     return (
       <div className="space-y-6">
@@ -74,10 +72,10 @@ async function DashboardData() {
         <DashboardStatistics
           thisYearDistance={thisYearDistance}
           thisMonthDistance={thisMonthDistance}
-          goalAchievementRate={goalAchievementRate}
-          goal={goal}
-          yearGoal={yearGoal}
-          yearGoalProgress={yearGoalProgress}
+          monthlyGoalProgress={monthlyGoalProgress}
+          monthlyGoal={monthlyGoalValue}
+          yearlyGoal={yearlyGoalValue}
+          yearlyGoalProgress={yearlyGoalProgress}
           monthlyRunDays={monthlyRunDays}
         />
 

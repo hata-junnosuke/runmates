@@ -1,5 +1,6 @@
 'use client';
 
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
 import type { RunningStatistics, RunRecord } from '../../types';
@@ -10,6 +11,7 @@ export default function RecentRecords({
 }: {
   statistics: RunningStatistics;
 }) {
+  const router = useRouter();
   const [selectedRecord, setSelectedRecord] = useState<RunRecord | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
 
@@ -21,6 +23,11 @@ export default function RecentRecords({
   const handleCloseModal = () => {
     setModalOpen(false);
     setSelectedRecord(null);
+  };
+
+  const handleDeleteSuccess = () => {
+    // ページをリフレッシュしてデータを更新
+    router.refresh();
   };
 
   // 日付ごとにレコードをグループ化（Mapを使用してObject Injectionを回避）
@@ -150,6 +157,7 @@ export default function RecentRecords({
         record={selectedRecord}
         isOpen={modalOpen}
         onClose={handleCloseModal}
+        onDeleteSuccess={handleDeleteSuccess}
       />
     </>
   );
