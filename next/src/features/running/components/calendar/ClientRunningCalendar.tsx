@@ -10,6 +10,7 @@ export default function ClientRunningCalendar({
   records,
   onDateClick,
   currentDate: initialDate,
+  onMonthChange,
 }: ClientRunningCalendarProps) {
   const [currentDate, setCurrentDate] = useState(initialDate || new Date());
   const [today, setToday] = useState<Date | null>(null);
@@ -18,6 +19,13 @@ export default function ClientRunningCalendar({
   useEffect(() => {
     setToday(new Date());
   }, []);
+  
+  // currentDateが外部から変更された時に内部状態を更新
+  useEffect(() => {
+    if (initialDate) {
+      setCurrentDate(initialDate);
+    }
+  }, [initialDate]);
 
   // 現在の年月
   const year = currentDate.getFullYear();
@@ -68,12 +76,16 @@ export default function ClientRunningCalendar({
 
   // 前月へ
   const goToPreviousMonth = () => {
-    setCurrentDate(new Date(year, month - 1, 1));
+    const newDate = new Date(year, month - 1, 1);
+    setCurrentDate(newDate);
+    onMonthChange?.(newDate);
   };
 
   // 次月へ
   const goToNextMonth = () => {
-    setCurrentDate(new Date(year, month + 1, 1));
+    const newDate = new Date(year, month + 1, 1);
+    setCurrentDate(newDate);
+    onMonthChange?.(newDate);
   };
 
   // 日付クリック処理

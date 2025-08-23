@@ -1,6 +1,7 @@
 class Api::V1::RunningStatisticsController < Api::V1::BaseController
   before_action :authenticate_user!
 
+  # 統計情報を取得(ダッシュボードの「統計カード」と「最近の記録」に使用)
   def show
     current_year = Date.current.year
     current_month = Date.current.month

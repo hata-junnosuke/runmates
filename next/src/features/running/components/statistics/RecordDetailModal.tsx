@@ -12,13 +12,15 @@ import {
 } from '@/components/ui/dialog';
 import { deleteRunningRecord } from '@/features/running/actions/running-actions';
 
+import { eventBus, EVENTS } from '../../lib/events';
 import type { RecordDetailModalProps } from '../../types';
 
 export default function RecordDetailModal({
   record,
   isOpen,
   onClose,
-}: RecordDetailModalProps) {
+  onDeleteSuccess,
+}: RecordDetailModalProps & { onDeleteSuccess?: () => void }) {
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
   const [isPending, startTransition] = useTransition();
 
@@ -34,6 +36,16 @@ export default function RecordDetailModal({
       if (result.success) {
         setShowConfirmDialog(false);
         onClose();
+        
+        // イベントを発行して他のコンポーネントに通知
+        if (eventBus) {
+          eventBus.emit(EVENTS.RUNNING_RECORD_DELETED, { recordId: record.id });
+        }
+        
+        // 削除成功時のコールバックを呼び出す
+        if (onDeleteSuccess) {
+          onDeleteSuccess();
+        }
       } else {
         // エラーハンドリング（今後トースト通知などを追加可能）
         console.error('削除に失敗しました:', result.error);

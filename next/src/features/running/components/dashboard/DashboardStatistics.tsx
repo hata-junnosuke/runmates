@@ -10,10 +10,10 @@ import StatisticsCards from '../statistics/StatisticsCards';
 export default function DashboardStatistics({
   thisYearDistance,
   thisMonthDistance,
-  goalAchievementRate,
-  goal,
-  yearGoal,
-  yearGoalProgress,
+  monthlyGoalProgress,
+  monthlyGoal,
+  yearlyGoal,
+  yearlyGoalProgress,
   monthlyRunDays,
 }: DashboardStatisticsProps) {
   const [monthlyGoalModalOpen, setMonthlyGoalModalOpen] = useState(false);
@@ -32,10 +32,10 @@ export default function DashboardStatistics({
       <StatisticsCards
         thisYearDistance={thisYearDistance}
         thisMonthDistance={thisMonthDistance}
-        goalAchievementRate={goalAchievementRate}
-        goal={goal}
-        yearGoal={yearGoal}
-        yearGoalProgress={yearGoalProgress}
+        monthlyGoalProgress={monthlyGoalProgress}
+        monthlyGoal={monthlyGoal}
+        yearlyGoal={yearlyGoal}
+        yearlyGoalProgress={yearlyGoalProgress}
         monthlyRunDays={monthlyRunDays}
         onYearlyGoalClick={handleYearlyGoalClick}
         onMonthlyGoalClick={handleMonthlyGoalClick}
@@ -43,13 +43,13 @@ export default function DashboardStatistics({
 
       {/* モーダル */}
       <ClientGoalForm
-        currentGoal={goal}
+        currentGoal={monthlyGoal}
         isOpen={monthlyGoalModalOpen}
         onClose={() => setMonthlyGoalModalOpen(false)}
       />
 
       <ClientYearlyGoalForm
-        currentGoal={yearGoal}
+        currentGoal={yearlyGoal}
         isOpen={yearlyGoalModalOpen}
         onClose={() => setYearlyGoalModalOpen(false)}
       />

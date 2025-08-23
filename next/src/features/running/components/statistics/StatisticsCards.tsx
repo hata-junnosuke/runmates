@@ -3,10 +3,10 @@ import type { DashboardStatisticsProps } from '../../types';
 export default function StatisticsCards({
   thisYearDistance,
   thisMonthDistance,
-  goalAchievementRate,
-  goal,
-  yearGoal,
-  yearGoalProgress,
+  monthlyGoalProgress,
+  monthlyGoal,
+  yearlyGoal,
+  yearlyGoalProgress,
   monthlyRunDays,
   onYearlyGoalClick,
   onMonthlyGoalClick,
@@ -26,7 +26,7 @@ export default function StatisticsCards({
             onYearlyGoalClick();
           }
         }}
-        aria-label={`今年の総走行距離: ${thisYearDistance.toFixed(1)}km、年間目標: ${yearGoal}km、達成率: ${yearGoalProgress.toFixed(0)}%`}
+        aria-label={`今年の総走行距離: ${thisYearDistance.toFixed(1)}km、年間目標: ${yearlyGoal}km、達成率: ${yearlyGoalProgress.toFixed(0)}%`}
       >
         <div className="flex items-start justify-between">
           <div>
@@ -42,13 +42,13 @@ export default function StatisticsCards({
             <div className="bg-opacity-30 mt-2 h-2 w-full rounded-full bg-white">
               <div
                 className="h-2 rounded-full bg-yellow-400 transition-all duration-300"
-                style={{ width: `${Math.min(yearGoalProgress, 100)}%` }}
+                style={{ width: `${Math.min(yearlyGoalProgress, 100)}%` }}
               ></div>
             </div>
             <p className="mt-1 text-xs text-emerald-100">
-              {yearGoal ? (
+              {yearlyGoal ? (
                 <>
-                  🎯 年間目標: {yearGoal}km ({yearGoalProgress.toFixed(0)}%)
+                  🎯 年間目標: {yearlyGoal}km ({yearlyGoalProgress.toFixed(0)}%)
                 </>
               ) : (
                 <>🎯 年間目標: 未設定</>
@@ -60,9 +60,9 @@ export default function StatisticsCards({
               🏃
             </span>
             <div className="text-xs font-bold text-emerald-100">
-              {yearGoal && yearGoal > thisYearDistance
-                ? `残り${(yearGoal - thisYearDistance).toFixed(0)}km`
-                : yearGoal
+              {yearlyGoal && yearlyGoal > thisYearDistance
+                ? `残り${(yearlyGoal - thisYearDistance).toFixed(0)}km`
+                : yearlyGoal
                   ? '目標達成🎆'
                   : ''}
             </div>
@@ -104,7 +104,7 @@ export default function StatisticsCards({
             onMonthlyGoalClick();
           }
         }}
-        aria-label={`月間目標達成率: ${goalAchievementRate.toFixed(0)}%、目標: ${goal ? `${goal}km` : '未設定'}、現在: ${thisMonthDistance.toFixed(1)}km`}
+        aria-label={`月間目標達成率: ${monthlyGoalProgress.toFixed(0)}%、目標: ${monthlyGoal ? `${monthlyGoal}km` : '未設定'}、現在: ${thisMonthDistance.toFixed(1)}km`}
       >
         <div className="flex items-start justify-between">
           <div>
@@ -113,32 +113,32 @@ export default function StatisticsCards({
               目標達成率
             </p>
             <p className="flex items-center text-3xl font-bold">
-              {goalAchievementRate.toFixed(0)}%
-              {goalAchievementRate >= 100 && (
+              {monthlyGoalProgress.toFixed(0)}%
+              {monthlyGoalProgress >= 100 && (
                 <span className="ml-2 group-hover:animate-bounce">🎉</span>
               )}
             </p>
             <div className="bg-opacity-30 mt-2 h-2 w-full rounded-full bg-white">
               <div
-                className={`h-2 rounded-full transition-all duration-300 ${goalAchievementRate >= 100 ? 'bg-green-400' : 'bg-yellow-400'}`}
-                style={{ width: `${Math.min(goalAchievementRate, 100)}%` }}
+                className={`h-2 rounded-full transition-all duration-300 ${monthlyGoalProgress >= 100 ? 'bg-green-400' : 'bg-yellow-400'}`}
+                style={{ width: `${Math.min(monthlyGoalProgress, 100)}%` }}
               ></div>
             </div>
             <p className="mt-1 text-xs text-purple-100">
-              目標: {goal ? `${goal}km` : '未設定'} / 現在:{' '}
+              目標: {monthlyGoal ? `${monthlyGoal}km` : '未設定'} / 現在:{' '}
               {thisMonthDistance.toFixed(1)}km
             </p>
           </div>
           <div className="text-right">
             <span
-              className={`mb-2 text-5xl text-purple-200 ${goalAchievementRate >= 100 ? 'group-hover:animate-bounce' : 'group-hover:animate-pulse'}`}
+              className={`mb-2 text-5xl text-purple-200 ${monthlyGoalProgress >= 100 ? 'group-hover:animate-bounce' : 'group-hover:animate-pulse'}`}
             >
               🏆
             </span>
             <div className="text-xs text-purple-100">
-              {goal && goal > thisMonthDistance
-                ? `残り${(goal - thisMonthDistance).toFixed(1)}km`
-                : goal
+              {monthlyGoal && monthlyGoal > thisMonthDistance
+                ? `残り${(monthlyGoal - thisMonthDistance).toFixed(1)}km`
+                : monthlyGoal
                   ? '目標達成🎉'
                   : ''}
             </div>
