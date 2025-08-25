@@ -3,7 +3,7 @@ import { getAuthHeaders } from '@/features/auth/lib/headers';
 // サーバーサイドでは内部Docker通信、クライアントサイドでは外部URLを使用
 const API_BASE_URL = process.env.INTERNAL_API_URL || 'http://rails:3000/api/v1';
 
-// APIレスポンスの型定義
+// APIレスポンスの型定義(ジェネリクスを使用して、型を柔軟に定義)
 export type ApiResponse<T> =
   | { success: true; data: T }
   | { success: false; errors: string[]; status: number };
