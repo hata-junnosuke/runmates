@@ -65,17 +65,18 @@ export default function ClientYearlyGoalForm({
 
   const onSubmit = async (data: YearlyGoalFormData) => {
     setError(null);
-    const formData = new FormData();
-    const distance =
+    const distanceGoal =
       data.distance_goal === '' || data.distance_goal === null
-        ? null
+        ? 0
         : data.distance_goal;
-    if (distance !== null) {
-      formData.append('distance_goal', distance.toString());
+    
+    if (!distanceGoal) {
+      setError('目標距離を入力してください');
+      return;
     }
 
     startTransition(async () => {
-      const result = await updateYearlyGoal(formData);
+      const result = await updateYearlyGoal({ distanceGoal });
       if (result.success) {
         form.reset();
         handleClose();

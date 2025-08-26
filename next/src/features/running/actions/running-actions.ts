@@ -3,9 +3,28 @@
 import { revalidatePath } from 'next/cache';
 import { cookies } from 'next/headers';
 
+import type { ActionResponse } from '../types/api-responses';
+import type {
+  MonthlyGoalInput,
+  RunningRecordInput,
+  YearlyGoalInput,
+} from '../types/form-inputs';
+
 const API_BASE_URL = process.env.INTERNAL_API_URL || 'http://rails:3000/api/v1';
 
-// サーバーアクション用API呼び出し関数
+// ========================================
+// ヘルパー関数
+// ========================================
+
+/**
+ * Rails APIへのリクエストを送信するヘルパー関数
+ * 認証情報をクッキーから自動的に取得して付与
+ * 
+ * @param endpoint - APIエンドポイント（例: '/running_records'）
+ * @param options - fetchオプション
+ * @returns APIレスポンスまたはnull（204の場合）
+ * @throws Error APIエラーが発生した場合
+ */
 async function apiCall(endpoint: string, options: RequestInit = {}) {
   const cookieStore = await cookies();
   const url = `${API_BASE_URL}${endpoint}`;
@@ -52,15 +71,32 @@ async function apiCall(endpoint: string, options: RequestInit = {}) {
   return response.json();
 }
 
-// 走行記録を追加
-export async function createRunningRecord(formData: FormData) {
-  try {
-    // FormDataは全ての値を文字列として保存するため、最初から数値で受け取ることはできない。
-    const date = formData.get('date') as string;
-    const distanceStr = formData.get('distance') as string;
-    const distance = distanceStr ? parseFloat(distanceStr) : NaN;
+// ========================================
+// 走行記録 (Running Records) 関連
+// ========================================
 
-    if (!date || !distanceStr || isNaN(distance) || distance <= 0) {
+/**
+ * 新しいランニング記録を作成
+ * 
+ * @param data - ランニング記録データ
+ * @param data.date - 記録日（YYYY-MM-DD形式）
+ * @param data.distance - 走行距離（km）
+ * @returns 成功/失敗の結果
+ * 
+ * @example
+ * ```typescript
+ * const result = await createRunningRecord({
+ *   date: '2025-08-26',
+ *   distance: 5.5
+ * });
+ * ```
+ */
+export async function createRunningRecord(data: RunningRecordInput): Promise<ActionResponse> {
+  try {
+    const { date, distance } = data;
+
+    // バリデーション
+    if (!date || !distance || distance <= 0) {
       return { success: false, error: '有効な日付と距離を入力してください' };
     }
 
@@ -79,71 +115,18 @@ export async function createRunningRecord(formData: FormData) {
   }
 }
 
-// 月次目標を更新
-export async function updateMonthlyGoal(formData: FormData) {
-  try {
-    // FormDataは全ての値を文字列として保存するため、最初から数値で受け取ることはできない。
-    const distanceGoalStr = formData.get('distance_goal') as string;
-    const distanceGoal = distanceGoalStr ? parseFloat(distanceGoalStr) : NaN;
-
-    if (!distanceGoalStr || isNaN(distanceGoal) || distanceGoal <= 0) {
-      return { success: false, error: '有効な目標距離を入力してください' };
-    }
-
-    const currentDate = new Date();
-
-    await apiCall('/current_monthly_goal', {
-      method: 'POST',
-      body: JSON.stringify({
-        monthly_goal: {
-          year: currentDate.getFullYear(),
-          month: currentDate.getMonth() + 1, // getMonth()は0-11の範囲で返すので+1する
-          distance_goal: distanceGoal,
-        },
-      }),
-    });
-
-    revalidatePath('/');
-    return { success: true };
-  } catch (error) {
-    console.error('Failed to set monthly goal:', error);
-    return { success: false, error: '月次目標の設定に失敗しました' };
-  }
-}
-
-// 年間目標を更新
-export async function updateYearlyGoal(formData: FormData) {
-  try {
-    // FormDataは全ての値を文字列として保存するため、最初から数値で受け取ることはできない。
-    const distanceGoalStr = formData.get('distance_goal') as string;
-    const distanceGoal = distanceGoalStr ? parseFloat(distanceGoalStr) : NaN;
-
-    if (!distanceGoalStr || isNaN(distanceGoal) || distanceGoal <= 0) {
-      return { success: false, error: '有効な目標距離を入力してください' };
-    }
-
-    const currentDate = new Date();
-
-    await apiCall('/current_yearly_goal', {
-      method: 'POST',
-      body: JSON.stringify({
-        yearly_goal: {
-          year: currentDate.getFullYear(),
-          distance_goal: distanceGoal,
-        },
-      }),
-    });
-
-    revalidatePath('/');
-    return { success: true };
-  } catch (error) {
-    console.error('Failed to set yearly goal:', error);
-    return { success: false, error: '年間目標の設定に失敗しました' };
-  }
-}
-
-// 走行記録を削除
-export async function deleteRunningRecord(recordId: string) {
+/**
+ * ランニング記録を削除
+ * 
+ * @param recordId - 削除する記録のID
+ * @returns 成功/失敗の結果
+ * 
+ * @example
+ * ```typescript
+ * const result = await deleteRunningRecord('123');
+ * ```
+ */
+export async function deleteRunningRecord(recordId: string): Promise<ActionResponse> {
   try {
     if (!recordId) {
       return { success: false, error: '記録IDが必要です' };
@@ -158,5 +141,98 @@ export async function deleteRunningRecord(recordId: string) {
   } catch (error) {
     console.error('Failed to delete running record:', error);
     return { success: false, error: '記録の削除に失敗しました' };
+  }
+}
+
+// ========================================
+// 目標設定 (Goals) 関連
+// ========================================
+
+/**
+ * 当月の走行距離目標を設定または更新
+ * 
+ * @param data - 月間目標データ
+ * @param data.distanceGoal - 目標距離（km）
+ * @returns 成功/失敗の結果
+ * 
+ * @example
+ * ```typescript
+ * const result = await updateMonthlyGoal({
+ *   distanceGoal: 100
+ * });
+ * ```
+ */
+export async function updateMonthlyGoal(data: MonthlyGoalInput): Promise<ActionResponse> {
+  try {
+    const { distanceGoal } = data;
+
+    // バリデーション
+    if (!distanceGoal || distanceGoal <= 0) {
+      return { success: false, error: '有効な目標距離を入力してください' };
+    }
+
+    const currentDate = new Date();
+
+    await apiCall('/current_monthly_goal', {
+      method: 'POST',
+      body: JSON.stringify({
+        monthly_goal: {
+          year: currentDate.getFullYear(),
+          month: currentDate.getMonth() + 1, // getMonth()は0-11の範囲で返すので+1する
+          // Rails APIはスネークケースを期待するため、キャメルケースからスネークケースに変換
+          distance_goal: distanceGoal,
+        },
+      }),
+    });
+
+    revalidatePath('/');
+    return { success: true };
+  } catch (error) {
+    console.error('Failed to set monthly goal:', error);
+    return { success: false, error: '月次目標の設定に失敗しました' };
+  }
+}
+
+/**
+ * 当年の走行距離目標を設定または更新
+ * 
+ * @param data - 年間目標データ
+ * @param data.distanceGoal - 目標距離（km）
+ * @returns 成功/失敗の結果
+ * 
+ * @example
+ * ```typescript
+ * const result = await updateYearlyGoal({
+ *   distanceGoal: 500
+ * });
+ * ```
+ */
+export async function updateYearlyGoal(data: YearlyGoalInput): Promise<ActionResponse> {
+  try {
+    const { distanceGoal } = data;
+
+    // バリデーション
+    if (!distanceGoal || distanceGoal <= 0) {
+      return { success: false, error: '有効な目標距離を入力してください' };
+    }
+
+    const currentDate = new Date();
+
+    await apiCall('/current_yearly_goal', {
+      method: 'POST',
+      body: JSON.stringify({
+        yearly_goal: {
+          year: currentDate.getFullYear(),
+          // Rails APIはスネークケースを期待するため、キャメルケースからスネークケースに変換
+          distance_goal: distanceGoal,
+        },
+      }),
+    });
+
+    revalidatePath('/');
+    return { success: true };
+  } catch (error) {
+    console.error('Failed to set yearly goal:', error);
+    return { success: false, error: '年間目標の設定に失敗しました' };
   }
 }
