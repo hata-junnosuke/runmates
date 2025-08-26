@@ -84,13 +84,13 @@ export default function ClientRecordForm({
 
   const onSubmit = async (data: RunningRecordFormData) => {
     setError(null);
-    const formData = new FormData();
-    formData.append('date', data.date);
     const distance = data.distance === '' ? 0 : data.distance;
-    formData.append('distance', distance.toString());
 
     startTransition(async () => {
-      const result = await createRunningRecord(formData);
+      const result = await createRunningRecord({
+        date: data.date,
+        distance,
+      });
       if (result.success) {
         form.reset();
         handleClose();

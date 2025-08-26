@@ -65,18 +65,19 @@ export default function ClientGoalForm({
 
   const onSubmit = async (data: MonthlyGoalFormData) => {
     setError(null);
-    const formData = new FormData();
-    const distance =
+    const distanceGoal =
       data.distance_goal === '' || data.distance_goal === null
-        ? null
+        ? 0
         : data.distance_goal;
-    if (distance !== null) {
-      formData.append('distance_goal', distance.toString());
+    
+    if (!distanceGoal) {
+      setError('目標距離を入力してください');
+      return;
     }
 
     // 非同期処理をトランジションでラップすることで、この処理の間はisPendingがtrueになる
     startTransition(async () => {
-      const result = await updateMonthlyGoal(formData);
+      const result = await updateMonthlyGoal({ distanceGoal });
       if (result.success) {
         form.reset();
         handleClose();
