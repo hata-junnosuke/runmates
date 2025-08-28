@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from 'react';
 
+import { LoadingSpinner } from '@/components/common/LoadingSpinner';
+
 import { clientRunningRecordsAPI } from '../../api/client-running-records';
 import { eventBus, EVENTS } from '../../lib/events';
 import type { MonthlyGoal, RunRecord } from '../../types';
@@ -21,7 +23,8 @@ export default function DashboardWithCalendar({
   const [currentDate, setCurrentDate] = useState(new Date());
   const [isLoading, setIsLoading] = useState(false);
   // 現在表示中の月のレコード
-  const [currentMonthRecords, setCurrentMonthRecords] = useState<RunRecord[]>(initialRecords);
+  const [currentMonthRecords, setCurrentMonthRecords] =
+    useState<RunRecord[]>(initialRecords);
 
   const handleDateClick = (date: string) => {
     setSelectedDate(date);
@@ -32,7 +35,7 @@ export default function DashboardWithCalendar({
   const refreshCurrentMonthData = async () => {
     const year = currentDate.getFullYear();
     const month = currentDate.getMonth() + 1;
-    
+
     try {
       const result = await clientRunningRecordsAPI.getByMonth(year, month);
       if (result.success) {
@@ -55,12 +58,12 @@ export default function DashboardWithCalendar({
     setCurrentDate(date);
     const year = date.getFullYear();
     const month = date.getMonth() + 1;
-    
+
     setIsLoading(true);
-    
+
     try {
       const result = await clientRunningRecordsAPI.getByMonth(year, month);
-      
+
       if (result.success) {
         setCurrentMonthRecords(result.data);
       } else {
@@ -98,8 +101,8 @@ export default function DashboardWithCalendar({
       {/* カレンダー */}
       <div className="relative">
         {isLoading && (
-          <div className="absolute inset-0 z-10 flex items-center justify-center rounded-lg bg-white bg-opacity-75">
-            <div className="text-gray-600">読み込み中...</div>
+          <div className="bg-opacity-75 absolute inset-0 z-10 flex items-center justify-center rounded-lg bg-white">
+            <LoadingSpinner size="lg" text="データを更新しています..." />
           </div>
         )}
         <ClientRunningCalendar
@@ -111,8 +114,8 @@ export default function DashboardWithCalendar({
       </div>
 
       {/* 走行記録グラフ */}
-      <RunningChartWrapper 
-        records={currentMonthRecords} 
+      <RunningChartWrapper
+        records={currentMonthRecords}
         monthlyGoals={monthlyGoals}
         currentDate={currentDate}
         onMonthChange={handleMonthChange}

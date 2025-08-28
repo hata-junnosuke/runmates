@@ -4,9 +4,14 @@ import type { RunningStatistics, RunRecord } from '../types';
 
 export const runningRecordsAPI = {
   // 記録一覧を取得(ダッシュボードの「カレンダー」に使用)
-  getAll: (year?: number, month?: number): Promise<ApiResponse<RunRecord[]>> => {
+  getAll: (
+    year?: number,
+    month?: number,
+  ): Promise<ApiResponse<RunRecord[]>> => {
     if (year && month) {
-      return serverApiCall<RunRecord[]>(`/running_records?year=${year}&month=${month}`);
+      return serverApiCall<RunRecord[]>(
+        `/running_records?year=${year}&month=${month}`,
+      );
     }
     // デフォルト: 現在月のデータを取得
     return serverApiCall<RunRecord[]>('/running_records');

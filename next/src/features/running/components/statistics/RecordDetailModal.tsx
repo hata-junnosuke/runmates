@@ -36,12 +36,12 @@ export default function RecordDetailModal({
       if (result.success) {
         setShowConfirmDialog(false);
         onClose();
-        
+
         // イベントを発行して他のコンポーネントに通知
         if (eventBus) {
           eventBus.emit(EVENTS.RUNNING_RECORD_DELETED, { recordId: record.id });
         }
-        
+
         // 削除成功時のコールバックを呼び出す
         if (onDeleteSuccess) {
           onDeleteSuccess();

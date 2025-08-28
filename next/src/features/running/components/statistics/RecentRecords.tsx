@@ -1,7 +1,10 @@
 'use client';
 
+import { Activity } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
+
+import { EmptyState } from '@/components/common/EmptyState';
 
 import type { RunningStatistics, RunRecord } from '../../types';
 import RecordDetailModal from './RecordDetailModal';
@@ -85,13 +88,11 @@ export default function RecentRecords({
         </h3>
         <div className="space-y-3">
           {sortedDates.length === 0 ? (
-            <div className="py-12 text-center text-gray-500">
-              <div className="mb-4 text-6xl text-gray-300">🏃‍♂️</div>
-              <p className="text-lg">まだ記録がありません</p>
-              <p className="text-sm">
-                カレンダーから日付を選択して最初の走行記録を追加してみましょう！
-              </p>
-            </div>
+            <EmptyState
+              icon={<Activity className="h-12 w-12" />}
+              title="まだ記録がありません"
+              description="カレンダーから日付を選択して最初の走行記録を追加してみましょう！"
+            />
           ) : (
             sortedDates.slice(0, 5).map((group) => (
               <div key={group.date} className="space-y-2">

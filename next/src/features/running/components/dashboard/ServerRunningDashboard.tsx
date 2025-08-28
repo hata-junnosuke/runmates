@@ -1,5 +1,6 @@
 import { Suspense } from 'react';
 
+import { Skeleton } from '@/components/ui/skeleton';
 import { monthlyGoalsAPI, yearlyGoalsAPI } from '@/features/running/api/goals';
 import { runningRecordsAPI } from '@/features/running/api/running-records';
 import type { MonthlyGoal, RunRecord } from '@/features/running/types';
@@ -15,7 +16,7 @@ async function DashboardData() {
     const currentDate = new Date();
     const currentYear = currentDate.getFullYear();
     const currentMonth = currentDate.getMonth() + 1; // getMonth()は0-11なので+1
-    
+
     const [
       recordsResult,
       statisticsResult,
@@ -45,14 +46,16 @@ async function DashboardData() {
 
     const thisYearDistance = Number(statistics?.this_year_distance || 0);
     const thisMonthDistance = Number(statistics?.this_month_distance || 0);
-    
+
     // 今月の目標を取得(設定してなければnull)
     const monthlyGoalValue = monthlyGoal?.distance_goal
       ? Number(monthlyGoal.distance_goal)
       : null;
     // 月間目標達成率を計算
     const monthlyGoalProgress =
-      monthlyGoalValue && monthlyGoalValue > 0 ? (thisMonthDistance / monthlyGoalValue) * 100 : 0;
+      monthlyGoalValue && monthlyGoalValue > 0
+        ? (thisMonthDistance / monthlyGoalValue) * 100
+        : 0;
 
     // 今年の目標を取得(設定してなければnull)
     const yearlyGoalValue = yearlyGoal?.distance_goal
@@ -60,7 +63,9 @@ async function DashboardData() {
       : null;
     // 年間目標達成率を計算
     const yearlyGoalProgress =
-      yearlyGoalValue && yearlyGoalValue > 0 ? (thisYearDistance / yearlyGoalValue) * 100 : 0;
+      yearlyGoalValue && yearlyGoalValue > 0
+        ? (thisYearDistance / yearlyGoalValue) * 100
+        : 0;
 
     // 今月走った日数を計算
     // recordsはすでに現在月のデータのみなのでフィルタ不要
@@ -99,24 +104,24 @@ async function DashboardData() {
   }
 }
 
-// ローディングコンポーネント
+// ローディングコンポーネント（Skeletonを使用）
 function DashboardLoading() {
   return (
     <div className="space-y-6">
       <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
         {[1, 2, 3].map((i) => (
-          <div key={i} className="animate-pulse rounded-xl bg-gray-200 p-6">
-            <div className="mb-2 h-4 rounded bg-gray-300"></div>
-            <div className="mb-2 h-8 rounded bg-gray-300"></div>
-            <div className="h-2 rounded bg-gray-300"></div>
+          <div key={i} className="rounded-xl bg-white p-6 shadow-lg">
+            <Skeleton className="mb-2 h-4 w-24" />
+            <Skeleton className="mb-2 h-8 w-32" />
+            <Skeleton className="h-2 w-full" />
           </div>
         ))}
       </div>
-      <div className="animate-pulse rounded-xl bg-gray-200 p-6">
-        <div className="mb-4 h-6 rounded bg-gray-300"></div>
+      <div className="rounded-xl bg-white p-6 shadow-lg">
+        <Skeleton className="mb-4 h-6 w-32" />
         <div className="space-y-3">
           {[1, 2, 3].map((i) => (
-            <div key={i} className="h-16 rounded bg-gray-300"></div>
+            <Skeleton key={i} className="h-16 w-full" />
           ))}
         </div>
       </div>

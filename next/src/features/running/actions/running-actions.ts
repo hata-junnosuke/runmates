@@ -19,7 +19,7 @@ const API_BASE_URL = process.env.INTERNAL_API_URL || 'http://rails:3000/api/v1';
 /**
  * Rails APIへのリクエストを送信するヘルパー関数
  * 認証情報をクッキーから自動的に取得して付与
- * 
+ *
  * @param endpoint - APIエンドポイント（例: '/running_records'）
  * @param options - fetchオプション
  * @returns APIレスポンスまたはnull（204の場合）
@@ -77,12 +77,12 @@ async function apiCall(endpoint: string, options: RequestInit = {}) {
 
 /**
  * 新しいランニング記録を作成
- * 
+ *
  * @param data - ランニング記録データ
  * @param data.date - 記録日（YYYY-MM-DD形式）
  * @param data.distance - 走行距離（km）
  * @returns 成功/失敗の結果
- * 
+ *
  * @example
  * ```typescript
  * const result = await createRunningRecord({
@@ -91,7 +91,9 @@ async function apiCall(endpoint: string, options: RequestInit = {}) {
  * });
  * ```
  */
-export async function createRunningRecord(data: RunningRecordInput): Promise<ActionResponse> {
+export async function createRunningRecord(
+  data: RunningRecordInput,
+): Promise<ActionResponse> {
   try {
     const { date, distance } = data;
 
@@ -117,16 +119,18 @@ export async function createRunningRecord(data: RunningRecordInput): Promise<Act
 
 /**
  * ランニング記録を削除
- * 
+ *
  * @param recordId - 削除する記録のID
  * @returns 成功/失敗の結果
- * 
+ *
  * @example
  * ```typescript
  * const result = await deleteRunningRecord('123');
  * ```
  */
-export async function deleteRunningRecord(recordId: string): Promise<ActionResponse> {
+export async function deleteRunningRecord(
+  recordId: string,
+): Promise<ActionResponse> {
   try {
     if (!recordId) {
       return { success: false, error: '記録IDが必要です' };
@@ -150,11 +154,11 @@ export async function deleteRunningRecord(recordId: string): Promise<ActionRespo
 
 /**
  * 当月の走行距離目標を設定または更新
- * 
+ *
  * @param data - 月間目標データ
  * @param data.distanceGoal - 目標距離（km）
  * @returns 成功/失敗の結果
- * 
+ *
  * @example
  * ```typescript
  * const result = await updateMonthlyGoal({
@@ -162,7 +166,9 @@ export async function deleteRunningRecord(recordId: string): Promise<ActionRespo
  * });
  * ```
  */
-export async function updateMonthlyGoal(data: MonthlyGoalInput): Promise<ActionResponse> {
+export async function updateMonthlyGoal(
+  data: MonthlyGoalInput,
+): Promise<ActionResponse> {
   try {
     const { distanceGoal } = data;
 
@@ -195,11 +201,11 @@ export async function updateMonthlyGoal(data: MonthlyGoalInput): Promise<ActionR
 
 /**
  * 当年の走行距離目標を設定または更新
- * 
+ *
  * @param data - 年間目標データ
  * @param data.distanceGoal - 目標距離（km）
  * @returns 成功/失敗の結果
- * 
+ *
  * @example
  * ```typescript
  * const result = await updateYearlyGoal({
@@ -207,7 +213,9 @@ export async function updateMonthlyGoal(data: MonthlyGoalInput): Promise<ActionR
  * });
  * ```
  */
-export async function updateYearlyGoal(data: YearlyGoalInput): Promise<ActionResponse> {
+export async function updateYearlyGoal(
+  data: YearlyGoalInput,
+): Promise<ActionResponse> {
   try {
     const { distanceGoal } = data;
 
