@@ -43,8 +43,8 @@ export default function RunningChartWrapper({
         </div>
       }
     >
-      <RunningChart 
-        records={records} 
+      <RunningChart
+        records={records}
         monthlyGoals={monthlyGoals}
         currentDate={currentDate}
         onMonthChange={onMonthChange}

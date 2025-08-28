@@ -43,7 +43,9 @@ export default function RunningChart({
   onMonthChange,
 }: RunningChartProps) {
   // カレンダーと同期した日付を使用
-  const [currentViewDate, setCurrentViewDate] = useState(currentDate || new Date());
+  const [currentViewDate, setCurrentViewDate] = useState(
+    currentDate || new Date(),
+  );
 
   // currentDateが変更されたら同期
   useEffect(() => {

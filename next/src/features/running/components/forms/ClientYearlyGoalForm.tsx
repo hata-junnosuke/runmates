@@ -69,7 +69,7 @@ export default function ClientYearlyGoalForm({
       data.distance_goal === '' || data.distance_goal === null
         ? 0
         : data.distance_goal;
-    
+
     if (!distanceGoal) {
       setError('目標距離を入力してください');
       return;

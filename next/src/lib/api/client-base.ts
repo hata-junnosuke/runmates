@@ -8,11 +8,15 @@ export interface ApiResponse<T> {
   error?: string;
 }
 
-export async function apiCall<T>(endpoint: string, options?: RequestInit): Promise<ApiResponse<T>> {
+export async function apiCall<T>(
+  endpoint: string,
+  options?: RequestInit,
+): Promise<ApiResponse<T>> {
   try {
-    const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000/api/v1';
+    const baseUrl =
+      process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000/api/v1';
     const url = `${baseUrl}${endpoint}`;
-    
+
     const response = await fetch(url, {
       ...options,
       credentials: 'include',

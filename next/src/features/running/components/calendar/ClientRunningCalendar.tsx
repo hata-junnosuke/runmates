@@ -19,7 +19,7 @@ export default function ClientRunningCalendar({
   useEffect(() => {
     setToday(new Date());
   }, []);
-  
+
   // currentDateが外部から変更された時に内部状態を更新
   useEffect(() => {
     if (initialDate) {
