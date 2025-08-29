@@ -24,6 +24,7 @@ import {
 import { Input } from '@/components/ui/input';
 
 import { createRunningRecord } from '../../actions/running-actions';
+import type { RunRecord } from '../../types';
 
 const runningRecordSchema = z.object({
   date: z.string().min(1, '日付を入力してください'),
@@ -41,7 +42,7 @@ type RunningRecordFormData = {
 interface ClientRecordFormProps {
   selectedDate?: string;
   isOpen: boolean;
-  onClose: () => void;
+  onClose: (updatedRecords?: RunRecord[]) => void;
 }
 
 export default function ClientRecordForm({
@@ -71,14 +72,14 @@ export default function ClientRecordForm({
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
 
-  const handleClose = useCallback(() => {
+  const handleClose = useCallback((updatedRecords?: RunRecord[]) => {
     form.reset({
       date: '',
       distance: '',
     });
     setError(null);
     if (onClose) {
-      onClose();
+      onClose(updatedRecords);
     }
   }, [form, onClose]);
 
@@ -93,7 +94,8 @@ export default function ClientRecordForm({
       });
       if (result.success) {
         form.reset();
-        handleClose();
+        // 最新データをprops経由で親コンポーネントに渡す
+        handleClose(result.data);
       } else {
         setError(result.error || '記録の保存に失敗しました');
       }
@@ -101,7 +103,7 @@ export default function ClientRecordForm({
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={handleClose}>
+    <Dialog open={isOpen} onOpenChange={() => handleClose()}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle className="text-xl font-bold text-gray-800">
@@ -172,7 +174,7 @@ export default function ClientRecordForm({
               <Button
                 type="button"
                 variant="outline"
-                onClick={handleClose}
+                onClick={() => handleClose()}
                 disabled={isPending || form.formState.isSubmitting}
                 className="flex-1"
               >

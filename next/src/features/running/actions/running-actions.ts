@@ -3,6 +3,7 @@
 import { revalidatePath } from 'next/cache';
 import { cookies } from 'next/headers';
 
+import type { RunRecord } from '../types';
 import type { ActionResponse } from '../types/api-responses';
 import type {
   MonthlyGoalInput,
@@ -25,7 +26,7 @@ const API_BASE_URL = process.env.INTERNAL_API_URL || 'http://rails:3000/api/v1';
  * @returns APIレスポンスまたはnull（204の場合）
  * @throws Error APIエラーが発生した場合
  */
-async function apiCall(endpoint: string, options: RequestInit = {}) {
+async function apiCall<T = unknown>(endpoint: string, options: RequestInit = {}): Promise<T> {
   const cookieStore = await cookies();
   const url = `${API_BASE_URL}${endpoint}`;
 
@@ -65,10 +66,10 @@ async function apiCall(endpoint: string, options: RequestInit = {}) {
   }
 
   if (response.status === 204) {
-    return null;
+    return null as T;
   }
 
-  return response.json();
+  return response.json() as Promise<T>;
 }
 
 // ========================================
@@ -93,7 +94,7 @@ async function apiCall(endpoint: string, options: RequestInit = {}) {
  */
 export async function createRunningRecord(
   data: RunningRecordInput,
-): Promise<ActionResponse> {
+): Promise<ActionResponse<RunRecord[]>> {
   try {
     const { date, distance } = data;
 
@@ -109,8 +110,17 @@ export async function createRunningRecord(
       }),
     });
 
+    // 記録追加後、該当月の最新データを取得して返す
+    const recordDate = new Date(date);
+    const year = recordDate.getFullYear();
+    const month = recordDate.getMonth() + 1;
+    
+    const updatedRecords = await apiCall<RunRecord[]>(
+      `/running_records?year=${year}&month=${month}`
+    );
+
     revalidatePath('/');
-    return { success: true };
+    return { success: true, data: updatedRecords };
   } catch (error) {
     console.error('Failed to add running record:', error);
     return { success: false, error: '記録の追加に失敗しました' };

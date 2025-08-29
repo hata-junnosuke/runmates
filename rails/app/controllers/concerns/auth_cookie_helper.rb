@@ -18,9 +18,10 @@ module AuthCookieHelper
         value: value,
         httponly: true,
         secure: Rails.env.production?,
-        # Vercel環境対応: SameSite=noneを設定、domainはnilで現在のドメインを使用
-        same_site: Rails.env.production? ? :none : :lax,
-        domain: nil,
+        # サブドメイン間でクッキーを共有し、セキュリティを強化
+        same_site: Rails.env.production? ? :strict : :lax,
+        # 本番環境ではサブドメイン間でクッキーを共有
+        domain: Rails.env.production? ? ".runmates.net" : nil,
         expires: expires,
         path: "/",
       }
