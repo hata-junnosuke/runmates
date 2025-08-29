@@ -31,26 +31,14 @@ export default function DashboardWithCalendar({
     setRecordFormOpen(true);
   };
 
-  // データを再取得する関数
-  const refreshCurrentMonthData = async () => {
-    const year = currentDate.getFullYear();
-    const month = currentDate.getMonth() + 1;
-
-    try {
-      const result = await clientRunningRecordsAPI.getByMonth(year, month);
-      if (result.success) {
-        setCurrentMonthRecords(result.data);
-      }
-    } catch (error) {
-      console.error('Error refreshing data:', error);
-    }
-  };
-
-  const handleFormClose = () => {
+  const handleFormClose = (updatedRecords?: RunRecord[]) => {
     setRecordFormOpen(false);
-    // データを再取得
-    refreshCurrentMonthData();
     setSelectedDate('');
+    
+    // Server Actionから返された最新データで更新
+    if (updatedRecords) {
+      setCurrentMonthRecords(updatedRecords);
+    }
   };
 
   // 月が変更されたときにデータを取得（毎回APIを叩く）
@@ -82,8 +70,18 @@ export default function DashboardWithCalendar({
   useEffect(() => {
     if (!eventBus) return;
 
-    const handleRecordDeleted = () => {
-      refreshCurrentMonthData();
+    const handleRecordDeleted = async () => {
+      // クライアントAPIで即座にデータを更新
+      const year = currentDate.getFullYear();
+      const month = currentDate.getMonth() + 1;
+      try {
+        const result = await clientRunningRecordsAPI.getByMonth(year, month);
+        if (result.success) {
+          setCurrentMonthRecords(result.data);
+        }
+      } catch (error) {
+        console.error('Error refreshing data:', error);
+      }
     };
 
     eventBus.on(EVENTS.RUNNING_RECORD_DELETED, handleRecordDeleted);
@@ -93,8 +91,7 @@ export default function DashboardWithCalendar({
         eventBus.off(EVENTS.RUNNING_RECORD_DELETED, handleRecordDeleted);
       }
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentDate]); // currentDateが変わったら再登録
+  }, [currentDate]); // currentDateを依存配列に追加
 
   return (
     <div className="space-y-6">
