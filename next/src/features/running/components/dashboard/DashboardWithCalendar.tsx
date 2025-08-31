@@ -31,13 +31,13 @@ export default function DashboardWithCalendar({
     setRecordFormOpen(true);
   };
 
-  const handleFormClose = (updatedRecords?: RunRecord[]) => {
+  const handleFormClose = (freshMonthRecords?: RunRecord[]) => {
     setRecordFormOpen(false);
     setSelectedDate('');
     
     // Server Actionから返された最新データで更新
-    if (updatedRecords) {
-      setCurrentMonthRecords(updatedRecords);
+    if (freshMonthRecords) {
+      setCurrentMonthRecords(freshMonthRecords);
     }
   };
 

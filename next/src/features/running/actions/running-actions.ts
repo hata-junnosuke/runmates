@@ -115,12 +115,12 @@ export async function createRunningRecord(
     const year = recordDate.getFullYear();
     const month = recordDate.getMonth() + 1;
     
-    const updatedRecords = await apiCall<RunRecord[]>(
+    const freshMonthRecords = await apiCall<RunRecord[]>(
       `/running_records?year=${year}&month=${month}`
     );
 
     revalidatePath('/');
-    return { success: true, data: updatedRecords };
+    return { success: true, data: freshMonthRecords };
   } catch (error) {
     console.error('Failed to add running record:', error);
     return { success: false, error: '記録の追加に失敗しました' };
