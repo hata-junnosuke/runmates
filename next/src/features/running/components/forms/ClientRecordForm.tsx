@@ -42,7 +42,7 @@ type RunningRecordFormData = {
 interface ClientRecordFormProps {
   selectedDate?: string;
   isOpen: boolean;
-  onClose: (updatedRecords?: RunRecord[]) => void;
+  onClose: (freshMonthRecords?: RunRecord[]) => void;
 }
 
 export default function ClientRecordForm({
@@ -72,14 +72,14 @@ export default function ClientRecordForm({
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
 
-  const handleClose = useCallback((updatedRecords?: RunRecord[]) => {
+  const handleClose = useCallback((freshMonthRecords?: RunRecord[]) => {
     form.reset({
       date: '',
       distance: '',
     });
     setError(null);
     if (onClose) {
-      onClose(updatedRecords);
+      onClose(freshMonthRecords);
     }
   }, [form, onClose]);
 
