@@ -7,7 +7,10 @@ RSpec.describe "Api::V1::RunningRecords", type: :request do
   describe "GET /api/v1/running_records" do
     context "認証済みユーザーの場合" do
       before do
-        create_list(:running_record, 3, user: user)
+        # 現在月の異なる日付で3つのレコードを作成
+        create(:running_record, user: user, date: Date.current.beginning_of_month)
+        create(:running_record, user: user, date: Date.current.beginning_of_month + 5.days)
+        create(:running_record, user: user, date: Date.current)
       end
 
       it "ランニングレコード一覧を返す" do
