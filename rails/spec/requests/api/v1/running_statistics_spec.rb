@@ -7,12 +7,11 @@ RSpec.describe "Api::V1::RunningStatistics", type: :request do
   describe "GET /api/v1/running_statistics" do
     context "認証済みユーザーの場合" do
       before do
-        # 今年のレコードを作成
-        create(:running_record, user: user, date: Date.current) # デフォルト5.0km
-        create(:running_record, user: user, date: Date.current - 1.day, distance: 3.0)
-        create(:running_record, user: user, date: Date.current - 2.days, distance: 4.0)
-
-        # 今月のレコード（上記3つ含む）
+        # 今月のレコードを作成（月をまたがないように月の中間日付を使用）
+        middle_of_month = Date.current.beginning_of_month + 14.days
+        create(:running_record, user: user, date: middle_of_month, distance: 5.0)
+        create(:running_record, user: user, date: middle_of_month - 1.day, distance: 3.0)
+        create(:running_record, user: user, date: middle_of_month - 2.days, distance: 4.0)
         create(:running_record, user: user, date: Date.current.beginning_of_month, distance: 2.0)
 
         # 去年のレコード（長距離）
