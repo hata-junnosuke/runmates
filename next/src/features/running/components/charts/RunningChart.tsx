@@ -291,6 +291,10 @@ export default function RunningChart({
         callbacks: {
           label: function (context) {
             if (context.datasetIndex === 0) {
+              // 累積距離のツールチップ
+              if (context.parsed.y === null || context.parsed.y === undefined) {
+                return '';
+              }
               const goalValue = goalLineData[context.dataIndex] || 0;
               const diff = context.parsed.y - goalValue;
               const status =
@@ -299,13 +303,19 @@ export default function RunningChart({
                 1,
               )} km (目標比: ${status})`;
             } else if (context.datasetIndex === 1) {
+              // 目標ペースのツールチップ
+              if (context.parsed.y === null || context.parsed.y === undefined) {
+                return '';
+              }
               return `${monthDisplayName}の目標ペース: ${context.parsed.y.toFixed(
                 1,
               )} km`;
             } else {
-              return context.parsed.y > 0
-                ? `その日: ${context.parsed.y.toFixed(1)} km`
-                : '';
+              // 日別距離のツールチップ
+              if (!context.parsed.y || context.parsed.y <= 0) {
+                return '';
+              }
+              return `その日: ${context.parsed.y.toFixed(1)} km`;
             }
           },
         },
