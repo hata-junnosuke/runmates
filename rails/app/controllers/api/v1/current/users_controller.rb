@@ -17,9 +17,9 @@ class Api::V1::Current::UsersController < Api::V1::BaseController
 
       # メールアドレス変更リクエスト
       if current_user.request_email_change(params[:new_email])
-        render json: { 
+        render json: {
           message: "確認メールを送信しました。メールを確認して変更を完了してください。",
-          pending_email: current_user.pending_email 
+          pending_email: current_user.pending_email,
         }, status: :ok
       else
         render json: { errors: current_user.errors.full_messages }, status: :unprocessable_entity

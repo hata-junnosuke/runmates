@@ -4,6 +4,6 @@ class AddEmailChangeFieldsToUsers < ActiveRecord::Migration[8.0]
     add_column :users, :pending_email_confirmation_token, :string
     add_column :users, :pending_email_confirmed_at, :datetime
 
-    add_index :users, :pending_email_confirmation_token, unique: true, name: 'idx_users_pending_email_token'
+    add_index :users, :pending_email_confirmation_token, unique: true, name: "idx_users_pending_email_token"
   end
 end

@@ -26,7 +26,8 @@ services:
     tty: true
     stdin_open: true
     environment:
-      TZ: Asia/Tokyo
+      - TZ=Asia/Tokyo
+      - NEXT_PUBLIC_BASE_URL=http://localhost:8000
   
   # SolidQueueワーカーコンテナ
   worker:
@@ -41,6 +42,7 @@ services:
     environment:
       - RAILS_ENV=development
       - TZ=Asia/Tokyo
+      - NEXT_PUBLIC_BASE_URL=http://localhost:8000
     # worker専用のentrypointを使用
     entrypoint: ["/myapp/entrypoint.worker.sh"]
   next:

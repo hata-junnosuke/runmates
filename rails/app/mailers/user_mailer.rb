@@ -42,7 +42,7 @@ class UserMailer < ApplicationMailer
     @confirmation_token = confirmation_token
     @app_name = "Runmates"
     @new_email = user.pending_email
-    @confirmation_url = "#{Rails.application.config.action_mailer.default_url_options[:host]}/api/v1/auth/email_confirmation?confirmation_token=#{@confirmation_token}"
+    @confirmation_url = "#{base_url}/confirm-email-change?token=#{@confirmation_token}"
 
     mail(
       to: @new_email,
@@ -64,6 +64,7 @@ class UserMailer < ApplicationMailer
   private
 
     def base_url
+      # フロントエンドのURL（リダイレクト先）
       if Rails.env.production?
         "https://runmates.net"
       else
