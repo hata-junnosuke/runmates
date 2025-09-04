@@ -14,9 +14,12 @@ Rails.application.routes.draw do
         passwords: "api/v1/auth/passwords",
         confirmations: "api/v1/auth/confirmations",
       }
+      
+      # メールアドレス変更確認用
+      get "auth/email_confirmation", to: "auth/email_confirmations#show"
 
       namespace :current do
-        resource :user, only: [:show, :destroy]
+        resource :user, only: [:show, :update, :destroy]
       end
 
       resources :running_records

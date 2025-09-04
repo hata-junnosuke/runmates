@@ -15,6 +15,13 @@ class UserMailerJob < ApplicationJob
       user = args[0]
       token = args[1]
       UserMailer.confirmation_email(user, token).deliver_now
+    when "email_change"
+      user = args[0]
+      token = args[1]
+      UserMailer.email_change(user, token).deliver_now
+    when "email_changed"
+      user = args[0]
+      UserMailer.email_changed(user).deliver_now
     else
       Rails.logger.error "Unknown mailer action: #{action}"
     end

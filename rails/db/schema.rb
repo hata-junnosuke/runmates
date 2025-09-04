@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_08_22_164111) do
+ActiveRecord::Schema[8.0].define(version: 2025_09_04_091859) do
   create_table "monthly_goals", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.bigint "user_id", null: false
     t.integer "year", null: false
@@ -173,8 +173,12 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_22_164111) do
     t.text "tokens"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "pending_email"
+    t.string "pending_email_confirmation_token"
+    t.datetime "pending_email_confirmed_at"
     t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true
     t.index ["email"], name: "index_users_on_email", unique: true
+    t.index ["pending_email_confirmation_token"], name: "idx_users_pending_email_token", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
     t.index ["uid", "provider"], name: "index_users_on_uid_and_provider", unique: true
   end
