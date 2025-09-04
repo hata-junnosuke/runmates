@@ -1,4 +1,4 @@
-Rails.application.routes.draw do
+Rails.application.routes.draw do # rubocop:disable Metrics/BlockLength
   # 開発環境用エンジン
   if defined?(Rswag)
     mount Rswag::Ui::Engine => "/api-docs"
