@@ -48,3 +48,4 @@ Rails/ReversibleMigration:
 Rails/Output:
   Exclude:
     - 'lib/tasks/**/*'
+

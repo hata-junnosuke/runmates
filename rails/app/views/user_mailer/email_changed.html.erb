@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta content='text/html; charset=UTF-8' http-equiv='Content-Type' />
+  </head>
+  <body>
+    <h2><%= @app_name %> - メールアドレスが変更されました</h2>
+    
+    <p>
+      <%= @user.name || @user.email %> 様
+    </p>
+    
+    <p>
+      あなたのアカウントのメールアドレスが正常に変更されました。
+    </p>
+    
+    <p>
+      新しいメールアドレス：<strong><%= @user.email %></strong>
+    </p>
+    
+    <p style="color: #f44336; margin: 20px 0;">
+      <strong>重要：</strong> この変更に心当たりがない場合は、アカウントが不正にアクセスされた可能性があります。<br>
+      直ちにパスワードを変更し、サポートまでご連絡ください。
+    </p>
+    
+    <p>
+      今後も <%= @app_name %> をよろしくお願いいたします。
+    </p>
+    
+    <hr style="margin: 30px 0; border: none; border-top: 1px solid #ddd;">
+    
+    <p style="color: #999; font-size: 12px;">
+      このメールは自動送信されています。返信はできません。<br>
+      © <%= Date.current.year %> <%= @app_name %>
+    </p>
+  </body>
+</html>

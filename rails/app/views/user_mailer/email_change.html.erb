@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta content='text/html; charset=UTF-8' http-equiv='Content-Type' />
+  </head>
+  <body>
+    <h2><%= @app_name %> - メールアドレス変更の確認</h2>
+    
+    <p>
+      <%= @user.name || @user.email %> 様
+    </p>
+    
+    <p>
+      メールアドレスを以下のアドレスに変更するリクエストを受け付けました：
+    </p>
+    
+    <p style="font-weight: bold; margin: 20px 0;">
+      <%= @new_email %>
+    </p>
+    
+    <p>
+      以下のリンクをクリックして、メールアドレスの変更を完了してください：
+    </p>
+    
+    <p style="margin: 20px 0;">
+      <%= link_to "メールアドレス変更を確認する", @confirmation_url, style: "background-color: #4CAF50; color: white; padding: 10px 20px; text-decoration: none; display: inline-block; border-radius: 5px;" %>
+    </p>
+    
+    <p style="color: #666; font-size: 14px;">
+      ※ このリンクの有効期限は24時間です。<br>
+      ※ このメールに心当たりがない場合は、このメールを破棄してください。
+    </p>
+    
+    <hr style="margin: 30px 0; border: none; border-top: 1px solid #ddd;">
+    
+    <p style="color: #999; font-size: 12px;">
+      このメールは自動送信されています。返信はできません。<br>
+      © <%= Date.current.year %> <%= @app_name %>
+    </p>
+  </body>
+</html>

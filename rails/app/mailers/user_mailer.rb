@@ -36,9 +36,35 @@ class UserMailer < ApplicationMailer
     )
   end
 
+  # メールアドレス変更確認メール
+  def email_change(user, confirmation_token)
+    @user = user
+    @confirmation_token = confirmation_token
+    @app_name = "Runmates"
+    @new_email = user.pending_email
+    @confirmation_url = "#{base_url}/confirm-email-change?token=#{@confirmation_token}"
+
+    mail(
+      to: @new_email,
+      subject: "【#{@app_name}】メールアドレス変更の確認",
+    )
+  end
+
+  # メールアドレス変更完了通知
+  def email_changed(user)
+    @user = user
+    @app_name = "Runmates"
+
+    mail(
+      to: @user.email,
+      subject: "【#{@app_name}】メールアドレスが変更されました",
+    )
+  end
+
   private
 
     def base_url
+      # フロントエンドのURL（リダイレクト先）
       if Rails.env.production?
         "https://runmates.net"
       else
