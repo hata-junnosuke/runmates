@@ -4,6 +4,8 @@ import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
+import { logoutAction } from '@/features/auth/actions/auth-actions';
+
 export default function ConfirmEmailChangeClient() {
   const [status, setStatus] = useState<'loading' | 'success' | 'error'>(
     'loading',
@@ -38,21 +40,10 @@ export default function ConfirmEmailChangeClient() {
           setMessage('メールアドレスが変更されました');
           setNewEmail(data.email || '');
           
-          // ログアウトしてからログインページへリダイレクト
-          const logoutAndRedirect = async () => {
-            try {
-              await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/sign_out`, {
-                method: 'DELETE',
-                credentials: 'include',
-              });
-            } catch {
-              // ログアウトが失敗してもリダイレクトは行う
-            }
-            router.push('/login');
-          };
-          
-          // 5秒後にログアウトしてリダイレクト
-          setTimeout(logoutAndRedirect, 5000);
+          // 3秒後にログアウト（Server Action経由で確実にクッキーをクリア）
+          setTimeout(() => {
+            logoutAction();
+          }, 3000);
         } else {
           setStatus('error');
           setMessage(
@@ -108,7 +99,7 @@ export default function ConfirmEmailChangeClient() {
           セキュリティのため、新しいメールアドレスで再度ログインしてください。
         </p>
         <p className="mb-4 text-gray-600">
-          5秒後にログインページへ移動します。
+          3秒後にログインページへ移動します。
         </p>
         <Link
           href="/login"
