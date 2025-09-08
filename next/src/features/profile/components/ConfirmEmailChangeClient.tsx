@@ -35,12 +35,24 @@ export default function ConfirmEmailChangeClient() {
 
         if (response.ok && data.success) {
           setStatus('success');
-          setMessage(data.message || 'メールアドレスの変更が完了しました！');
+          setMessage('メールアドレスが変更されました');
           setNewEmail(data.email || '');
-          // 3秒後に設定ページへリダイレクト
-          setTimeout(() => {
-            router.push('/settings');
-          }, 3000);
+          
+          // ログアウトしてからログインページへリダイレクト
+          const logoutAndRedirect = async () => {
+            try {
+              await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/sign_out`, {
+                method: 'DELETE',
+                credentials: 'include',
+              });
+            } catch {
+              // ログアウトが失敗してもリダイレクトは行う
+            }
+            router.push('/login');
+          };
+          
+          // 5秒後にログアウトしてリダイレクト
+          setTimeout(logoutAndRedirect, 5000);
         } else {
           setStatus('error');
           setMessage(
@@ -92,14 +104,17 @@ export default function ConfirmEmailChangeClient() {
             <span className="font-semibold">{newEmail}</span>
           </p>
         )}
+        <p className="mb-4 text-orange-600">
+          セキュリティのため、新しいメールアドレスで再度ログインしてください。
+        </p>
         <p className="mb-4 text-gray-600">
-          3秒後に設定ページへ移動します。
+          5秒後にログインページへ移動します。
         </p>
         <Link
-          href="/settings"
+          href="/login"
           className="text-sm text-green-500 hover:underline"
         >
-          今すぐ設定ページへ
+          今すぐログインページへ
         </Link>
       </div>
     );
