@@ -26,7 +26,6 @@ RSpec.describe "Api::V1::Auth::EmailConfirmations", type: :request do
         expect(json["success"]).to be true
         expect(json["message"]).to eq("メールアドレスが正常に変更されました")
         expect(json["email"]).to eq(new_email)
-        expect(json["require_login"]).to be true
 
         user.reload
         expect(user.email).to eq(new_email)

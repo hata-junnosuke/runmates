@@ -25,7 +25,6 @@ class Api::V1::Auth::EmailConfirmationsController < Api::V1::BaseController
         success: true,
         message: "メールアドレスが正常に変更されました",
         email: user.email,
-        require_login: true, # フロントエンドに再ログインが必要であることを通知
       }, status: :ok
     else
       render json: {
