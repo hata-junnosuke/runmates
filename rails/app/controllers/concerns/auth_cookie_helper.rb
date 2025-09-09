@@ -18,8 +18,8 @@ module AuthCookieHelper
         value: value,
         httponly: true,
         secure: Rails.env.production?,
-        # サブドメイン間でクッキーを共有し、セキュリティを強化
-        same_site: Rails.env.production? ? :strict : :lax,
+        # サブドメイン間でクッキーを共有し、セキュリティとユーザビリティのバランスを取る
+        same_site: :lax,
         # 本番環境ではサブドメイン間でクッキーを共有
         domain: Rails.env.production? ? ".runmates.net" : nil,
         expires: expires,
