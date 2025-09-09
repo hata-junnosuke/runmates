@@ -17,7 +17,7 @@ class Api::V1::MonthlyGoalsController < Api::V1::BaseController
     if @monthly_goal.save
       render json: @monthly_goal, status: :created
     else
-      render json: { errors: @monthly_goal.errors }, status: :unprocessable_entity
+      render json: { errors: @monthly_goal.errors.full_messages }, status: :unprocessable_entity
     end
   end
 
@@ -25,7 +25,7 @@ class Api::V1::MonthlyGoalsController < Api::V1::BaseController
     if @monthly_goal.update(monthly_goal_params)
       render json: @monthly_goal
     else
-      render json: { errors: @monthly_goal.errors }, status: :unprocessable_entity
+      render json: { errors: @monthly_goal.errors.full_messages }, status: :unprocessable_entity
     end
   end
 

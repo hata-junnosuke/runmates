@@ -20,9 +20,9 @@ class MonthlyGoal < ApplicationRecord
   belongs_to :user
 
   validates :year, presence: true,
-                   numericality: { in: 2020..2050 }
+                   numericality: { greater_than_or_equal_to: 2020, less_than_or_equal_to: 2050 }
   validates :month, presence: true,
-                    numericality: { in: 1..12 }
+                    inclusion: { in: 1..12 }
   validates :distance_goal, numericality: { greater_than: 0 },
                             allow_nil: true
   validates :user_id, uniqueness: { scope: [:year, :month] }

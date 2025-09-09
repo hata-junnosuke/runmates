@@ -32,7 +32,7 @@ class Api::V1::RunningRecordsController < Api::V1::BaseController
     if @running_record.save
       render json: @running_record, serializer: RunningRecordSerializer, status: :created
     else
-      render json: { errors: @running_record.errors }, status: :unprocessable_entity
+      render json: { errors: @running_record.errors.full_messages }, status: :unprocessable_entity
     end
   end
 
@@ -40,7 +40,7 @@ class Api::V1::RunningRecordsController < Api::V1::BaseController
     if @running_record.update(running_record_params)
       render json: @running_record, serializer: RunningRecordSerializer
     else
-      render json: { errors: @running_record.errors }, status: :unprocessable_entity
+      render json: { errors: @running_record.errors.full_messages }, status: :unprocessable_entity
     end
   end
 
