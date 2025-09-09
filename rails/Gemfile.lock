@@ -492,7 +492,7 @@ DEPENDENCIES
   pry-rails
   puma (>= 5.0)
   rack-cors
-  rails
+  rails (~> 8.0.2)
   rspec-rails
   rswag-api
   rswag-ui
@@ -509,4 +509,4 @@ RUBY VERSION
    ruby 3.4.3p32
 
 BUNDLED WITH
-   2.6.9
+   2.7.2
