@@ -24,7 +24,7 @@ RSpec.describe "Api::V1::Auth::Passwords", type: :request do
         expect(response).to have_http_status(:ok)
         json = response.parsed_body
         expect(json["success"]).to be true
-        expect(json["message"]).to include("案内")
+        expect(json["message"]).to include("送信しました")
       end
     end
 

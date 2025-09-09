@@ -10,8 +10,8 @@ RSpec.describe MonthlyGoal, type: :model do
 
     it { should validate_presence_of(:year) }
     it { should validate_presence_of(:month) }
-    it { should validate_numericality_of(:year).is_in(2020..2050) }
-    it { should validate_numericality_of(:month).is_in(1..12) }
+    it { should validate_numericality_of(:year).is_greater_than_or_equal_to(2020).is_less_than_or_equal_to(2050) }
+    it { should validate_inclusion_of(:month).in_range(1..12) }
     it { should validate_numericality_of(:distance_goal).is_greater_than(0).allow_nil }
     it { should validate_uniqueness_of(:user_id).scoped_to([:year, :month]) }
 

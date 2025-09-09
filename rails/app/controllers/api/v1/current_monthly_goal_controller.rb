@@ -30,7 +30,7 @@ class Api::V1::CurrentMonthlyGoalController < Api::V1::BaseController
     if @monthly_goal.save
       render json: @monthly_goal, status: @monthly_goal.previously_new_record? ? :created : :ok
     else
-      render json: { errors: @monthly_goal.errors }, status: :unprocessable_entity
+      render json: { errors: @monthly_goal.errors.full_messages }, status: :unprocessable_entity
     end
   end
 

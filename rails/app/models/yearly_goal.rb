@@ -19,7 +19,7 @@ class YearlyGoal < ApplicationRecord
   belongs_to :user
 
   validates :year, presence: true,
-                   numericality: { in: 2020..2050 }
+                   numericality: { greater_than_or_equal_to: 2020, less_than_or_equal_to: 2050 }
   validates :distance_goal, numericality: { greater_than_or_equal_to: 1 },
                             allow_nil: true
   validates :user_id, uniqueness: { scope: :year }

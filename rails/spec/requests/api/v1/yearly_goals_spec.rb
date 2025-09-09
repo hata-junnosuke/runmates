@@ -114,7 +114,8 @@ RSpec.describe "Api::V1::YearlyGoals", type: :request do
 
           expect(response).to have_http_status(:unprocessable_entity)
           json = response.parsed_body
-          expect(json["errors"]["user_id"]).to be_present
+          expect(json["errors"]).to be_present
+          expect(json["errors"].join).to include("すでに存在")
         end
       end
     end

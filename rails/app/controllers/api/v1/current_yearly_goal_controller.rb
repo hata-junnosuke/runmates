@@ -28,7 +28,7 @@ class Api::V1::CurrentYearlyGoalController < Api::V1::BaseController
     if @yearly_goal.save
       render json: @yearly_goal, status: @yearly_goal.previously_new_record? ? :created : :ok
     else
-      render json: { errors: @yearly_goal.errors }, status: :unprocessable_entity
+      render json: { errors: @yearly_goal.errors.full_messages }, status: :unprocessable_entity
     end
   end
 
