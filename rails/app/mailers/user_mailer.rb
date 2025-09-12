@@ -16,6 +16,7 @@ class UserMailer < ApplicationMailer
   def welcome_email(user)
     @user = user
     @app_name = "Runmates"
+    @app_url = base_url
 
     mail(
       to: @user.email,
@@ -65,10 +66,8 @@ class UserMailer < ApplicationMailer
 
     def base_url
       # フロントエンドのURL（リダイレクト先）
-      if Rails.env.production?
-        "https://runmates.net"
-      else
+      # 環境別のcredentialsから取得
+      Rails.application.credentials.dig(Rails.env.to_sym, :frontend_url) ||
         "http://localhost:8000"
-      end
     end
 end

@@ -114,6 +114,18 @@ docker compose exec rails /bin/bash
 rails db:create
 rails db:migrate
 rails db:seed  # テストデータ投入（開発環境のみ）
+
+# 5. Rails Credentials設定（重要）
+# 環境変数を設定するためにcredentialsを編集
+docker-compose exec rails bash -c "EDITOR='vi' rails credentials:edit"
+# 以下の内容を追加:
+# development:
+#   frontend_url: http://localhost:8000
+# production:
+#   frontend_url: https://runmates.net
+# （viエディタ: i で挿入モード、ESCで終了、:wq で保存）
+
+# 6. Railsサーバー起動
 rails s -b '0.0.0.0'  # http://localhost:3000
 ```
 
@@ -201,6 +213,55 @@ docker-compose exec next npm audit fix    # 脆弱性自動修正
 | **統計** | GET | `/api/v1/running_statistics` | 統計情報取得 |
 
 詳細な仕様は `rails/swagger/v1/swagger.yaml` を参照してください。
+
+## 🔧 Rails Credentials（環境変数管理）
+
+Railsアプリケーションの環境変数は、暗号化されたCredentialsで管理しています。
+
+### 設定方法
+
+```bash
+# Credentialsファイルを編集
+docker-compose exec rails bash -c "EDITOR='vi' rails credentials:edit"
+```
+
+### 設定内容
+
+```yaml
+# 環境別設定
+development:
+  frontend_url: http://localhost:8000  # 開発環境のフロントエンドURL
+
+production:
+  frontend_url: https://runmates.net   # 本番環境のフロントエンドURL
+
+test:
+  frontend_url: http://localhost:8000  # テスト環境のフロントエンドURL
+
+# 既存のsecret_key_baseはそのまま残す
+secret_key_base: xxxxx
+```
+
+### viエディタの操作
+1. `i` キー: 挿入モード開始
+2. 編集後、`ESC` キー: 挿入モード終了
+3. `:wq` + Enter: 保存して終了
+4. `:q!` + Enter: 保存せずに終了（変更を破棄）
+
+### 設定値の確認
+
+```bash
+# 現在の環境の設定を確認
+docker-compose exec rails rails runner "puts Rails.application.credentials.dig(Rails.env.to_sym, :frontend_url)"
+
+# 特定環境の設定を確認
+docker-compose exec rails rails runner "puts Rails.application.credentials.dig(:production, :frontend_url)"
+```
+
+### 本番環境での管理
+- `config/credentials.yml.enc`: 暗号化された設定（リポジトリに含まれる）
+- `config/master.key`: 復号化キー（.gitignoreで除外、安全に管理）
+- 環境変数`RAILS_MASTER_KEY`でもmaster.keyを設定可能
 
 ## 🔄 開発ワークフロー
 
