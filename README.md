@@ -52,51 +52,88 @@ Runmatesは、ランニング愛好家のための包括的な記録管理・目
 
 ### Infrastructure
 - **Container**: Docker & Docker Compose
-- **Production**: AWS ECS Fargate
-- **Proxy**: Nginx
-- **CI/CD**: GitHub Actions
+- **Frontend Hosting**: Vercel
+- **Backend Hosting**: AWS ECS Fargate
+- **Database**: Amazon RDS (MySQL)
+- **CI/CD**: GitHub Actions (Backend) / Vercel (Frontend)
+- **Proxy**: Nginx (Production)
 
 ## 📁 プロジェクト構造
 
 ```
 runmates/
-├── rails/                    # Railsバックエンド
+├── rails/                       # Railsバックエンド
 │   ├── app/
-│   │   ├── controllers/     # APIコントローラー
-│   │   │   └── api/v1/     # API v1エンドポイント
-│   │   ├── models/          # データモデル
-│   │   ├── mailers/         # メール送信
-│   │   └── jobs/            # 非同期ジョブ
-│   ├── config/              # 設定ファイル
-│   │   ├── initializers/    # 初期化設定
-│   │   └── routes.rb        # ルーティング定義
-│   ├── db/                  # データベース関連
-│   │   ├── migrate/         # マイグレーション
-│   │   └── schema.rb        # スキーマ定義
-│   ├── spec/                # RSpecテスト
-│   │   ├── models/          # モデルテスト
-│   │   ├── requests/        # APIテスト
-│   │   └── factories/       # テストデータ
-│   └── swagger/             # API仕様書
-│       └── v1/
-│           └── swagger.yaml # OpenAPI仕様
-├── next/                    # Next.jsフロントエンド
+│   │   ├── controllers/        # APIコントローラー
+│   │   │   └── api/v1/        # API v1エンドポイント
+│   │   │       ├── auth/      # 認証関連
+│   │   │       └── current/   # 現在のユーザー関連
+│   │   ├── models/             # データモデル
+│   │   ├── mailers/            # メール送信
+│   │   ├── jobs/               # 非同期ジョブ（SolidQueue）
+│   │   ├── serializers/        # JSONシリアライザー
+│   │   └── views/              # メールテンプレート
+│   ├── config/                 # 設定ファイル
+│   │   ├── initializers/       # 初期化設定（CORS、DeviseTokenAuth等）
+│   │   ├── credentials.yml.enc # 暗号化された認証情報
+│   │   └── routes.rb           # ルーティング定義
+│   ├── db/                     # データベース関連
+│   │   ├── migrate/            # マイグレーション
+│   │   └── schema.rb           # スキーマ定義
+│   ├── spec/                   # RSpecテスト
+│   │   ├── models/             # モデルテスト
+│   │   ├── requests/           # APIテスト
+│   │   └── factories/          # テストデータ
+│   ├── swagger/                # API仕様書
+│   │   └── v1/
+│   │       └── swagger.yaml    # OpenAPI仕様
+│   └── lib/
+│       └── tasks/              # Rakeタスク（annotate等）
+├── next/                        # Next.jsフロントエンド
 │   ├── src/
-│   │   ├── app/            # App Router
-│   │   │   ├── components/ # UIコンポーネント
-│   │   │   ├── sign_in/    # ログインページ
-│   │   │   ├── sign_up/    # 登録ページ
-│   │   │   └── dashboard/  # ダッシュボード
-│   │   └── lib/            # ユーティリティ
-│   │       ├── api.ts      # API通信
-│   │       └── auth.ts     # 認証処理
-│   ├── public/             # 静的ファイル
-│   └── package.json        # 依存関係
-├── docker-compose.yml       # Docker設定
-├── .github/                 # GitHub設定
-│   ├── workflows/          # GitHub Actions
-│   └── ISSUE_TEMPLATE/     # Issueテンプレート
-└── README.md               # このファイル
+│   │   ├── app/                # App Router
+│   │   │   ├── (auth)/        # 認証が必要なページ
+│   │   │   │   └── dashboard/ # ダッシュボード
+│   │   │   ├── sign_in/       # ログインページ
+│   │   │   ├── sign_up/       # 登録ページ
+│   │   │   └── layout.tsx     # ルートレイアウト
+│   │   ├── components/         # 共通UIコンポーネント
+│   │   │   └── ui/            # shadcn/ui コンポーネント
+│   │   ├── features/           # 機能別モジュール
+│   │   │   ├── auth/           # 認証機能
+│   │   │   ├── running/        # ランニング記録機能
+│   │   │   ├── account/        # アカウント管理
+│   │   │   ├── profile/        # プロフィール
+│   │   │   └── settings/       # 設定
+│   │   ├── lib/                # ユーティリティ
+│   │   │   └── api/           # API通信層
+│   │   └── middleware.ts       # 認証ミドルウェア
+│   ├── public/                 # 静的ファイル
+│   └── package.json            # 依存関係
+├── docker-compose.yml          # Docker設定
+├── .github/                    # GitHub設定
+│   ├── workflows/              # GitHub Actions
+│   │   ├── cd.yml             # デプロイワークフロー
+│   │   └── ci.yml             # テスト・品質チェック
+│   ├── ISSUE_TEMPLATE/         # Issueテンプレート
+│   │   ├── bug_report.md      # バグレポート用
+│   │   └── feature_request.md # 機能要望用
+│   └── PULL_REQUEST_TEMPLATE.md # PRテンプレート
+├── .claude/                    # Claude Code設定
+│   ├── commands/               # カスタムコマンド
+│   │   ├── cpr.md             # PR作成コマンド
+│   │   ├── security.md        # セキュリティチェック
+│   │   ├── security-next.md   # Next.jsセキュリティ
+│   │   └── security-rails.md  # Railsセキュリティ
+│   ├── hooks/                  # 自動化フック
+│   │   ├── github-templates.md    # GitHubテンプレート
+│   │   ├── notification-sounds.md # 通知音設定
+│   │   └── pre-commit-checks.md   # コミット前チェック
+│   └── settings.local.json    # ローカル設定
+├── .cursor/                    # Cursor IDE設定
+├── CLAUDE.md                   # Claude Code用ガイドライン
+├── vercel.json                 # Vercelデプロイ設定
+└── README.md                   # このファイル
 ```
 
 ## 🚀 開発環境セットアップ
@@ -226,18 +263,54 @@ docker-compose exec next npm audit fix    # 脆弱性自動修正
 
 詳細な仕様は `rails/swagger/v1/swagger.yaml` を参照してください。
 
-## 🔧 Rails Credentials（環境変数管理）
+## 🔧 環境変数管理
+
+### フロントエンド (Next.js) - GitHub Secrets設定
+
+本番環境のフロントエンド環境変数は、GitHub ActionsのSecretsを使用してVercelにデプロイ時に設定されます。
+
+#### 設定手順
+
+1. GitHubリポジトリの Settings → Secrets and variables → Actions へ移動
+2. 「New repository secret」をクリック
+3. 以下の環境変数を追加：
+   - `AWS_ACCESS_KEY_ID` - AWSアクセスキーID
+   - `AWS_SECRET_ACCESS_KEY` - AWSシークレットアクセスキー
+   - `RAILS_MASTER_KEY` - Rails master.keyの内容
+   - `NEXT_PUBLIC_API_URL` - APIのパブリックURL
+   - `NEXT_PUBLIC_BASE_URL` - フロントエンドのベースURL
+   - `INTERNAL_API_URL` - 内部API URL（サーバーサイド用）
+
+4. GitHub Actionsワークフロー（`.github/workflows/cd.yml`）で環境変数を参照：
+```yaml
+# AWS認証
+aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+# Railsビルド時
+--build-arg RAILS_MASTER_KEY=${{ secrets.RAILS_MASTER_KEY }}
+--build-arg NEXT_PUBLIC_BASE_URL=${{ secrets.NEXT_PUBLIC_BASE_URL }}
+
+# Next.js環境変数（現在はコメントアウト中）
+NEXT_PUBLIC_API_URL=${{ secrets.NEXT_PUBLIC_API_URL }}
+NEXT_PUBLIC_BASE_URL=${{ secrets.NEXT_PUBLIC_BASE_URL }}
+INTERNAL_API_URL=${{ secrets.INTERNAL_API_URL }}
+```
+
+**注意**: 現在、Next.jsはVercelで直接デプロイされているため、Next.jsのECSデプロイ部分はコメントアウトされています。
+
+### バックエンド (Rails) - Credentials管理
 
 Railsアプリケーションの環境変数は、暗号化されたCredentialsで管理しています。
 
-### 設定方法
+#### 設定方法
 
 ```bash
 # Credentialsファイルを編集
 docker-compose exec rails bash -c "EDITOR='vi' rails credentials:edit"
 ```
 
-### 設定内容
+#### 設定内容
 
 ```yaml
 # 環境別設定
@@ -254,13 +327,13 @@ test:
 secret_key_base: xxxxx
 ```
 
-### viエディタの操作
+#### viエディタの操作
 1. `i` キー: 挿入モード開始
 2. 編集後、`ESC` キー: 挿入モード終了
 3. `:wq` + Enter: 保存して終了
 4. `:q!` + Enter: 保存せずに終了（変更を破棄）
 
-### 設定値の確認
+#### 設定値の確認
 
 ```bash
 # 現在の環境の設定を確認
@@ -270,7 +343,7 @@ docker-compose exec rails rails runner "puts Rails.application.credentials.dig(R
 docker-compose exec rails rails runner "puts Rails.application.credentials.dig(:production, :frontend_url)"
 ```
 
-### 本番環境での管理
+#### 本番環境での管理
 - `config/credentials.yml.enc`: 暗号化された設定（リポジトリに含まれる）
 - `config/master.key`: 復号化キー（.gitignoreで除外、安全に管理）
 - 環境変数`RAILS_MASTER_KEY`でもmaster.keyを設定可能
@@ -282,8 +355,6 @@ docker-compose exec rails rails runner "puts Rails.application.credentials.dig(:
 ```
 main              # 本番環境（保護ブランチ）
 ├── feature/*     # 新機能開発
-├── fix/*         # バグ修正
-└── refactor/*    # リファクタリング
 ```
 
 **重要**: `feature/*` ブランチは自動デプロイが無効化されています
@@ -316,43 +387,6 @@ docker-compose exec rails bundle exec bundle-audit
 7. PRテンプレートを使用してPR作成
 8. CI/CDパイプラインの通過を確認
 9. コードレビュー後マージ
-
-## 🐛 トラブルシューティング
-
-### Docker関連
-
-| 問題 | 解決方法 |
-|------|---------|
-| `Cannot connect to the Docker daemon` | Docker Desktopを起動 |
-| `port is already allocated` | `lsof -i :ポート番号` で確認し、プロセスを停止 |
-| コンテナが起動しない | `docker-compose down` → `docker-compose up --build` |
-| ボリュームの問題 | `docker-compose down -v` でボリュームも削除 |
-
-### Rails関連
-
-| 問題 | 解決方法 |
-|------|---------|
-| `Migrations are pending` | `docker-compose exec rails rails db:migrate` |
-| `Gem::LoadError` | `docker-compose exec rails bundle install` |
-| テスト失敗 | `docker-compose exec rails rails db:test:prepare` |
-| `Can't connect to MySQL` | MySQLコンテナの起動を確認 |
-
-### Next.js関連
-
-| 問題 | 解決方法 |
-|------|---------|
-| `Module not found` | `docker-compose exec next npm install` |
-| 環境変数が読み込まれない | `.env.development` の設定を確認 |
-| ホットリロードが効かない | `docker-compose restart next` |
-| ビルドエラー | `docker-compose exec next rm -rf .next` → 再ビルド |
-
-### 認証関連
-
-| 問題 | 解決方法 |
-|------|---------|
-| ログインできない | ブラウザのクッキーをクリア |
-| CORS エラー | `rails/config/initializers/cors.rb` の設定確認 |
-| 401 Unauthorized | 認証ヘッダーの送信を確認 |
 
 ## 🚢 デプロイ
 
@@ -388,32 +422,10 @@ docker-compose exec rails bundle exec bundle-audit
 
 ### 環境変数
 
-本番環境の環境変数はAWS Systems Manager Parameter Storeで管理
+本番環境の環境変数管理：
+- **フロントエンド (Next.js)**: GitHub ActionsのSecretsで管理
+- **バックエンド (Rails)**: Rails Credentialsで暗号化管理 (`config/credentials.yml.enc`)
 
-## 🤝 貢献方法
-
-### 開発への参加
-
-1. [Issues](https://github.com/hata-junnosuke/runmates/issues) を確認
-2. 作業するIssueを選択またはIssue作成
-3. featureブランチを作成
-4. 変更を実装（テストを含む）
-5. PRテンプレートを使用してPR作成
-6. コードレビュー
-7. マージ
-
-### コーディング規約
-
-- **Ruby**: `.rubocop.yml` の設定に従う
-- **TypeScript/JavaScript**: `.eslintrc.json` の設定に従う
-- **コミットメッセージ**: [Conventional Commits](https://www.conventionalcommits.org/) を推奨
-  - `feat:` 新機能
-  - `fix:` バグ修正
-  - `docs:` ドキュメント
-  - `style:` フォーマット
-  - `refactor:` リファクタリング
-  - `test:` テスト
-  - `chore:` その他
 
 ## 📝 ライセンス
 
