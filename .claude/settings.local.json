@@ -45,7 +45,8 @@
       "Bash(git restore:*)",
       "mcp__playwright__browser_snapshot",
       "Bash(npx shadcn@latest add:*)",
-      "Bash(npm run build:*)"
+      "Bash(npm run build:*)",
+      "mcp__playwright__browser_fill_form"
     ],
     "deny": []
   },
