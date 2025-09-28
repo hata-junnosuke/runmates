@@ -3,19 +3,33 @@ Runmatesは、ランニング愛好家のための包括的な記録管理・目
 
 日々のランニング記録を簡単に記録し、月間・年間目標の達成状況を視覚的に把握できます。
 <div align="center">
-  <img width="600" alt="ダッシュボード" src="https://github.com/user-attachments/assets/5cc4f23c-76da-440a-8ac8-40ada815b75d" />
-  
-  **📊 すべての走りが数値とグラフに**
-  
-  年間累計・月間実績・目標達成率を一目で確認。  
-  あなたの努力が数字として蓄積されていきます。
-  
-  **🌱 走った日はカレンダーが緑に染まる**
-  
-  GitHubの草のように、毎日の記録が色となって現れます。  
-  記録を残して、カレンダーを緑で埋め尽くそう。
+  <img width="600" alt="Runmatesロゴ" src="https://github.com/user-attachments/assets/9fb8a4de-0f73-4840-9bc4-8d5f29157670" />
 </div>
-
+<table>
+  <tr>
+    <td width="60%">
+      <img width="100%" alt="ダッシュボード" src="https://github.com/user-attachments/assets/5cc4f23c-76da-440a-8ac8-40ada815b75d" />
+    </td>
+    <td width="40%" valign="top">
+      <h3>📊 すべての走りが数値とグラフに</h3>
+      <p>
+        年間累計・月間実績・目標達成率を一目で確認。<br/>
+        あなたの努力が数字として蓄積されていきます。
+      </p>
+      <br/>
+      <h3>🌱 走った日はカレンダーが緑に染まる</h3>
+      <p>
+        GitHubの草のように、毎日の記録が色となって現れます。<br/>
+        記録を残して、カレンダーを緑で埋め尽くそう。
+      </p>
+      <br/>
+      <h3>📈 月間の進捗を可視化</h3>
+      <p>
+        Chart.jsによるインタラクティブなグラフで月間の進捗を視覚化
+      </p>
+    </td>
+  </tr>
+</table>
 
 ## 💭 開発背景
 
@@ -344,6 +358,12 @@ docker-compose exec rails bundle exec bundle-audit
 ## 👥 チーム
 
 - メンテナー: [hata-junnosuke](https://github.com/hata-junnosuke)
+
+## 🔑 お試しアカウント
+```
+メールアドレス: jh19911209+1@gmail.com
+パスワード: pN4vJ8dB2kz7PMY
+```
 
 ---
 
