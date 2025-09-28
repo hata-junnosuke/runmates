@@ -58,9 +58,9 @@ RSpec.describe UserMailer, type: :mailer do
 
     it "リセットトークンを含むリンクを含むこと" do
       expect(mail.html_part.body.encoded).to include(reset_token)
-      expect(mail.html_part.body.encoded).to include("/reset_password?token=#{reset_token}")
+      expect(mail.html_part.body.encoded).to include("/reset-password?token=#{reset_token}")
       expect(mail.text_part.body.encoded).to include(reset_token)
-      expect(mail.text_part.body.encoded).to include("/reset_password?token=#{reset_token}")
+      expect(mail.text_part.body.encoded).to include("/reset-password?token=#{reset_token}")
     end
 
     it "有効期限の警告を含むこと" do

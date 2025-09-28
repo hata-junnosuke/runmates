@@ -4,7 +4,7 @@ class UserMailer < ApplicationMailer
     @user = user
     @confirmation_token = confirmation_token
     @app_name = "Runmates"
-    @confirmation_url = "#{base_url}/confirm_email?token=#{@confirmation_token}"
+    @confirmation_url = "#{base_url}/confirm-email?token=#{@confirmation_token}"
 
     mail(
       to: @user.email,
@@ -29,7 +29,7 @@ class UserMailer < ApplicationMailer
     @user = user
     @reset_password_token = reset_password_token
     @app_name = "Runmates"
-    @reset_url = "#{base_url}/reset_password?token=#{@reset_password_token}"
+    @reset_url = "#{base_url}/reset-password?token=#{@reset_password_token}"
 
     mail(
       to: @user.email,
