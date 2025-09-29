@@ -67,7 +67,7 @@ Runmatesは、ランニング愛好家のための包括的な記録管理・目
 - **スタイリング**: Tailwind CSS + shadcn/ui
 - **主要ライブラリ**:
   - `react-hook-form` - フォーム管理とバリデーション
-  - `chart.js` + `react-chartjs-2` - データ可視化
+  - `react-chartjs-2` - データ可視化
  
 ### バックエンド (Rails API)
 - **フレームワーク**: Rails 8.0.2 (Ruby 3.4.3)
