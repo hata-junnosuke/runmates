@@ -14,7 +14,7 @@ module AuthCookieHelper
     end
 
     def auth_cookie_options(value, expires)
-      {
+      options = {
         value: value,
         httponly: true,
         secure: Rails.env.production?,
@@ -26,5 +26,11 @@ module AuthCookieHelper
         expires: expires,
         path: "/",
       }
+
+      # Partitioned Cookieを無効化（クロスサイトで送信されるようにする）
+      # Rails 7.1以降でpartitionedオプションがサポートされている場合のみ設定
+      options[:partitioned] = false if Rails.env.production?
+
+      options
     end
 end
