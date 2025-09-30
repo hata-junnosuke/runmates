@@ -13,48 +13,44 @@ export async function apiCall<T>(
   options?: RequestInit,
 ): Promise<ApiResponse<T>> {
   try {
-    const baseUrl =
-      process.env.NEXT_PUBLIC_API_URL || 
-      (typeof window !== 'undefined' && 
-       (window.location.hostname === 'runmates.net')
-        ? 'https://backend.runmates.net/api/v1' 
-        : 'http://localhost:3000/api/v1');
+    // 本番環境の場合は直接backend.runmates.netを使用
+    const baseUrl = 
+      typeof window !== 'undefined' && window.location.hostname === 'runmates.net'
+        ? 'https://backend.runmates.net/api/v1'
+        : process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000/api/v1';
     const url = `${baseUrl}${endpoint}`;
 
-    // クッキーの存在を確認（デバッグ用）
+    // クッキーから認証情報を取得してヘッダーに設定
+    const headers: Record<string, string> = {
+      'Content-Type': 'application/json',
+    };
+    
+    // optionsのheadersが存在する場合はマージ
+    if (options?.headers) {
+      const optHeaders = options.headers as Record<string, string>;
+      Object.assign(headers, optHeaders);
+    }
+    
     if (typeof window !== 'undefined') {
       const cookies = document.cookie.split('; ');
-      const hasAuthCookies = {
-        'access-token': cookies.some(c => c.startsWith('access-token=')),
-        'client': cookies.some(c => c.startsWith('client=')),
-        'uid': cookies.some(c => c.startsWith('uid='))
-      };
+      const accessToken = cookies.find(c => c.startsWith('access-token='))?.split('=')[1];
+      const client = cookies.find(c => c.startsWith('client='))?.split('=')[1];
+      const uid = cookies.find(c => c.startsWith('uid='))?.split('=')[1];
       
-      console.log('🔐 Auth Cookie Status:', hasAuthCookies);
-      console.log('📍 Request URL:', url);
+      if (accessToken && client && uid) {
+        headers['access-token'] = decodeURIComponent(accessToken);
+        headers['client'] = decodeURIComponent(client);
+        headers['uid'] = decodeURIComponent(uid);
+      }
     }
 
     const response = await fetch(url, {
       ...options,
       credentials: 'include',
-      headers: {
-        'Content-Type': 'application/json',
-        ...options?.headers,
-      },
+      headers,
     });
 
     if (!response.ok) {
-      // エラーの詳細をログ出力
-      if (typeof window !== 'undefined') {
-        console.error('❌ API Error Details:', {
-          status: response.status,
-          statusText: response.statusText,
-          url: url,
-          endpoint: endpoint,
-          credentials: 'include',
-          cookies: document.cookie ? 'Cookies exist' : 'No cookies'
-        });
-      }
       throw new Error(`API error: ${response.status}`);
     }
 
