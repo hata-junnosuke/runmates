@@ -13,41 +13,20 @@ export async function apiCall<T>(
   options?: RequestInit,
 ): Promise<ApiResponse<T>> {
   try {
-    // 本番環境の場合は直接backend.runmates.netを使用
+    // 本番環境ではプロキシ経由、開発環境では直接APIを呼ぶ
     const baseUrl = 
       typeof window !== 'undefined' && window.location.hostname === 'runmates.net'
-        ? 'https://backend.runmates.net/api/v1'
+        ? '/api/proxy/v1'  // プロキシ経由で同一オリジンとして扱う
         : process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000/api/v1';
     const url = `${baseUrl}${endpoint}`;
 
-    // クッキーから認証情報を取得してヘッダーに設定
-    const headers: Record<string, string> = {
-      'Content-Type': 'application/json',
-    };
-    
-    // optionsのheadersが存在する場合はマージ
-    if (options?.headers) {
-      const optHeaders = options.headers as Record<string, string>;
-      Object.assign(headers, optHeaders);
-    }
-    
-    if (typeof window !== 'undefined') {
-      const cookies = document.cookie.split('; ');
-      const accessToken = cookies.find(c => c.startsWith('access-token='))?.split('=')[1];
-      const client = cookies.find(c => c.startsWith('client='))?.split('=')[1];
-      const uid = cookies.find(c => c.startsWith('uid='))?.split('=')[1];
-      
-      if (accessToken && client && uid) {
-        headers['access-token'] = decodeURIComponent(accessToken);
-        headers['client'] = decodeURIComponent(client);
-        headers['uid'] = decodeURIComponent(uid);
-      }
-    }
-
     const response = await fetch(url, {
       ...options,
-      credentials: 'include',
-      headers,
+      credentials: 'include',  // クッキーを自動的に送信
+      headers: {
+        'Content-Type': 'application/json',
+        ...options?.headers,
+      },
     });
 
     if (!response.ok) {
