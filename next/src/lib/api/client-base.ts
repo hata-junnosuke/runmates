@@ -13,11 +13,10 @@ export async function apiCall<T>(
   options?: RequestInit,
 ): Promise<ApiResponse<T>> {
   try {
-    // 本番環境ではプロキシ経由、開発環境では直接APIを呼ぶ
-    const baseUrl = 
-      typeof window !== 'undefined' && window.location.hostname === 'runmates.net'
-        ? '/api/proxy/v1'  // プロキシ経由で同一オリジンとして扱う
-        : process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000/api/v1';
+    // 環境変数で判定（SSRとクライアントで同じ値になる）
+    const baseUrl = process.env.NODE_ENV === 'production'
+      ? '/api/proxy/v1'  // 本番環境：プロキシ経由で同一オリジンとして扱う
+      : process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000/api/v1';  // 開発環境
     const url = `${baseUrl}${endpoint}`;
 
     const response = await fetch(url, {
