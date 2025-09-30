@@ -14,7 +14,11 @@ export async function apiCall<T>(
 ): Promise<ApiResponse<T>> {
   try {
     const baseUrl =
-      process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000/api/v1';
+      process.env.NEXT_PUBLIC_API_URL || 
+      (typeof window !== 'undefined' && 
+       (window.location.hostname === 'runmates.net')
+        ? 'https://backend.runmates.net/api/v1' 
+        : 'http://localhost:3000/api/v1');
     const url = `${baseUrl}${endpoint}`;
 
     const response = await fetch(url, {
@@ -27,6 +31,15 @@ export async function apiCall<T>(
     });
 
     if (!response.ok) {
+      // エラーの詳細をログ出力
+      if (typeof window !== 'undefined') {
+        console.error('API Error Details:', {
+          status: response.status,
+          statusText: response.statusText,
+          url: url,
+          endpoint: endpoint
+        });
+      }
       throw new Error(`API error: ${response.status}`);
     }
 
