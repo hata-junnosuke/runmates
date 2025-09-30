@@ -13,9 +13,21 @@ export async function apiCall<T>(
   options?: RequestInit,
 ): Promise<ApiResponse<T>> {
   try {
+    // 環境変数を無視して直接URLを指定
     const baseUrl =
-      process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000/api/v1';
+      typeof window !== 'undefined' && window.location.hostname === 'runmates.net'
+        ? 'https://backend.runmates.net/api/v1' 
+        : 'http://localhost:3000/api/v1';
     const url = `${baseUrl}${endpoint}`;
+
+    // デバッグログ
+    if (typeof window !== 'undefined') {
+      console.log('🔍 API Request Debug:');
+      console.log('  Hostname:', window.location.hostname);
+      console.log('  Base URL:', baseUrl);
+      console.log('  Full URL:', url);
+      console.log('  Credentials:', 'include');
+    }
 
     const response = await fetch(url, {
       ...options,
