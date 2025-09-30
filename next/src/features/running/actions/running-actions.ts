@@ -54,14 +54,6 @@ async function apiCall<T = unknown>(endpoint: string, options: RequestInit = {})
   const response = await fetch(url, defaultOptions);
 
   if (!response.ok) {
-    // デバッグ情報を追加
-    console.error('API call failed:', {
-      endpoint,
-      status: response.status,
-      hasAccessToken: !!accessToken,
-      hasClient: !!client,
-      hasUid: !!uid,
-    });
     throw new Error(`API Error: ${response.status} ${response.statusText}`);
   }
 
