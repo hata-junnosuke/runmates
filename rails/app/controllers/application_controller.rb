@@ -4,10 +4,6 @@ class ApplicationController < ActionController::API
 
   before_action :set_auth_headers_from_cookies
 
-  def ping
-    render json: { message: "pong" }
-  end
-
   private
 
     def set_auth_headers_from_cookies
