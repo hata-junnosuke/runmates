@@ -3,6 +3,8 @@
     "deploymentEnabled": {
       "main": true,
       "feature/*": false,
+      "refactor/*": false,
+      "fix/*": false,
       "develop": false,
       "staging": false,
       "*": false
