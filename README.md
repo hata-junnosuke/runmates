@@ -302,9 +302,11 @@ docker-compose exec rails rails runner "puts Rails.application.credentials.dig(:
 ```
 main              # 本番環境（保護ブランチ）
 ├── feature/*     # 新機能開発
+├── fix/*     # バグ修正
+├── refactor/*     # リファクタリング
 ```
 
-**重要**: `feature/*` ブランチは自動デプロイが無効化されています
+**重要**: `feature/*`、`fix/*`、`refactor/*` ブランチは自動デプロイが無効化されています
 
 ### コミット前チェックリスト
 
@@ -326,7 +328,7 @@ docker-compose exec rails bundle exec bundle-audit
 ### プルリクエスト作成
 
 1. Issueを作成または選択
-2. featureブランチを作成
+2. feature/fix/refactorブランチを作成
 3. 変更を実装
 4. テストを追加・更新
 5. コミット: `git commit -m "feat: 機能説明"`
