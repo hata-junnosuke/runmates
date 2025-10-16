@@ -158,6 +158,36 @@ RSpec.describe "Api::V1::RunningRecords", type: :request do
           json = response.parsed_body
           expect(json["errors"]).to be_present
         end
+
+        it "2025年未満の日付は登録できない" do
+          params = {
+            running_record: {
+              date: "2024-12-31",
+              distance: 5.0,
+            },
+          }
+
+          post "/api/v1/running_records", params: params, headers: headers
+
+          expect(response).to have_http_status(:unprocessable_entity)
+          json = response.parsed_body
+          expect(json["errors"]).to include("日付は2025年1月1日以降の日付を入力してください")
+        end
+
+        it "不正な形式の日付は登録できない" do
+          params = {
+            running_record: {
+              date: "2025/11/01",
+              distance: 5.0,
+            },
+          }
+
+          post "/api/v1/running_records", params: params, headers: headers
+
+          expect(response).to have_http_status(:unprocessable_entity)
+          json = response.parsed_body
+          expect(json["errors"]).to include("日付はYYYY-MM-DD形式で入力してください")
+        end
       end
     end
 

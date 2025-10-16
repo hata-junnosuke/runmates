@@ -12,6 +12,8 @@ import type {
 } from '../types/form-inputs';
 
 const API_BASE_URL = process.env.INTERNAL_API_URL || 'http://rails:3000/api/v1';
+const MIN_RUNNING_RECORD_DATE = '2025-01-01';
+const RUNNING_RECORD_DATE_REGEX = /^\d{4}-\d{2}-\d{2}$/;
 
 // ========================================
 // ヘルパー関数
@@ -93,6 +95,12 @@ export async function createRunningRecord(
     // バリデーション
     if (!date || !distance || distance <= 0) {
       return { success: false, error: '有効な日付と距離を入力してください' };
+    }
+    if (!RUNNING_RECORD_DATE_REGEX.test(date)) {
+      return { success: false, error: '日付はYYYY-MM-DD形式で入力してください' };
+    }
+    if (date < MIN_RUNNING_RECORD_DATE) {
+      return { success: false, error: '日付は2025年1月1日以降を選択してください' };
     }
 
     await apiCall('/running_records', {
