@@ -62,7 +62,7 @@ RSpec.describe RunningRecord, type: :model do
     context "同じユーザーが同じ日付で複数のレコードを作成する場合" do
       it "複数のレコードを作成できる" do
         user = create(:user)
-        date = Date.new(2025, 6, 15)
+        date = Date.current
         create(:running_record, user: user, date: date, distance: 5.0)
         second_record = build(:running_record, user: user, date: date, distance: 3.0)
 
