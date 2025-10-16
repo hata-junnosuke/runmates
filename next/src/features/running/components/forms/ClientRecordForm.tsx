@@ -1,7 +1,7 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useCallback, useEffect, useState, useTransition } from 'react';
+import { useCallback, useEffect, useMemo, useState, useTransition } from 'react';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
 
@@ -26,8 +26,15 @@ import { Input } from '@/components/ui/input';
 import { createRunningRecord } from '../../actions/running-actions';
 import type { RunRecord } from '../../types';
 
+const MIN_DATE = '2025-01-01';
+const DATE_REGEX = /^\d{4}-\d{2}-\d{2}$/;
+
 const runningRecordSchema = z.object({
-  date: z.string().min(1, '日付を入力してください'),
+  date: z
+    .string()
+    .min(1, '日付を入力してください')
+    .regex(DATE_REGEX, '日付はYYYY-MM-DD形式で入力してください')
+    .refine((value) => value >= MIN_DATE, '日付は2025年1月1日以降を選択してください'),
   distance: z.union([
     z.number().min(0.01, '距離は0より大きい値を入力してください'),
     z.literal('').transform(() => 0),
@@ -50,10 +57,19 @@ export default function ClientRecordForm({
   isOpen,
   onClose,
 }: ClientRecordFormProps) {
+  // selectedDateに変化がない限り今日の日付計算を再実行しないようメモ化しておく
+  const defaultDate = useMemo(() => {
+    if (selectedDate && DATE_REGEX.test(selectedDate) && selectedDate >= MIN_DATE) {
+      return selectedDate;
+    }
+    const today = new Date().toISOString().split('T')[0];
+    return today >= MIN_DATE ? today : MIN_DATE;
+  }, [selectedDate]);
+
   const form = useForm<RunningRecordFormData>({
     resolver: zodResolver(runningRecordSchema),
     defaultValues: {
-      date: selectedDate || '',
+      date: defaultDate,
       distance: '',
     },
   });
@@ -61,27 +77,23 @@ export default function ClientRecordForm({
   // モーダルが開かれたときに日付を設定
   useEffect(() => {
     if (isOpen) {
-      if (selectedDate) {
-        form.setValue('date', selectedDate);
-      } else {
-        form.setValue('date', new Date().toISOString().split('T')[0]);
-      }
+      form.setValue('date', defaultDate);
     }
-  }, [isOpen, selectedDate, form]);
+  }, [isOpen, defaultDate, form]);
 
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
 
   const handleClose = useCallback((freshMonthRecords?: RunRecord[]) => {
     form.reset({
-      date: '',
+      date: defaultDate,
       distance: '',
     });
     setError(null);
     if (onClose) {
       onClose(freshMonthRecords);
     }
-  }, [form, onClose]);
+  }, [form, onClose, defaultDate]);
 
   const onSubmit = async (data: RunningRecordFormData) => {
     setError(null);
@@ -123,7 +135,32 @@ export default function ClientRecordForm({
                 <FormItem>
                   <FormLabel>日付</FormLabel>
                   <FormControl>
-                    <Input type="date" {...field} />
+                    <Input
+                      type="date"
+                      min={MIN_DATE}
+                      {...field}
+                      onChange={(event) => {
+                        const value = event.target.value;
+                        if (!value) {
+                          field.onChange(value);
+                          return;
+                        }
+                        if (!DATE_REGEX.test(value)) {
+                          field.onChange(value);
+                          return;
+                        }
+                        if (value < MIN_DATE) {
+                          field.onChange(MIN_DATE);
+                          form.setError('date', {
+                            type: 'min',
+                            message: '日付は2025年1月1日以降を選択してください',
+                          });
+                          return;
+                        }
+                        form.clearErrors('date');
+                        field.onChange(value);
+                      }}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
