@@ -3,6 +3,9 @@ set -e
 
 echo "Start entrypoint.prod.sh"
 
+export WEB_CONCURRENCY=${WEB_CONCURRENCY:-1}
+export RAILS_MAX_THREADS=${RAILS_MAX_THREADS:-2}
+
 echo "rm -f /myapp/tmp/pids/server.pid"
 rm -f /myapp/tmp/pids/server.pid
 

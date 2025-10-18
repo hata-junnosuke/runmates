@@ -34,15 +34,15 @@ production:
   # 本番環境では負荷に応じて調整
   dispatchers:
     - polling_interval: 1
-      batch_size: 1000
-  
+      batch_size: 200
+ 
   workers:
     # 通常のジョブ用ワーカー
     - queues: ["default", "mailers"]
-      threads: 5
-      processes: 2
+      threads: 1
+      processes: 1
     
     # 優先度の高いジョブ用ワーカー
     - queues: ["urgent"]
-      threads: 3
+      threads: 1
       processes: 1
