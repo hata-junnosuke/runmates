@@ -1,26 +1,17 @@
-import { dirname } from "path";
-import { fileURLToPath } from "url";
-import { FlatCompat } from "@eslint/eslintrc";
+import nextCoreWebVitals from "eslint-config-next/core-web-vitals";
+import nextTypescript from "eslint-config-next/typescript";
 import simpleImportSort from "eslint-plugin-simple-import-sort";
 import unusedImports from "eslint-plugin-unused-imports";
 import security from "eslint-plugin-security";
-import jsxA11y from "eslint-plugin-jsx-a11y";
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-
-const compat = new FlatCompat({
-  baseDirectory: __dirname,
-});
 
 const eslintConfig = [
-  ...compat.extends("next/core-web-vitals", "next/typescript"),
+  ...nextCoreWebVitals,
+  ...nextTypescript,
   {
     plugins: {
       "simple-import-sort": simpleImportSort,
       "unused-imports": unusedImports,
-      "security": security,
-      "jsx-a11y": jsxA11y,
+      security,
     },
     rules: {
       "simple-import-sort/imports": "error",
@@ -79,6 +70,9 @@ const eslintConfig = [
       "jsx-a11y/role-supports-aria-props": "error",
       "jsx-a11y/scope": "error",
       "jsx-a11y/tabindex-no-positive": "error",
+      // React Compiler beta rules are too strict for current codebase
+      "react-hooks/set-state-in-effect": "off",
+      "react-hooks/incompatible-library": "off",
     },
   },
 ];

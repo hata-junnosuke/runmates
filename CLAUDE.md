@@ -24,7 +24,7 @@ npm run dev        # ローカル実行
 
 **技術スタック:**
 - **バックエンド**: Rails API (Ruby 3.4.3) + MySQL 8.0.32
-- **フロントエンド**: Next.js 15.3.1 + TypeScript、Tailwind CSS、MUI、Chart.js
+- **フロントエンド**: Next.js 16.0.1 + TypeScript、Tailwind CSS、MUI、Chart.js
 - **認証**: DeviseTokenAuth（HTTP-onlyクッキー使用）
 - **データ可視化**: Chart.js + react-chartjs-2
 - **デプロイ**: AWS ECS Fargate + Nginxリバースプロキシ

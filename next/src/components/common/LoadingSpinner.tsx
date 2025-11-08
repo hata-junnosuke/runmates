@@ -17,7 +17,7 @@ const sizeClasses = {
   sm: 'h-4 w-4',
   md: 'h-6 w-6',
   lg: 'h-8 w-8',
-};
+} as const;
 
 /**
  * ローディングスピナーコンポーネント
@@ -40,6 +40,13 @@ export function LoadingSpinner({
   fullScreen = false,
   className,
 }: LoadingSpinnerProps) {
+  const spinnerSizeClass =
+    size === 'sm'
+      ? sizeClasses.sm
+      : size === 'lg'
+        ? sizeClasses.lg
+        : sizeClasses.md;
+
   const spinner = (
     <div
       className={cn(
@@ -48,7 +55,7 @@ export function LoadingSpinner({
       )}
     >
       <Loader2
-        className={cn('animate-spin text-emerald-600', sizeClasses[size])}
+        className={cn('animate-spin text-emerald-600', spinnerSizeClass)}
       />
       {text && (
         <p

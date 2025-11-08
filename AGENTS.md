@@ -18,7 +18,7 @@ docker-compose exec next npm run dev
 
 ## システム構成の要点
 - Rails API（Ruby 3.4.3）とMySQL 8.0.32によるバックエンド
-- Next.js 15.3.1 + TypeScript + Tailwind CSS + MUI + Chart.jsからなるフロントエンド
+- Next.js 16.0.1 + TypeScript + Tailwind CSS + MUI + Chart.jsからなるフロントエンド
 - DeviseTokenAuthを用いたHTTP-onlyクッキー認証
 - Nginxリバースプロキシを前段に置き、AWS ECS Fargateで運用
 - 主機能はランニング記録管理、目標設定、統計ダッシュボード
