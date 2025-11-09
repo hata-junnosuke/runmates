@@ -28,7 +28,10 @@ const RUNNING_RECORD_DATE_REGEX = /^\d{4}-\d{2}-\d{2}$/;
  * @returns APIレスポンスまたはnull（204の場合）
  * @throws Error APIエラーが発生した場合
  */
-async function apiCall<T = unknown>(endpoint: string, options: RequestInit = {}): Promise<T> {
+async function apiCall<T = unknown>(
+  endpoint: string,
+  options: RequestInit = {},
+): Promise<T> {
   const cookieStore = await cookies();
   const url = `${API_BASE_URL}${endpoint}`;
 
@@ -97,10 +100,16 @@ export async function createRunningRecord(
       return { success: false, error: '有効な日付と距離を入力してください' };
     }
     if (!RUNNING_RECORD_DATE_REGEX.test(date)) {
-      return { success: false, error: '日付はYYYY-MM-DD形式で入力してください' };
+      return {
+        success: false,
+        error: '日付はYYYY-MM-DD形式で入力してください',
+      };
     }
     if (date < MIN_RUNNING_RECORD_DATE) {
-      return { success: false, error: '日付は2025年1月1日以降を選択してください' };
+      return {
+        success: false,
+        error: '日付は2025年1月1日以降を選択してください',
+      };
     }
 
     await apiCall('/running_records', {
@@ -114,9 +123,9 @@ export async function createRunningRecord(
     const recordDate = new Date(date);
     const year = recordDate.getFullYear();
     const month = recordDate.getMonth() + 1;
-    
+
     const freshMonthRecords = await apiCall<RunRecord[]>(
-      `/running_records?year=${year}&month=${month}`
+      `/running_records?year=${year}&month=${month}`,
     );
 
     revalidatePath('/');

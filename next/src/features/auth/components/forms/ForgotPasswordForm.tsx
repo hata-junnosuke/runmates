@@ -126,7 +126,10 @@ export default function ForgotPasswordForm() {
         </Button>
 
         <div className="mt-2 text-center">
-          <Link href="/login" className="text-sm text-green-500 hover:underline">
+          <Link
+            href="/login"
+            className="text-sm text-green-500 hover:underline"
+          >
             ログインに戻る
           </Link>
         </div>

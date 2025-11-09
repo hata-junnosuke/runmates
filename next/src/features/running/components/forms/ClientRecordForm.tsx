@@ -1,7 +1,13 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useCallback, useEffect, useMemo, useState, useTransition } from 'react';
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+  useTransition,
+} from 'react';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
 
@@ -34,7 +40,10 @@ const runningRecordSchema = z.object({
     .string()
     .min(1, '日付を入力してください')
     .regex(DATE_REGEX, '日付はYYYY-MM-DD形式で入力してください')
-    .refine((value) => value >= MIN_DATE, '日付は2025年1月1日以降を選択してください'),
+    .refine(
+      (value) => value >= MIN_DATE,
+      '日付は2025年1月1日以降を選択してください',
+    ),
   distance: z.union([
     z.number().min(0.01, '距離は0より大きい値を入力してください'),
     z.literal('').transform(() => 0),
@@ -59,7 +68,11 @@ export default function ClientRecordForm({
 }: ClientRecordFormProps) {
   // selectedDateに変化がない限り今日の日付計算を再実行しないようメモ化しておく
   const defaultDate = useMemo(() => {
-    if (selectedDate && DATE_REGEX.test(selectedDate) && selectedDate >= MIN_DATE) {
+    if (
+      selectedDate &&
+      DATE_REGEX.test(selectedDate) &&
+      selectedDate >= MIN_DATE
+    ) {
       return selectedDate;
     }
     const today = new Date().toISOString().split('T')[0];
@@ -84,16 +97,19 @@ export default function ClientRecordForm({
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
 
-  const handleClose = useCallback((freshMonthRecords?: RunRecord[]) => {
-    form.reset({
-      date: defaultDate,
-      distance: '',
-    });
-    setError(null);
-    if (onClose) {
-      onClose(freshMonthRecords);
-    }
-  }, [form, onClose, defaultDate]);
+  const handleClose = useCallback(
+    (freshMonthRecords?: RunRecord[]) => {
+      form.reset({
+        date: defaultDate,
+        distance: '',
+      });
+      setError(null);
+      if (onClose) {
+        onClose(freshMonthRecords);
+      }
+    },
+    [form, onClose, defaultDate],
+  );
 
   const onSubmit = async (data: RunningRecordFormData) => {
     setError(null);

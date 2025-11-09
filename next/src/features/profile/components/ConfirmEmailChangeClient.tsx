@@ -39,7 +39,7 @@ export default function ConfirmEmailChangeClient() {
           setStatus('success');
           setMessage('メールアドレスが変更されました');
           setNewEmail(data.email || '');
-          
+
           // 3秒後にログアウト（Server Action経由で確実にクッキーをクリア）
           setTimeout(() => {
             logoutAction();
@@ -101,10 +101,7 @@ export default function ConfirmEmailChangeClient() {
         <p className="mb-4 text-gray-600">
           3秒後にログインページへ移動します。
         </p>
-        <Link
-          href="/login"
-          className="text-sm text-green-500 hover:underline"
-        >
+        <Link href="/login" className="text-sm text-green-500 hover:underline">
           今すぐログインページへ
         </Link>
       </div>
