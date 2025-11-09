@@ -6,7 +6,6 @@ export default async function SettingsPage() {
     <div className="min-h-screen bg-gradient-to-br from-green-100 to-blue-200">
       <div className="container mx-auto px-4 py-4 md:py-8">
         <div className="mx-auto max-w-4xl rounded-xl bg-white p-4 shadow-lg md:p-8">
-
           <div className="mb-6 md:mb-8">
             <h1 className="text-2xl font-bold text-gray-900 md:text-3xl">
               設定

@@ -40,13 +40,17 @@ export default async function ProfilePage() {
                 </div>
                 <div className="p-4 md:p-6">
                   <div className="mb-4">
-                    <p className="text-sm text-gray-600">現在のメールアドレス</p>
-                    <p className="mt-1 font-medium text-gray-900">{user.email}</p>
+                    <p className="text-sm text-gray-600">
+                      現在のメールアドレス
+                    </p>
+                    <p className="mt-1 font-medium text-gray-900">
+                      {user.email}
+                    </p>
                     {user.pending_email && (
                       <div className="mt-2 rounded-md bg-yellow-50 p-3">
                         <p className="text-sm text-yellow-800">
-                          <strong>{user.pending_email}</strong> への変更を確認中です。
-                          メールをご確認ください。
+                          <strong>{user.pending_email}</strong>{' '}
+                          への変更を確認中です。 メールをご確認ください。
                         </p>
                       </div>
                     )}
@@ -56,7 +60,7 @@ export default async function ProfilePage() {
               </div>
             </>
           )}
-          
+
           <div className="mt-8">
             <Link
               href="/settings"

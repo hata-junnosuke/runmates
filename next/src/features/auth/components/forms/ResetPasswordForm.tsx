@@ -21,7 +21,9 @@ import { Input } from '@/components/ui/input';
 const resetPasswordSchema = z
   .object({
     password: z.string().min(6, 'パスワードは6文字以上で入力してください'),
-    passwordConfirmation: z.string().min(6, 'パスワードは6文字以上で入力してください'),
+    passwordConfirmation: z
+      .string()
+      .min(6, 'パスワードは6文字以上で入力してください'),
   })
   .refine((data) => data.password === data.passwordConfirmation, {
     message: 'パスワードが一致しません',
@@ -177,7 +179,10 @@ export default function ResetPasswordForm() {
         </Button>
 
         <div className="mt-2 text-center">
-          <Link href="/login" className="text-sm text-green-500 hover:underline">
+          <Link
+            href="/login"
+            className="text-sm text-green-500 hover:underline"
+          >
             ログインに戻る
           </Link>
         </div>

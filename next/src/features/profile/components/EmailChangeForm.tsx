@@ -119,7 +119,7 @@ export function EmailChangeForm({ currentEmail }: EmailChangeFormProps) {
                 <Input
                   type="email"
                   placeholder="新しいメールアドレスを入力"
-                  className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-green-500 focus:outline-none focus:ring-1 focus:ring-green-500"
+                  className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-green-500 focus:ring-1 focus:ring-green-500 focus:outline-none"
                   disabled={isPending || form.formState.isSubmitting}
                   {...field}
                 />
@@ -146,7 +146,7 @@ export function EmailChangeForm({ currentEmail }: EmailChangeFormProps) {
                 <Input
                   type="password"
                   placeholder="パスワードを入力"
-                  className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-green-500 focus:outline-none focus:ring-1 focus:ring-green-500"
+                  className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-green-500 focus:ring-1 focus:ring-green-500 focus:outline-none"
                   disabled={isPending || form.formState.isSubmitting}
                   {...field}
                 />
@@ -189,7 +189,7 @@ export function EmailChangeForm({ currentEmail }: EmailChangeFormProps) {
                   form.formState.isSubmitting ||
                   watchNewEmail === currentEmail
                 }
-                className="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed"
+                className="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:bg-gray-300"
               >
                 {isPending ? '送信中...' : '確認メールを送信'}
               </Button>

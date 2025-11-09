@@ -108,7 +108,7 @@ export default function DeleteAccountForm() {
             control={form.control}
             name="isConfirmed"
             render={({ field }) => (
-              <FormItem className="flex flex-row items-start space-x-3 space-y-0">
+              <FormItem className="flex flex-row items-start space-y-0 space-x-3">
                 <FormControl>
                   <Checkbox
                     checked={field.value}
@@ -117,7 +117,7 @@ export default function DeleteAccountForm() {
                   />
                 </FormControl>
                 <div className="space-y-1 leading-none">
-                  <FormLabel className="cursor-pointer text-sm text-gray-700 font-normal">
+                  <FormLabel className="cursor-pointer text-sm font-normal text-gray-700">
                     上記のデータがすべて完全に削除され、復旧できないことを理解しました
                   </FormLabel>
                   <FormMessage />

@@ -34,7 +34,7 @@ export default function DashboardWithCalendar({
   const handleFormClose = (freshMonthRecords?: RunRecord[]) => {
     setRecordFormOpen(false);
     setSelectedDate('');
-    
+
     // Server Actionから返された最新データで更新
     if (freshMonthRecords) {
       setCurrentMonthRecords(freshMonthRecords);
