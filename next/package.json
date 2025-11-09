@@ -6,7 +6,7 @@
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start -p 80",
-    "lint": "eslint \"src\"",
+    "lint": "eslint \"src\" && prettier --check 'src/**/*.{js,jsx,ts,tsx}'",
     "format": "eslint \"src\" --fix && prettier --write 'src/**/*.{js,jsx,ts,tsx}'"
   },
   "dependencies": {
