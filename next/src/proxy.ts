@@ -19,7 +19,7 @@ const excludePaths = [
   '/sitemap.xml',
 ];
 
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   // 除外パスの場合は何もしない
