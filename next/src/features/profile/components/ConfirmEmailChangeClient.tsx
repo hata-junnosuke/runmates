@@ -29,6 +29,7 @@ export default function ConfirmEmailChangeClient() {
           `${process.env.NEXT_PUBLIC_API_URL}/auth/email_confirmation?confirmation_token=${token}`,
           {
             method: 'GET',
+            cache: 'no-store',
             credentials: 'include',
           },
         );

@@ -1,4 +1,12 @@
+import { unstable_noStore as noStore } from 'next/cache';
+
 import { getAuthHeaders } from '@/features/auth/lib/headers';
+
+type ExtendedRequestInit = RequestInit & {
+  next?: {
+    revalidate?: number;
+  };
+};
 
 // サーバーサイドでは内部Docker通信、クライアントサイドでは外部URLを使用
 const API_BASE_URL = process.env.INTERNAL_API_URL || 'http://rails:3000/api/v1';
@@ -11,19 +19,24 @@ export type ApiResponse<T> =
 // サーバーサイドAPI呼び出し関数
 export async function serverApiCall<T = unknown>(
   endpoint: string,
-  options: RequestInit = {},
+  options: ExtendedRequestInit = {},
 ): Promise<ApiResponse<T>> {
   try {
+    noStore();
     const url = `${API_BASE_URL}${endpoint}`;
     const authHeaders = await getAuthHeaders();
 
-    const defaultOptions: RequestInit = {
+    const defaultOptions: ExtendedRequestInit = {
+      ...options,
       headers: {
         'Content-Type': 'application/json',
         ...authHeaders,
         ...options.headers,
       },
-      ...options,
+      cache: 'no-store',
+      next: {
+        revalidate: 0,
+      },
     };
 
     const response = await fetch(url, defaultOptions);

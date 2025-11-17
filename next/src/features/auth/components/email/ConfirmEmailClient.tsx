@@ -26,6 +26,7 @@ export default function ConfirmEmailClient() {
           `${process.env.NEXT_PUBLIC_API_URL}/auth/confirmation?confirmation_token=${token}`,
           {
             method: 'GET',
+            cache: 'no-store',
             credentials: 'include',
           },
         );
