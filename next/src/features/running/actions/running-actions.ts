@@ -1,6 +1,6 @@
 'use server';
 
-import { revalidatePath } from 'next/cache';
+import { revalidatePath, unstable_noStore as noStore } from 'next/cache';
 import { cookies } from 'next/headers';
 
 import type { RunRecord } from '../types';
@@ -28,10 +28,17 @@ const RUNNING_RECORD_DATE_REGEX = /^\d{4}-\d{2}-\d{2}$/;
  * @returns APIレスポンスまたはnull（204の場合）
  * @throws Error APIエラーが発生した場合
  */
+type ExtendedRequestInit = RequestInit & {
+  next?: {
+    revalidate?: number;
+  };
+};
+
 async function apiCall<T = unknown>(
   endpoint: string,
-  options: RequestInit = {},
+  options: ExtendedRequestInit = {},
 ): Promise<T> {
+  noStore();
   const cookieStore = await cookies();
   const url = `${API_BASE_URL}${endpoint}`;
 
@@ -40,7 +47,8 @@ async function apiCall<T = unknown>(
   const client = cookieStore.get('client')?.value;
   const uid = cookieStore.get('uid')?.value;
 
-  const defaultOptions: RequestInit = {
+  const defaultOptions: ExtendedRequestInit = {
+    ...options,
     headers: {
       'Content-Type': 'application/json',
       ...(accessToken &&
@@ -53,7 +61,10 @@ async function apiCall<T = unknown>(
         }),
       ...options.headers,
     },
-    ...options,
+    cache: 'no-store',
+    next: {
+      revalidate: 0,
+    },
   };
 
   const response = await fetch(url, defaultOptions);

@@ -1,5 +1,6 @@
 'use server';
 
+import { unstable_noStore as noStore } from 'next/cache';
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 
@@ -7,6 +8,7 @@ const API_BASE_URL = process.env.INTERNAL_API_URL || 'http://rails:3000/api/v1';
 
 // ログイン
 export async function loginAction(formData: FormData) {
+  noStore();
   try {
     const email = formData.get('email') as string;
     const password = formData.get('password') as string;
@@ -22,6 +24,10 @@ export async function loginAction(formData: FormData) {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+      },
+      cache: 'no-store',
+      next: {
+        revalidate: 0,
       },
       body: JSON.stringify({ email, password }),
     });
@@ -69,6 +75,7 @@ export async function loginAction(formData: FormData) {
 
 // アカウント作成
 export async function createAccountAction(formData: FormData) {
+  noStore();
   try {
     const email = formData.get('email') as string;
     const password = formData.get('password') as string;
@@ -88,6 +95,10 @@ export async function createAccountAction(formData: FormData) {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+      },
+      cache: 'no-store',
+      next: {
+        revalidate: 0,
       },
       body: JSON.stringify({
         email,
@@ -121,6 +132,7 @@ export async function createAccountAction(formData: FormData) {
 
 // ログアウト
 export async function logoutAction() {
+  noStore();
   try {
     const cookieStore = await cookies();
 
@@ -137,6 +149,10 @@ export async function logoutAction() {
           'access-token': accessToken,
           client: client,
           uid: uid,
+        },
+        cache: 'no-store',
+        next: {
+          revalidate: 0,
         },
       });
     }

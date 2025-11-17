@@ -7,6 +7,7 @@ export async function signIn(email: string, password: string) {
       headers: {
         'Content-Type': 'application/json',
       },
+      cache: 'no-store',
       credentials: 'include', // クッキーを送受信
       body: JSON.stringify({
         email,
@@ -42,6 +43,7 @@ export async function signUp(
       headers: {
         'Content-Type': 'application/json',
       },
+      cache: 'no-store',
       credentials: 'include', // クッキーを送受信
       body: JSON.stringify({
         email,
@@ -76,6 +78,7 @@ export async function signOut() {
   try {
     await fetch(process.env.NEXT_PUBLIC_API_URL + '/auth/sign_out', {
       method: 'DELETE',
+      cache: 'no-store',
       credentials: 'include', // クッキーを送受信
     });
 

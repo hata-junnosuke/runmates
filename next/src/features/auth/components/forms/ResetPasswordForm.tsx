@@ -72,6 +72,7 @@ export default function ResetPasswordForm() {
             headers: {
               'Content-Type': 'application/json',
             },
+            cache: 'no-store',
             credentials: 'include',
             body: JSON.stringify({
               password: data.password,

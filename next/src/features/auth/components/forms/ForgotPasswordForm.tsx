@@ -50,6 +50,7 @@ export default function ForgotPasswordForm() {
             headers: {
               'Content-Type': 'application/json',
             },
+            cache: 'no-store',
             credentials: 'include',
             body: JSON.stringify({
               email: data.email,

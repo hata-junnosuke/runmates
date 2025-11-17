@@ -22,6 +22,7 @@ export async function apiCall<T>(
 
     const response = await fetch(url, {
       ...options,
+      cache: 'no-store',
       credentials: 'include', // クッキーを自動的に送信
       headers: {
         'Content-Type': 'application/json',
