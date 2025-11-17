@@ -2,7 +2,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useState, useTransition } from 'react';
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
 
@@ -29,7 +29,7 @@ export default function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [error, setError] = useState('');
-  const [isPending, startTransition] = useTransition();
+  const [isPending, setIsPending] = useState(false);
 
   const form = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
@@ -41,8 +41,9 @@ export default function LoginForm() {
 
   const onSubmit = async (data: LoginFormData) => {
     setError('');
+    setIsPending(true);
 
-    startTransition(async () => {
+    try {
       const formData = new FormData();
       formData.append('email', data.email);
       formData.append('password', data.password);
@@ -56,7 +57,9 @@ export default function LoginForm() {
       } else {
         setError(result.error || 'ログインに失敗しました');
       }
-    });
+    } finally {
+      setIsPending(false);
+    }
   };
 
   return (
@@ -108,7 +111,7 @@ export default function LoginForm() {
         <Button
           type="submit"
           className="w-full rounded bg-green-600 py-2 font-bold text-white transition hover:bg-green-700 disabled:opacity-50"
-          disabled={form.formState.isSubmitting}
+          disabled={isPending || form.formState.isSubmitting}
         >
           {isPending ? '送信中...' : 'ログイン'}
         </Button>
