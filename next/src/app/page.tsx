@@ -1,6 +1,9 @@
 import HeaderNav from '@/components/layout/HeaderNav';
 import ServerRunningDashboard from '@/features/running/components/dashboard/ServerRunningDashboard';
 
+// ServerRunningDashboardがcookies()を参照するServer Componentを内包するためビルド時プリレンダー不可
+export const dynamic = 'force-dynamic';
+
 export default async function HomePage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-100 to-blue-200">

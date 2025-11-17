@@ -4,6 +4,9 @@ import Link from 'next/link';
 import { getUserProfile } from '@/features/profile/actions/get-user-profile';
 import { EmailChangeForm } from '@/features/profile/components/EmailChangeForm';
 
+// getUserProfile内でcookies()を参照するため静的生成ができず動的レンダリングを明示
+export const dynamic = 'force-dynamic';
+
 export default async function ProfilePage() {
   const { user, error } = await getUserProfile();
 
