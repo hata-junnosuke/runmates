@@ -91,6 +91,11 @@ export default function ClientRecordForm({
   useEffect(() => {
     if (isOpen) {
       form.setValue('date', defaultDate);
+      // モーダル表示時は距離入力欄から入力開始できるよう少し遅らせてフォーカスを移す
+      const timer = window.setTimeout(() => {
+        form.setFocus('distance', { shouldSelect: true });
+      }, 0);
+      return () => window.clearTimeout(timer);
     }
   }, [isOpen, defaultDate, form]);
 
