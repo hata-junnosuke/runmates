@@ -29,7 +29,8 @@ class RunningPlan < ApplicationRecord
   validates :status, presence: true
   enum :status,
        { planned: "planned", partial: "partial", completed: "completed" },
-       prefix: true
+       prefix: true,
+       validate: true
 
   scope :for_month, ->(year, month) { where("YEAR(date) = ? AND MONTH(date) = ?", year, month) }
 end
