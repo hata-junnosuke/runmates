@@ -15,7 +15,6 @@ import { Button } from '@/components/ui/button';
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
@@ -59,12 +58,14 @@ interface ClientRecordFormProps {
   selectedDate?: string;
   isOpen: boolean;
   onClose: (freshMonthRecords?: RunRecord[]) => void;
+  onSwitchToPlan?: () => void;
 }
 
 export default function ClientRecordForm({
   selectedDate,
   isOpen,
   onClose,
+  onSwitchToPlan,
 }: ClientRecordFormProps) {
   // selectedDateに変化がない限り今日の日付計算を再実行しないようメモ化しておく
   const defaultDate = useMemo(() => {
@@ -87,11 +88,10 @@ export default function ClientRecordForm({
     },
   });
 
-  // モーダルが開かれたときに日付を設定
+  // モーダルが開いた時や選択日変更時に日付を固定セット
   useEffect(() => {
     if (isOpen) {
       form.setValue('date', defaultDate);
-      // モーダル表示時は距離入力欄から入力開始できるよう少し遅らせてフォーカスを移す
       const timer = window.setTimeout(() => {
         form.setFocus('distance', { shouldSelect: true });
       }, 0);
@@ -101,6 +101,12 @@ export default function ClientRecordForm({
 
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
+  const dateLabel = useMemo(() => {
+    const date = defaultDate || '';
+    if (!date || !DATE_REGEX.test(date)) return date;
+    const [y, m, d] = date.split('-').map((v) => Number(v));
+    return `${y}年${m}月${d}日`;
+  }, [defaultDate]);
 
   const handleClose = useCallback(
     (freshMonthRecords?: RunRecord[]) => {
@@ -137,56 +143,40 @@ export default function ClientRecordForm({
 
   return (
     <Dialog open={isOpen} onOpenChange={() => handleClose()}>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="border-t-4 border-emerald-400 sm:max-w-md">
         <DialogHeader>
           <DialogTitle className="text-xl font-bold text-gray-800">
-            🏃‍♂️ 新しい走行記録
+            🏃‍♂️ ランニング記録
           </DialogTitle>
-          <DialogDescription>
-            本日の走行距離を記録しましょう。
-          </DialogDescription>
+          {onSwitchToPlan && (
+            <div className="mt-2">
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                className="w-full justify-center border-blue-200 text-blue-700 hover:bg-blue-50"
+                onClick={() => onSwitchToPlan()}
+              >
+                予定フォームを開く
+              </Button>
+            </div>
+          )}
         </DialogHeader>
 
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+            {/* 日付はカレンダーで選択した値をhiddenで送る */}
             <FormField
               control={form.control}
               name="date"
               render={({ field }) => (
-                <FormItem>
-                  <FormLabel>日付</FormLabel>
-                  <FormControl>
-                    <Input
-                      type="date"
-                      min={MIN_DATE}
-                      {...field}
-                      onChange={(event) => {
-                        const value = event.target.value;
-                        if (!value) {
-                          field.onChange(value);
-                          return;
-                        }
-                        if (!DATE_REGEX.test(value)) {
-                          field.onChange(value);
-                          return;
-                        }
-                        if (value < MIN_DATE) {
-                          field.onChange(MIN_DATE);
-                          form.setError('date', {
-                            type: 'min',
-                            message: '日付は2025年1月1日以降を選択してください',
-                          });
-                          return;
-                        }
-                        form.clearErrors('date');
-                        field.onChange(value);
-                      }}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
+                <input type="hidden" {...field} value={field.value} />
               )}
             />
+
+            {dateLabel && (
+              <div className="text-sm text-gray-700">対象日: {dateLabel}</div>
+            )}
 
             <FormField
               control={form.control}

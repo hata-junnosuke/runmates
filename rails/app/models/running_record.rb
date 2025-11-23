@@ -17,34 +17,35 @@
 #
 
 class RunningRecord < ApplicationRecord
+  include DateOnOrAfterMinDate
   belongs_to :user
 
   validates :date, presence: true
   validates :distance, presence: true,
                        numericality: { greater_than: 0 }
-  validate :date_must_be_on_or_after_min_date
 
   scope :for_year, ->(year) { where("YEAR(date) = ?", year) }
   scope :for_month, ->(year, month) { where("YEAR(date) = ? AND MONTH(date) = ?", year, month) }
   scope :recent, -> { order(date: :desc) }
 
-  MIN_DATE = Date.new(2025, 1, 1)
-  private_constant :MIN_DATE
+  after_commit :update_running_plan_statuses
 
   private
 
-    def date_must_be_on_or_after_min_date
-      return if date.blank?
+    def update_running_plan_statuses
+      return unless user
 
-      if date < MIN_DATE
-        errors.add(:date, "は2025年1月1日以降の日付を入力してください")
+      # after_commitではselfを省略しても最新値を参照できる。
+      # 日付変更や削除にも対応するため、影響する日付を配列にまとめて順に更新する。
+      affected_dates = [date]
+      if saved_change_to_date?
+        old_date, new_date = saved_change_to_date
+        affected_dates << old_date if old_date
+        affected_dates << new_date if new_date
       end
 
-      raw_date = read_attribute_before_type_cast("date")
-      return unless raw_date.is_a?(String) && raw_date.present?
-
-      unless raw_date.match?(/\A\d{4}-\d{2}-\d{2}\z/)
-        errors.add(:date, "はYYYY-MM-DD形式で入力してください")
+      affected_dates.compact.uniq.each do |target_date|
+        RunningPlanStatusUpdater.call(user:, date: target_date)
       end
     end
 end

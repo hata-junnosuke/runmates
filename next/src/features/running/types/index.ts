@@ -14,6 +14,19 @@ export interface RunRecord {
 }
 
 /**
+ * ランニング予定の型定義
+ */
+export interface RunningPlan {
+  id: string;
+  date: string;
+  planned_distance: number;
+  memo?: string | null;
+  status: 'planned' | 'partial' | 'completed';
+  created_at?: string;
+  updated_at?: string;
+}
+
+/**
  * 月間目標の型定義
  */
 export interface MonthlyGoal {
@@ -87,7 +100,17 @@ export interface RunningChartProps {
  */
 export interface ClientRunningCalendarProps {
   records: RunRecord[];
-  onDateClick?: (date: string) => void;
+  plans?: RunningPlan[];
+  onDateClick?: (payload: {
+    dateString: string;
+    date: Date;
+    hasPlan: boolean;
+    plansForDate: RunningPlan[];
+    hasRecord: boolean;
+    isFuture: boolean;
+    isToday?: boolean;
+    planStatus?: RunningPlan['status'] | null;
+  }) => void;
   currentDate?: Date;
   onMonthChange?: (date: Date) => void;
 }

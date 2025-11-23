@@ -34,6 +34,10 @@ export async function apiCall<T>(
       throw new Error(`API error: ${response.status}`);
     }
 
+    if (response.status === 204) {
+      return { success: true, data: {} as T };
+    }
+
     const data = await response.json();
     return {
       success: true,

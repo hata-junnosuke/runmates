@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_09_04_091859) do
+ActiveRecord::Schema[8.0].define(version: 2025_09_11_000000) do
   create_table "monthly_goals", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.bigint "user_id", null: false
     t.integer "year", null: false
@@ -20,6 +20,19 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_04_091859) do
     t.datetime "updated_at", null: false
     t.index ["user_id", "year", "month"], name: "index_monthly_goals_on_user_id_and_year_and_month", unique: true
     t.index ["user_id"], name: "index_monthly_goals_on_user_id"
+  end
+
+  create_table "running_plans", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.date "date", null: false
+    t.decimal "planned_distance", precision: 5, scale: 2, null: false
+    t.text "memo"
+    t.string "status", default: "planned", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["status"], name: "index_running_plans_on_status"
+    t.index ["user_id", "date"], name: "index_running_plans_on_user_id_and_date"
+    t.index ["user_id"], name: "index_running_plans_on_user_id"
   end
 
   create_table "running_records", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
@@ -194,6 +207,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_04_091859) do
   end
 
   add_foreign_key "monthly_goals", "users"
+  add_foreign_key "running_plans", "users"
   add_foreign_key "running_records", "users"
   add_foreign_key "solid_queue_ready_executions", "solid_queue_jobs", column: "job_id", on_delete: :cascade
   add_foreign_key "solid_queue_recurring_executions", "solid_queue_jobs", column: "job_id", on_delete: :cascade

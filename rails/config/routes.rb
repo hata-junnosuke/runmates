@@ -27,6 +27,7 @@ Rails.application.routes.draw do # rubocop:disable Metrics/BlockLength
       # ランニング記録
       resources :running_records
       resource :running_statistics, only: [:show]
+      resources :running_plans, only: [:index, :create, :update, :destroy, :show]
 
       # 目標管理
       resources :monthly_goals
