@@ -14,9 +14,7 @@ RSpec.describe RunningPlan, type: :model do
     it { should validate_presence_of(:status) }
 
     it "ステータスは定義済みの値のみ許可する" do
-      plan = build(:running_plan, status: "invalid")
-      expect(plan).not_to be_valid
-      expect(plan.errors[:status]).to include("は一覧にありません")
+      expect { build(:running_plan, status: "invalid") }.to raise_error(ArgumentError)
     end
 
     context "有効な値の場合" do

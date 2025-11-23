@@ -21,13 +21,15 @@
 class RunningPlan < ApplicationRecord
   include DateOnOrAfterMinDate
   belongs_to :user
-  STATUSES = %w[planned partial completed].freeze
 
   validates :date, presence: true
   validates :planned_distance,
             presence: true,
             numericality: { greater_than: 0, less_than: 1000 }
-  validates :status, presence: true, inclusion: { in: STATUSES }
+  validates :status, presence: true
+  enum :status,
+       { planned: "planned", partial: "partial", completed: "completed" },
+       prefix: true
 
   scope :for_month, ->(year, month) { where("YEAR(date) = ? AND MONTH(date) = ?", year, month) }
 end
