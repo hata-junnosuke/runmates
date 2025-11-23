@@ -79,11 +79,14 @@ export default function ClientRunningCalendar({
     const datePlans = getPlansForDate(date);
     if (datePlans.length === 0) return null;
 
-    // 優先度: completed > partial > planned
-    if (datePlans.some((p) => p.status === 'completed'))
-      return 'completed' as const;
+    // 優先度: outstandingがある限り未達扱い。partial > planned > completed。
     if (datePlans.some((p) => p.status === 'partial'))
       return 'partial' as const;
+    if (datePlans.some((p) => p.status === 'planned'))
+      return 'planned' as const;
+    // 全て完了している場合のみ completed
+    if (datePlans.every((p) => p.status === 'completed'))
+      return 'completed' as const;
     return 'planned' as const;
   };
 

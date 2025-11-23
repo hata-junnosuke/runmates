@@ -127,14 +127,6 @@ export default function ClientPlanForm({
     });
   };
 
-  const handleEditClick = (plan: RunningPlan) => {
-    setEditingPlan(plan);
-    form.reset({
-      planned_distance: Number(plan.planned_distance),
-      memo: plan.memo ?? '',
-    });
-  };
-
   const handleDelete = (planId: string) => {
     if (!date) return;
     setError(null);
@@ -279,14 +271,6 @@ export default function ClientPlanForm({
                 )}
               </div>
               <div className="flex flex-col gap-2">
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  onClick={() => handleEditClick(plan)}
-                >
-                  編集
-                </Button>
                 <Button
                   type="button"
                   variant="ghost"
