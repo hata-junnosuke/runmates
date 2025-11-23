@@ -2,8 +2,13 @@ import { Suspense } from 'react';
 
 import { Skeleton } from '@/components/ui/skeleton';
 import { monthlyGoalsAPI, yearlyGoalsAPI } from '@/features/running/api/goals';
+import { runningPlansAPI } from '@/features/running/api/running-plans';
 import { runningRecordsAPI } from '@/features/running/api/running-records';
-import type { MonthlyGoal, RunRecord } from '@/features/running/types';
+import type {
+  MonthlyGoal,
+  RunningPlan,
+  RunRecord,
+} from '@/features/running/types';
 
 import RecentRecords from '../statistics/RecentRecords';
 import DashboardStatistics from './DashboardStatistics';
@@ -19,12 +24,14 @@ async function DashboardData() {
 
     const [
       recordsResult,
+      plansResult,
       statisticsResult,
       monthlyGoalResult,
       yearlyGoalResult,
       monthlyGoalsResult,
     ] = await Promise.all([
       runningRecordsAPI.getAll(currentYear, currentMonth), // 現在月のデータを取得
+      runningPlansAPI.getAll(currentYear, currentMonth),
       runningRecordsAPI.getStatistics(),
       monthlyGoalsAPI.getCurrent(),
       yearlyGoalsAPI.getCurrent(),
@@ -35,6 +42,7 @@ async function DashboardData() {
     const records: RunRecord[] = recordsResult.success
       ? recordsResult.data
       : [];
+    const plans: RunningPlan[] = plansResult.success ? plansResult.data : [];
     const statistics = statisticsResult.success ? statisticsResult.data : null;
     const monthlyGoal = monthlyGoalResult.success
       ? monthlyGoalResult.data
@@ -85,7 +93,11 @@ async function DashboardData() {
         />
 
         {/* カレンダーとアクションボタン */}
-        <DashboardWithCalendar records={records} monthlyGoals={monthlyGoals} />
+        <DashboardWithCalendar
+          records={records}
+          plans={plans}
+          monthlyGoals={monthlyGoals}
+        />
 
         {/* 最近の記録 - Server Component */}
         {statistics && <RecentRecords statistics={statistics} />}

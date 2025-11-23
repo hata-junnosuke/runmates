@@ -105,4 +105,40 @@ RSpec.describe RunningRecord, type: :model do
       end
     end
   end
+
+  describe "ランニングプラン連動" do
+    let(:user) { create(:user) }
+    let(:date) { Date.new(2025, 1, 10) }
+
+    it "記録作成で同日のプランステータスを更新する" do
+      plan = create(:running_plan, user:, date:, planned_distance: 5.0, status: "planned")
+
+      create(:running_record, user:, date:, distance: 3.0)
+      expect(plan.reload.status).to eq("partial")
+
+      create(:running_record, user:, date:, distance: 2.5)
+      expect(plan.reload.status).to eq("completed")
+    end
+
+    it "日付を変更した場合は旧日付と新日付のプランを再計算する" do
+      old_plan = create(:running_plan, user:, date:, planned_distance: 5.0, status: "planned")
+      new_plan = create(:running_plan, user:, date: date + 1.day, planned_distance: 4.0, status: "planned")
+      record = create(:running_record, user:, date:, distance: 5.0)
+      expect(old_plan.reload.status).to eq("completed")
+
+      record.update!(date: date + 1.day, distance: 3.0)
+
+      expect(old_plan.reload.status).to eq("planned")
+      expect(new_plan.reload.status).to eq("partial")
+    end
+
+    it "記録削除で同日のプランを再計算する" do
+      plan = create(:running_plan, user:, date:, planned_distance: 5.0, status: "planned")
+      record = create(:running_record, user:, date:, distance: 5.0)
+      expect(plan.reload.status).to eq("completed")
+
+      record.destroy!
+      expect(plan.reload.status).to eq("planned")
+    end
+  end
 end

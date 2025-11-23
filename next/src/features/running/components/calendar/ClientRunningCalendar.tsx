@@ -8,6 +8,7 @@ import type { ClientRunningCalendarProps } from '../../types';
 
 export default function ClientRunningCalendar({
   records,
+  plans,
   onDateClick,
   currentDate: initialDate,
   onMonthChange,
@@ -56,13 +57,34 @@ export default function ClientRunningCalendar({
     return records.some((record) => record.date === dateStr);
   };
 
-  // 指定された日付の記録を取得（複数対応）
-  const getRecordsForDate = (date: Date) => {
+  const formatDate = (date: Date) => {
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, '0');
     const day = String(date.getDate()).padStart(2, '0');
-    const dateStr = `${year}-${month}-${day}`;
+    return `${year}-${month}-${day}`;
+  };
+
+  // 指定された日付の記録を取得（複数対応）
+  const getRecordsForDate = (date: Date) => {
+    const dateStr = formatDate(date);
     return records.filter((record) => record.date === dateStr);
+  };
+
+  const getPlansForDate = (date: Date) => {
+    const dateStr = formatDate(date);
+    return plans?.filter((plan) => plan.date === dateStr) ?? [];
+  };
+
+  const getPlanStatusForDate = (date: Date) => {
+    const datePlans = getPlansForDate(date);
+    if (datePlans.length === 0) return null;
+
+    // 優先度: completed > partial > planned
+    if (datePlans.some((p) => p.status === 'completed'))
+      return 'completed' as const;
+    if (datePlans.some((p) => p.status === 'partial'))
+      return 'partial' as const;
+    return 'planned' as const;
   };
 
   // 指定された日付の合計距離を取得
@@ -92,11 +114,24 @@ export default function ClientRunningCalendar({
   const handleDateClick = (date: Date) => {
     if (!onDateClick) return;
 
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const day = String(date.getDate()).padStart(2, '0');
-    const dateStr = `${year}-${month}-${day}`;
-    onDateClick(dateStr);
+    const dateStr = formatDate(date);
+    const plansForDate = getPlansForDate(date);
+    const hasPlan = plansForDate.length > 0;
+    const isFuture = today ? date > today : date > new Date();
+    const isToday = today
+      ? date.toDateString() === today.toDateString()
+      : false;
+    const planStatus = getPlanStatusForDate(date);
+    onDateClick({
+      dateString: dateStr,
+      date,
+      hasPlan,
+      plansForDate,
+      hasRecord: hasRecord(date),
+      isFuture,
+      isToday,
+      planStatus,
+    });
   };
 
   // 曜日名
@@ -153,11 +188,39 @@ export default function ClientRunningCalendar({
       {/* カレンダーグリッド */}
       <div className="grid grid-cols-7 gap-0.5 sm:gap-1">
         {calendarDays.map((date, index) => {
+          const startOfToday =
+            today &&
+            new Date(today.getFullYear(), today.getMonth(), today.getDate());
           const isCurrentMonth = date.getMonth() === month;
           const isToday = today && date.toDateString() === today.toDateString();
           const hasRun = hasRecord(date);
           const totalDistance = getTotalDistanceForDate(date);
           const isWeekend = date.getDay() === 0 || date.getDay() === 6;
+          const isPast = startOfToday ? date < startOfToday : false;
+          const plansForDate = getPlansForDate(date);
+          const hasPlan = plansForDate.length > 0;
+          const plannedDistance = plansForDate.reduce(
+            (sum, plan) => sum + Number(plan.planned_distance || 0),
+            0,
+          );
+          const planStatus = getPlanStatusForDate(date);
+          const isOverduePlanned =
+            planStatus === 'planned' && isPast && !hasRun;
+
+          const planColor = isOverduePlanned
+            ? 'bg-red-500 text-white'
+            : planStatus === 'completed'
+              ? 'bg-blue-500 text-white'
+              : planStatus === 'partial'
+                ? 'bg-yellow-400 text-gray-900'
+                : 'bg-gray-300 text-gray-800';
+          const planDotColor = isOverduePlanned
+            ? 'bg-red-500'
+            : planStatus === 'completed'
+              ? 'bg-blue-500'
+              : planStatus === 'partial'
+                ? 'bg-yellow-400'
+                : 'bg-gray-300';
 
           return (
             <button
@@ -174,6 +237,8 @@ export default function ClientRunningCalendar({
                 date.getMonth() + 1
               }月${date.getDate()}日${
                 hasRun ? `、${totalDistance.toFixed(1)}km走行済み` : ''
+              }${
+                hasPlan ? `、予定${plannedDistance.toFixed(1)}km` : ''
               }${isToday ? '、今日' : ''}`}
               className={[
                 'relative flex h-10 items-center justify-center rounded-md text-xs transition-all duration-200 sm:h-12 sm:rounded-lg sm:text-sm',
@@ -184,6 +249,15 @@ export default function ClientRunningCalendar({
                 hasRun && isCurrentMonth
                   ? 'bg-gradient-to-br from-emerald-400 to-emerald-500 font-bold text-white shadow-md hover:shadow-lg'
                   : '',
+                !hasRun && hasPlan && isCurrentMonth
+                  ? isOverduePlanned
+                    ? 'border border-red-300 bg-red-50 text-red-700'
+                    : planStatus === 'completed'
+                      ? 'border border-blue-300 bg-blue-50 text-blue-700'
+                      : planStatus === 'partial'
+                        ? 'border border-yellow-200 bg-yellow-50 text-yellow-800'
+                        : 'border border-gray-200 bg-gray-50 text-gray-700'
+                  : '',
                 isWeekend && !hasRun && isCurrentMonth ? 'text-gray-500' : '',
                 !isCurrentMonth ? 'cursor-default' : '',
               ]
@@ -191,6 +265,20 @@ export default function ClientRunningCalendar({
                 .join(' ')}
             >
               <span className="relative z-10">{date.getDate()}</span>
+
+              {/* 予定バッジ（モバイルはドット、sm以上は距離表示） */}
+              {hasPlan && isCurrentMonth && (
+                <>
+                  <div
+                    className={`absolute top-1 right-1 z-10 h-2 w-2 rounded-full sm:hidden ${planDotColor}`}
+                  />
+                  <div
+                    className={`absolute top-1 right-1 z-10 hidden rounded-full px-2 py-[2px] text-[9px] font-semibold shadow-sm sm:block sm:text-[10px] ${planColor}`}
+                  >
+                    {plannedDistance.toFixed(1)}km
+                  </div>
+                </>
+              )}
 
               {/* 走った日のマーカー */}
               {hasRun && isCurrentMonth && (
