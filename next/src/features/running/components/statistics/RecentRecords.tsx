@@ -82,10 +82,19 @@ export default function RecentRecords({
 
   return (
     <>
-      <div className="rounded-xl bg-white p-6 shadow-lg">
-        <h3 className="mb-4 flex items-center text-xl font-bold text-gray-800">
-          🏃‍♂️ 最近の記録
-        </h3>
+      <div
+        className="fade-up relative overflow-hidden rounded-2xl bg-gradient-to-br from-white/70 via-emerald-50/60 to-white/70 p-6 pt-7 shadow-xl backdrop-blur"
+        style={{ animationDelay: '0.2s' }}
+      >
+        <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-emerald-500 via-teal-400 to-cyan-400" />
+        <div className="mb-4 flex items-center justify-between">
+          <h3 className="flex items-center text-xl font-bold text-slate-900 drop-shadow-sm">
+            🏃‍♂️ 最近の記録
+          </h3>
+          <span className="rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold text-emerald-700">
+            直近5件をピックアップ
+          </span>
+        </div>
         <div className="space-y-3">
           {sortedDates.length === 0 ? (
             <EmptyState
@@ -97,7 +106,7 @@ export default function RecentRecords({
             sortedDates.slice(0, 5).map((group) => (
               <div key={group.date} className="space-y-2">
                 {/* 日付ヘッダー */}
-                <div className="px-2 text-sm font-medium text-gray-600">
+                <div className="px-2 text-sm font-semibold text-emerald-700">
                   {group.date} ({group.totalDistance.toFixed(1)} km)
                 </div>
 
@@ -115,14 +124,14 @@ export default function RecentRecords({
                     aria-label={`${record.date}の${Number(
                       record.distance,
                     ).toFixed(1)}kmの記録を編集`}
-                    className="group flex w-full cursor-pointer items-center justify-between rounded-lg bg-gray-50 p-3 text-left transition-colors hover:bg-gray-100"
+                    className="group flex w-full cursor-pointer items-center justify-between rounded-xl border border-emerald-100/70 bg-gradient-to-r from-white/90 to-emerald-50/70 p-4 text-left shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-lg"
                   >
                     <div className="flex items-center space-x-3">
-                      <div className="text-emerald-600 group-hover:animate-pulse">
+                      <div className="text-2xl leading-none text-emerald-500 group-hover:animate-pulse">
                         🏃‍♂️
                       </div>
                       <div>
-                        <p className="font-semibold text-gray-800">
+                        <p className="font-semibold text-slate-900">
                           {Number(record.distance).toFixed(1)} km
                         </p>
                         <p className="text-xs text-gray-500">
@@ -130,7 +139,7 @@ export default function RecentRecords({
                         </p>
                       </div>
                     </div>
-                    <div className="text-gray-400 group-hover:text-gray-600">
+                    <div className="text-emerald-400 transition group-hover:text-emerald-600">
                       <svg
                         className="h-4 w-4"
                         fill="none"

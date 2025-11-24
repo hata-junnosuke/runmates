@@ -141,10 +141,14 @@ export default function ClientRunningCalendar({
   const weekDays = ['日', '月', '火', '水', '木', '金', '土'];
 
   return (
-    <div className="rounded-2xl border-l-4 border-blue-400 bg-white p-4 shadow-lg md:p-6">
+    <div
+      className="fade-up relative rounded-2xl bg-gradient-to-br from-blue-50/70 via-white/60 to-emerald-50/70 p-4 pt-5 shadow-xl backdrop-blur"
+      style={{ animationDelay: '0.15s' }}
+    >
+      <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-blue-500 via-cyan-400 to-emerald-400" />
       {/* ヘッダー */}
       <div className="mb-4 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-        <h2 className="flex items-center text-lg font-bold text-gray-800 md:text-xl">
+        <h2 className="flex items-center text-lg font-bold text-slate-900 drop-shadow-sm md:text-xl">
           📅 ランニングカレンダー
         </h2>
         <div className="flex items-center justify-center space-x-2">
