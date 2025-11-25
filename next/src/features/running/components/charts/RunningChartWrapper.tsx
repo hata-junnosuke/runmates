@@ -9,21 +9,21 @@ import type { RunningChartProps } from '../../types';
 const RunningChart = dynamic(() => import('./RunningChart'), {
   ssr: false,
   loading: () => (
-    <div className="rounded-xl bg-white p-4 shadow-lg md:p-6">
+    <div className="overflow-hidden rounded-2xl bg-gradient-to-br from-blue-50/70 via-white/60 to-cyan-50/70 p-4 shadow-xl backdrop-blur md:p-6">
       <div className="flex h-64 items-center justify-center md:h-80">
         <div className="animate-pulse">
-          <div className="mb-4 h-4 w-48 rounded bg-gray-300"></div>
+          <div className="mb-4 h-4 w-48 rounded bg-blue-100"></div>
           <div className="space-y-3">
-            <div className="h-2 rounded bg-gray-300"></div>
-            <div className="h-2 w-5/6 rounded bg-gray-300"></div>
-            <div className="h-2 w-4/6 rounded bg-gray-300"></div>
+            <div className="h-2 rounded bg-blue-100"></div>
+            <div className="h-2 w-5/6 rounded bg-blue-100"></div>
+            <div className="h-2 w-4/6 rounded bg-blue-100"></div>
           </div>
         </div>
       </div>
       <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-3">
-        <div className="h-12 animate-pulse rounded bg-gray-200"></div>
-        <div className="h-12 animate-pulse rounded bg-gray-200"></div>
-        <div className="h-12 animate-pulse rounded bg-gray-200"></div>
+        <div className="h-12 animate-pulse rounded bg-blue-50"></div>
+        <div className="h-12 animate-pulse rounded bg-blue-50"></div>
+        <div className="h-12 animate-pulse rounded bg-blue-50"></div>
       </div>
     </div>
   ),
@@ -38,8 +38,8 @@ export default function RunningChartWrapper({
   return (
     <Suspense
       fallback={
-        <div className="rounded-xl bg-white p-4 shadow-lg md:p-6">
-          <div className="h-64 animate-pulse rounded bg-gray-200 md:h-80"></div>
+        <div className="overflow-hidden rounded-2xl bg-gradient-to-br from-blue-50/70 via-white/60 to-cyan-50/70 p-4 shadow-xl backdrop-blur md:p-6">
+          <div className="h-64 animate-pulse rounded bg-blue-50 md:h-80"></div>
         </div>
       }
     >
