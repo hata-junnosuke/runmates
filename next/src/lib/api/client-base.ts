@@ -13,7 +13,7 @@ export async function apiCall<T>(
   options?: RequestInit,
 ): Promise<ApiResponse<T>> {
   try {
-    // 環境変数で判定（SSRとクライアントで同じ値になる）
+    // 環境変数で判定（SSRとクライアントで同じ値になる）P
     const baseUrl =
       process.env.NODE_ENV === 'production'
         ? '/api/proxy/v1' // 本番環境：プロキシ経由で同一オリジンとして扱う

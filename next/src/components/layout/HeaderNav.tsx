@@ -82,6 +82,7 @@ export default function HeaderNav() {
             {/* オーバーレイ */}
             <div
               className="bg-opacity-50 fixed inset-0 z-40 bg-black md:hidden"
+              style={{ animation: 'fade-in-overlay 0.2s ease-out forwards' }}
               onClick={closeMenu}
               onKeyDown={(e) => {
                 if (e.key === 'Escape') {
@@ -94,7 +95,10 @@ export default function HeaderNav() {
             />
 
             {/* メニューパネル */}
-            <div className="fixed top-0 right-0 z-50 h-full w-64 bg-white/95 shadow-2xl backdrop-blur md:hidden">
+            <div
+              className="fixed top-0 right-0 z-50 h-full w-64 bg-white/95 shadow-2xl backdrop-blur md:hidden"
+              style={{ animation: 'slide-in-right 0.25s ease-out forwards' }}
+            >
               <div className="flex items-center justify-between border-b border-blue-100 p-4">
                 <h2 className="text-lg font-semibold text-slate-900">
                   メニュー
@@ -108,18 +112,18 @@ export default function HeaderNav() {
                 </button>
               </div>
 
-              <nav className="space-y-4 p-4">
+              <nav className="space-y-3 p-4">
                 <Link
                   href="/settings"
                   onClick={closeMenu}
-                  className="flex items-center gap-3 rounded-xl bg-blue-50 p-3 text-slate-800 transition-colors hover:bg-blue-100"
+                  className="flex w-full items-center gap-3 rounded-lg border border-blue-100 bg-white px-4 py-3 text-slate-800 shadow-sm transition-colors hover:bg-blue-50"
                 >
                   <Settings className="h-5 w-5 text-blue-600" />
                   <span className="font-medium">設定</span>
                 </Link>
 
-                <div className="border-t pt-4">
-                  <LogoutButton className="w-full justify-center rounded-xl bg-slate-900 px-3 py-2 text-white shadow-md hover:-translate-y-0.5">
+                <div className="pt-2">
+                  <LogoutButton className="flex w-full items-center justify-center gap-2 rounded-lg border border-slate-200 bg-slate-900 px-4 py-3 text-white shadow-sm transition hover:opacity-90">
                     <LogOut className="h-4 w-4" />
                     <span>ログアウト</span>
                   </LogoutButton>
