@@ -72,7 +72,7 @@
 }
 
 body {
-  background: var(--background);
+  background: #eef4ff;
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
