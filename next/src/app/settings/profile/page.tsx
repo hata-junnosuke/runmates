@@ -11,8 +11,8 @@ export default async function ProfilePage() {
   const { user, error } = await getUserProfile();
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-100 to-blue-200">
-      <div className="container mx-auto px-4 py-4 md:py-8">
+    <div className="min-h-screen">
+      <div className="container mx-auto px-4 py-6 md:py-10">
         <div className="mx-auto max-w-4xl rounded-xl bg-white p-4 shadow-lg md:p-8">
           {error || !user ? (
             <div className="text-center">
