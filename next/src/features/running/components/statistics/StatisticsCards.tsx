@@ -96,10 +96,6 @@ export default function StatisticsCards({
             <p className="text-sm font-semibold text-cyan-800">
               練習日: {monthlyRunDays}日
             </p>
-            <div className="mt-2 inline-flex items-center gap-2 rounded-full bg-white/70 px-3 py-1 text-xs font-semibold text-cyan-800 shadow-sm">
-              <span className="inline-block h-2 w-2 rounded-full bg-cyan-500" />
-              今日の走りを積み上げよう
-            </div>
           </div>
           <div className="flex flex-col items-end text-right">
             <span className="text-4xl text-cyan-600 drop-shadow-sm">⏱️</span>

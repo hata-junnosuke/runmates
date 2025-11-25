@@ -1,16 +1,12 @@
 'use client';
 
-import { LogOut, Menu, Plus, Settings, X } from 'lucide-react';
+import { LogOut, Menu, Settings, X } from 'lucide-react';
 import Link from 'next/link';
 import { useState } from 'react';
 
 import LogoutButton from './LogoutButton';
 
-type HeaderNavProps = {
-  onAddRun?: () => void;
-};
-
-export default function HeaderNav({ onAddRun }: HeaderNavProps) {
+export default function HeaderNav() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const toggleMenu = () => {
@@ -54,13 +50,6 @@ export default function HeaderNav({ onAddRun }: HeaderNavProps) {
 
         {/* デスクトップナビゲーション */}
         <div className="hidden items-center gap-3 md:flex">
-          <button
-            onClick={onAddRun}
-            className="flex items-center gap-2 rounded-full bg-gradient-to-r from-blue-600 via-cyan-600 to-purple-600 px-4 py-2 text-sm font-semibold text-white shadow-lg transition duration-200 hover:-translate-y-0.5 hover:shadow-xl"
-          >
-            <Plus className="h-4 w-4" />
-            <span>記録を追加</span>
-          </button>
           <Link
             href="/settings"
             className="flex items-center gap-2 rounded-full bg-white/70 px-3 py-2 text-sm font-semibold text-slate-700 shadow-sm ring-1 ring-blue-100 transition ring-inset hover:-translate-y-0.5 hover:shadow-md"
@@ -120,17 +109,6 @@ export default function HeaderNav({ onAddRun }: HeaderNavProps) {
               </div>
 
               <nav className="space-y-4 p-4">
-                <button
-                  onClick={() => {
-                    onAddRun?.();
-                    closeMenu();
-                  }}
-                  className="flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-blue-600 via-cyan-600 to-purple-600 px-4 py-3 text-sm font-semibold text-white shadow-lg transition hover:shadow-xl"
-                >
-                  <Plus className="h-4 w-4" />
-                  <span>記録を追加</span>
-                </button>
-
                 <Link
                   href="/settings"
                   onClick={closeMenu}
