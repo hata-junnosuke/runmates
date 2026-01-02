@@ -1,5 +1,5 @@
-FROM ruby:3.4.3
-RUN apt-get update -qq && apt-get install -y vim
+FROM ruby:4.0.0
+RUN apt-get update -qq && apt-get install -y vim libreadline-dev
 
 RUN mkdir /myapp
 WORKDIR /myapp
