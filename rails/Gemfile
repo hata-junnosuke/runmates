@@ -56,6 +56,7 @@ gem "thor", ">= 1.4.0"
 # AWS SES for email delivery in production
 gem "aws-sdk-rails", "~> 4.0"
 gem "aws-sdk-sesv2", "~> 1.0"
+gem "net-imap", ">= 0.5.10"
 
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
