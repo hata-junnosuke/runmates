@@ -47,7 +47,8 @@ jobs:
       - name: Bundler and gem install
         run: |
           gem install bundler -v 4.0.3
-          bundle install --jobs 4 --retry 3 --path vendor/bundle
+          bundle config set path 'vendor/bundle'
+          bundle install --jobs 4 --retry 3
 
       - name: Database create and migrate
         run: |
@@ -77,7 +78,8 @@ jobs:
       - name: Bundler and gem install
         run: |
           gem install bundler -v 4.0.3
-          bundle install --jobs 4 --retry 3 --path vendor/bundle
+          bundle config set path 'vendor/bundle'
+          bundle install --jobs 4 --retry 3
 
       - name: Run rubocop
         run: bundle exec rubocop
