@@ -72,7 +72,7 @@ Runmatesは、ランニング愛好家のための包括的な記録管理・目
   - `react-chartjs-2` - データ可視化
  
 ### バックエンド (Rails API)
-- **フレームワーク**: Rails 8.0.2 (Ruby 3.4.3)
+- **フレームワーク**: Rails 8.0.2 (Ruby 4.0.0)
 - **データベース**: MySQL 8.0.32
 - **認証**: DeviseTokenAuth (HTTP-only Cookie)
 - **主要Gem**:

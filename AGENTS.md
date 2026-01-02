@@ -18,7 +18,7 @@ docker-compose exec next npm run dev
 ```
 
 ## システム構成の要点
-- Rails API（Ruby 3.4.3）とMySQL 8.0.32によるバックエンド
+- Rails API（Ruby 4.0.0）とMySQL 8.0.32によるバックエンド
 - Next.js 16.0.1 + TypeScript + Tailwind CSS + MUI + Chart.jsからなるフロントエンド
 - DeviseTokenAuthを用いたHTTP-onlyクッキー認証
 - Nginxリバースプロキシを前段に置き、AWS ECS Fargateで運用
@@ -87,6 +87,57 @@ docker-compose exec next npm audit
   docker-compose exec rails bundle exec rspec
   docker-compose exec rails bundle exec rubocop
   docker-compose exec next npm run lint
+  ```
+
+## 開発ワークフロー
+### ブランチ戦略
+```
+main              # 本番環境（保護ブランチ）
+├── feature/*     # 新機能開発
+├── fix/*         # バグ修正
+├── refactor/*    # リファクタリング
+```
+**重要**: `feature/*`、`fix/*`、`refactor/*` ブランチは自動デプロイが無効化されています
+
+### プルリクエスト作成
+1. Issueを作成または選択
+2. feature/fix/refactorブランチを作成
+3. 変更を実装
+4. テストを追加・更新
+5. コミット: `git commit -m "feat: 機能説明"`
+6. プッシュ: `git push origin feature/branch-name`
+7. PRテンプレートを使用してPR作成
+8. CIの通過を確認
+9. コードレビュー後mainブランチにマージ
+
+## CI/CD
+### CI
+- GitHub Actions: `/.github/workflows/ci.yml`
+- rspec / rubocop / lint を実行
+
+### CD
+- GitHub Actions: `/.github/workflows/cd.yml`
+- バックエンド: ECSへ自動デプロイ
+- フロントエンド: Vercel（GitHub連携）
+- **注意**: Next.jsのECSデプロイは現状コメントアウト
+
+## 環境変数・Secrets
+### GitHub Actions Secrets
+- `AWS_ACCESS_KEY_ID`
+- `AWS_SECRET_ACCESS_KEY`
+- `RAILS_MASTER_KEY`
+- `NEXT_PUBLIC_API_URL`
+- `NEXT_PUBLIC_BASE_URL`
+- `INTERNAL_API_URL`
+
+### Rails Credentials
+- 設定コマンド:
+  ```bash
+  docker-compose exec rails bash -c "EDITOR='vi' rails credentials:edit"
+  ```
+- 参照例:
+  ```bash
+  docker-compose exec rails rails runner "puts Rails.application.credentials.dig(Rails.env.to_sym, :frontend_url)"
   ```
 
 ## 参考情報

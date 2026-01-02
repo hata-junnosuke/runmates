@@ -1,4 +1,4 @@
-FROM --platform=linux/x86_64 ruby:3.4.3
+FROM --platform=linux/x86_64 ruby:4.0.0
 
 # ビルド引数として受け取る
 ARG RAILS_MASTER_KEY
@@ -12,6 +12,7 @@ ENV RAILS_ENV=production
 ENV RAILS_MASTER_KEY=$RAILS_MASTER_KEY
 ENV NEXT_PUBLIC_BASE_URL=$NEXT_PUBLIC_BASE_URL
 
+RUN apt-get update -qq && apt-get install -y libreadline-dev
 RUN mkdir /myapp
 WORKDIR /myapp
 COPY Gemfile /myapp/Gemfile

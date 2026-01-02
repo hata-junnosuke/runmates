@@ -23,7 +23,7 @@ npm run dev        # ローカル実行
 これは、Rails APIバックエンドとNext.jsフロントエンドを持つフルスタックの「Runmates」ランニング管理アプリケーションで、Dockerでコンテナ化されています。ランニング記録の追跡、目標設定、データ可視化機能を提供します。
 
 **技術スタック:**
-- **バックエンド**: Rails API (Ruby 3.4.3) + MySQL 8.0.32
+- **バックエンド**: Rails API (Ruby 4.0.0) + MySQL 8.0.32
 - **フロントエンド**: Next.js 16.0.1 + TypeScript、Tailwind CSS、MUI、Chart.js
 - **認証**: DeviseTokenAuth（HTTP-onlyクッキー使用）
 - **データ可視化**: Chart.js + react-chartjs-2

@@ -1,6 +1,6 @@
 source "https://rubygems.org"
 
-ruby "3.4.3"
+ruby "4.0.0"
 
 # Bundle edge Rails instead: gem "rails", github: "rails/rails", branch: "main"
 gem "rails", "~> 8.0.2"
@@ -60,11 +60,12 @@ gem "aws-sdk-sesv2", "~> 1.0"
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
   gem "debug", platforms: %i[mri windows]
+  # pry-byebug が readline に依存するため明示的に追加
+  gem "readline"
   # 開発環境でメール送信をテストする
   gem "letter_opener_web"
   # pry コンソールを使えるようにする。
   gem "pry-byebug"
-  gem "pry-doc"
   gem "pry-rails"
 
   gem "rspec-rails"
@@ -100,10 +101,6 @@ group :development do
 
   # コンソール出力を見やすく整形
   gem "amazing_print"
-
-  # ブラウザ上で詳細なエラー情報を表示
-  gem "better_errors"
-  gem "binding_of_caller"
 
   # N+1クエリ問題を検知
   gem "bullet"

@@ -33,7 +33,7 @@ jobs:
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: 3.4.3
+          ruby-version: 4.0.0
           bundler-cache: true
 
       - name: Cache node modules
@@ -46,7 +46,7 @@ jobs:
 
       - name: Bundler and gem install
         run: |
-          gem install bundler
+          gem install bundler -v 4.0.3
           bundle install --jobs 4 --retry 3 --path vendor/bundle
 
       - name: Database create and migrate
@@ -71,12 +71,12 @@ jobs:
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: 3.4.3
+          ruby-version: 4.0.0
           bundler-cache: true
 
       - name: Bundler and gem install
         run: |
-          gem install bundler
+          gem install bundler -v 4.0.3
           bundle install --jobs 4 --retry 3 --path vendor/bundle
 
       - name: Run rubocop
