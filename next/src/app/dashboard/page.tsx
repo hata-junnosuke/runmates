@@ -9,7 +9,7 @@ export default async function DashboardPage() {
     <div className="relative min-h-screen bg-[#eef4ff] text-slate-900">
       <HeaderNav />
 
-      <div className="relative z-10 mx-auto max-w-6xl px-4 pb-10 pt-6 md:pt-16">
+      <div className="relative z-10 mx-auto max-w-6xl px-4 pt-6 pb-10 md:pt-16">
         <div className="fade-up">
           <ServerRunningDashboard />
         </div>

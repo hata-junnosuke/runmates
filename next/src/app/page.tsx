@@ -1,9 +1,10 @@
 import { Bebas_Neue, Manrope } from 'next/font/google';
+import Image from 'next/image';
+import Link from 'next/link';
 
 import HeaderNav from '@/components/layout/HeaderNav';
 
 import DemoDashboard from './components/DemoDashboard';
-import Link from 'next/link';
 
 const display = Bebas_Neue({
   subsets: ['latin'],
@@ -43,18 +44,21 @@ export default function PlanAPage() {
       <main className="pt-0">
         <section className="relative -mt-16 min-h-[90vh] overflow-hidden">
           <div className="absolute inset-0">
-            <img
+            <Image
               src="https://images.unsplash.com/photo-1530143311094-34d807799e8f?auto=format&fit=crop&q=80&w=2000"
-              className="h-full w-full object-cover opacity-80"
               alt="Runner at night"
+              fill
+              priority
+              sizes="100vw"
+              className="object-cover opacity-80"
             />
             <div className="absolute inset-0 bg-gradient-to-b from-[#eef4ff]/5 via-[#eef4ff]/40 to-[#eef4ff]/75" />
-            <div className="absolute left-1/4 top-10 h-96 w-96 rounded-full bg-blue-200/60 blur-[120px]" />
-            <div className="absolute bottom-10 right-10 h-96 w-96 rounded-full bg-cyan-200/60 blur-[140px]" />
+            <div className="absolute top-10 left-1/4 h-96 w-96 rounded-full bg-blue-200/60 blur-[120px]" />
+            <div className="absolute right-10 bottom-10 h-96 w-96 rounded-full bg-cyan-200/60 blur-[140px]" />
           </div>
           <div className="relative z-10 mx-auto flex min-h-[90vh] max-w-6xl items-center px-6 pt-16 md:pt-20">
             <div className="max-w-2xl space-y-8">
-              <div className="inline-flex items-center gap-2 rounded-full border border-blue-500/30 bg-blue-600/10 px-4 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-blue-700">
+              <div className="inline-flex items-center gap-2 rounded-full border border-blue-500/30 bg-blue-600/10 px-4 py-1 text-xs font-semibold tracking-[0.2em] text-blue-700 uppercase">
                 ランニング管理アプリ
               </div>
               <div className="flex flex-col gap-3 md:flex-row md:items-baseline md:gap-6">
@@ -67,7 +71,7 @@ export default function PlanAPage() {
                   </span>
                 </h2>
                 <p className="text-lg font-medium tracking-[0.12em] text-slate-700 md:translate-y-1">
-                  - あなたの走りを"可視化"する -
+                  - あなたの走りを&ldquo;可視化&rdquo;する -
                 </p>
               </div>
               <div className="flex flex-wrap gap-4">
@@ -89,7 +93,7 @@ export default function PlanAPage() {
         </section>
 
         <section className="mx-auto w-full max-w-6xl px-6 py-20">
-          <p className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-500">
+          <p className="text-xs font-semibold tracking-[0.3em] text-slate-500 uppercase">
             Features
           </p>
           {/* <h3
@@ -104,7 +108,7 @@ export default function PlanAPage() {
                 key={feature.title}
                 className="relative rounded-3xl border border-blue-100 bg-white p-6 shadow-sm"
               >
-                <div className="absolute right-6 top-6 text-5xl font-black text-blue-100">
+                <div className="absolute top-6 right-6 text-5xl font-black text-blue-100">
                   0{index + 1}
                 </div>
                 <h3 className="text-xl font-semibold text-slate-900">
@@ -121,7 +125,7 @@ export default function PlanAPage() {
         <section className="mx-auto w-full max-w-6xl px-6 pb-24">
           <div className="space-y-8">
             <div className="space-y-4">
-              <p className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-500">
+              <p className="text-xs font-semibold tracking-[0.3em] text-slate-500 uppercase">
                 Dashboard Snapshot
               </p>
               {/* <h3
@@ -131,10 +135,10 @@ export default function PlanAPage() {
                 実際のダッシュボードを
                 <span className="block text-blue-600">デモデータで再現</span>
               </h3> */}
-              <p className="text-xl italic text-slate-800">
+              <p className="text-xl text-slate-800 italic">
                 記録・目標・統計が
                 <span className="mx-2 font-semibold text-blue-600">
-                  "可視化"
+                  &ldquo;可視化&rdquo;
                 </span>
                 <span className="ml-2 text-slate-900 underline decoration-blue-400/70 decoration-2 underline-offset-4">
                   もう走らずにはいられない！

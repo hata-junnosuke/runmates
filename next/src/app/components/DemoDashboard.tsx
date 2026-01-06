@@ -3,7 +3,7 @@
 import ClientRunningCalendar from '@/features/running/components/calendar/ClientRunningCalendar';
 import RunningChartWrapper from '@/features/running/components/charts/RunningChartWrapper';
 import StatisticsCards from '@/features/running/components/statistics/StatisticsCards';
-import type { MonthlyGoal, RunRecord, RunningPlan } from '@/features/running/types';
+import type { RunningPlan, RunRecord } from '@/features/running/types';
 
 const pad2 = (value: number) => String(value).padStart(2, '0');
 
@@ -13,7 +13,11 @@ const buildDate = (year: number, month: number, day: number) =>
 const getMonthList = (baseDate: Date, range: number) => {
   const months: { year: number; month: number }[] = [];
   for (let offset = -range; offset <= range; offset += 1) {
-    const date = new Date(baseDate.getFullYear(), baseDate.getMonth() + offset, 1);
+    const date = new Date(
+      baseDate.getFullYear(),
+      baseDate.getMonth() + offset,
+      1,
+    );
     months.push({ year: date.getFullYear(), month: date.getMonth() + 1 });
   }
   return months;
@@ -47,11 +51,7 @@ const buildDemoPlans = (
 ): RunningPlan[] => {
   const plans: RunningPlan[] = [];
   const days = [4, 11, 17, 24];
-  const statuses: RunningPlan['status'][] = [
-    'planned',
-    'completed',
-    'partial',
-  ];
+  const statuses: RunningPlan['status'][] = ['planned', 'completed', 'partial'];
   let counter = 1;
 
   months.forEach(({ year, month }) => {
@@ -97,9 +97,8 @@ const currentYearRecords = demoRecords.filter((record) =>
 );
 const thisYearDistance = Number(sumDistance(currentYearRecords).toFixed(1));
 const thisMonthDistance = Number(sumDistance(currentMonthRecords).toFixed(1));
-const monthlyRunDays = new Set(
-  currentMonthRecords.map((record) => record.date),
-).size;
+const monthlyRunDays = new Set(currentMonthRecords.map((record) => record.date))
+  .size;
 const currentMonthGoal =
   demoMonthlyGoals.find(
     (goal) => goal.year === currentYear && goal.month === currentMonth,
