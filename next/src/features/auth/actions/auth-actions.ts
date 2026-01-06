@@ -170,6 +170,6 @@ export async function logoutAction() {
     cookieStore.delete('uid');
   }
 
-  // ログインページへリダイレクト
-  redirect('/login');
+  // LPへリダイレクト
+  redirect('/');
 }
