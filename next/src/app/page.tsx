@@ -3,6 +3,7 @@ import { Bebas_Neue, Manrope } from 'next/font/google';
 import HeaderNav from '@/components/layout/HeaderNav';
 
 import DemoDashboard from './components/DemoDashboard';
+import Link from 'next/link';
 
 const display = Bebas_Neue({
   subsets: ['latin'],
@@ -54,32 +55,49 @@ export default function PlanAPage() {
           <div className="relative z-10 mx-auto flex min-h-[90vh] max-w-6xl items-center px-6 pt-16 md:pt-20">
             <div className="max-w-2xl space-y-8">
               <div className="inline-flex items-center gap-2 rounded-full border border-blue-500/30 bg-blue-600/10 px-4 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-blue-700">
-                継続者向けダッシュボード
+                ランニング管理アプリ
               </div>
-              <h2
-                className="text-6xl md:text-7xl"
-                style={{ fontFamily: 'var(--font-display)' }}
-              >
-                記録・目標・統計が
-                <span className="block text-blue-600">一画面で動く</span>
-              </h2>
-              <p className="text-lg text-slate-700">
-                ランニング記録とカレンダー、月間/年間目標、統計カード、チャート。
-                既存ダッシュボードの配色に合わせて、見慣れた体験をLPに反映。
-              </p>
+              <div className="flex flex-col gap-3 md:flex-row md:items-baseline md:gap-6">
+                <h2
+                  className="text-6xl leading-none md:text-7xl"
+                  style={{ fontFamily: 'var(--font-display)' }}
+                >
+                  <span className="bg-gradient-to-r from-blue-600 via-cyan-600 to-purple-600 bg-clip-text text-transparent">
+                    Runmates
+                  </span>
+                </h2>
+                <p className="text-lg font-medium tracking-[0.12em] text-slate-700 md:translate-y-1">
+                  - あなたの走りを"可視化"する -
+                </p>
+              </div>
               <div className="flex flex-wrap gap-4">
-                <button className="rounded-full bg-slate-900 px-6 py-3 text-sm font-semibold text-white shadow-[0_0_24px_rgba(15,23,42,0.25)] transition hover:-translate-y-0.5">
-                  無料で始める
-                </button>
-                <button className="rounded-full border border-slate-300 px-6 py-3 text-sm font-semibold text-slate-700 transition hover:border-slate-500">
-                  画面を確認
-                </button>
+                <Link
+                  href="/create-account"
+                  className="rounded-full bg-slate-900 px-6 py-3 text-sm font-semibold text-white shadow-[0_0_24px_rgba(15,23,42,0.25)] transition hover:-translate-y-0.5"
+                >
+                  新規登録
+                </Link>
+                <Link
+                  href="/login"
+                  className="rounded-full bg-slate-900 px-6 py-3 text-sm font-semibold text-white shadow-[0_0_24px_rgba(15,23,42,0.25)] transition hover:-translate-y-0.5"
+                >
+                  ログイン
+                </Link>
               </div>
             </div>
           </div>
         </section>
 
         <section className="mx-auto w-full max-w-6xl px-6 py-20">
+          <p className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-500">
+            Features
+          </p>
+          <h3
+            className="mt-3 text-3xl md:text-4xl"
+            style={{ fontFamily: 'var(--font-display)' }}
+          >
+            こんなことができます
+          </h3>
           <div className="grid gap-6 md:grid-cols-3">
             {features.map((feature, index) => (
               <div
