@@ -6,7 +6,11 @@ import { useState } from 'react';
 
 import LogoutButton from './LogoutButton';
 
-export default function HeaderNav() {
+type HeaderNavProps = {
+  isAuthenticated?: boolean;
+};
+
+export default function HeaderNav({ isAuthenticated = true }: HeaderNavProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const toggleMenu = () => {
@@ -18,7 +22,7 @@ export default function HeaderNav() {
   };
 
   return (
-    <header className="sticky top-0 z-50 border-b border-blue-200/50 bg-white/80 shadow-sm backdrop-blur-xl">
+    <header className="sticky top-0 z-50 border-b border-blue-200/50 bg-white/80 font-sans shadow-sm backdrop-blur-xl">
       <div className="mx-auto flex h-16 items-center justify-between px-4">
         {/* ブランド */}
         <div className="flex items-center gap-3">
@@ -50,17 +54,28 @@ export default function HeaderNav() {
 
         {/* デスクトップナビゲーション */}
         <div className="hidden items-center gap-3 md:flex">
-          <Link
-            href="/settings"
-            className="flex items-center gap-2 rounded-full bg-white/70 px-3 py-2 text-sm font-semibold text-slate-700 shadow-sm ring-1 ring-blue-100 transition ring-inset hover:-translate-y-0.5 hover:shadow-md"
-          >
-            <Settings className="h-4 w-4" />
-            <span>設定</span>
-          </Link>
-          <LogoutButton className="flex items-center gap-2 rounded-full bg-slate-900 px-3 py-2 text-sm font-semibold text-white shadow-md transition hover:-translate-y-0.5 hover:shadow-lg">
-            <LogOut className="h-4 w-4" />
-            <span>ログアウト</span>
-          </LogoutButton>
+          {isAuthenticated ? (
+            <>
+              <Link
+                href="/settings"
+                className="flex items-center gap-2 rounded-full bg-white/70 px-3 py-2 text-sm font-semibold text-slate-700 shadow-sm ring-1 ring-blue-100 transition ring-inset hover:-translate-y-0.5 hover:shadow-md"
+              >
+                <Settings className="h-4 w-4" />
+                <span>設定</span>
+              </Link>
+              <LogoutButton className="flex items-center gap-2 rounded-full bg-slate-900 px-3 py-2 text-sm font-semibold text-white shadow-md transition hover:-translate-y-0.5 hover:shadow-lg">
+                <LogOut className="h-4 w-4" />
+                <span>ログアウト</span>
+              </LogoutButton>
+            </>
+          ) : (
+            <Link
+              href="/login"
+              className="flex items-center gap-2 rounded-full bg-slate-900 px-4 py-2 text-sm font-semibold text-white shadow-md transition hover:-translate-y-0.5 hover:shadow-lg"
+            >
+              <span>ログイン</span>
+            </Link>
+          )}
         </div>
 
         {/* モバイルメニューボタン */}
@@ -113,21 +128,33 @@ export default function HeaderNav() {
               </div>
 
               <nav className="space-y-3 p-4">
-                <Link
-                  href="/settings"
-                  onClick={closeMenu}
-                  className="flex w-full items-center gap-3 rounded-lg border border-blue-100 bg-white px-4 py-3 text-slate-800 shadow-sm transition-colors hover:bg-blue-50"
-                >
-                  <Settings className="h-5 w-5 text-blue-600" />
-                  <span className="font-medium">設定</span>
-                </Link>
+                {isAuthenticated ? (
+                  <>
+                    <Link
+                      href="/settings"
+                      onClick={closeMenu}
+                      className="flex w-full items-center gap-3 rounded-lg border border-blue-100 bg-white px-4 py-3 text-slate-800 shadow-sm transition-colors hover:bg-blue-50"
+                    >
+                      <Settings className="h-5 w-5 text-blue-600" />
+                      <span className="font-medium">設定</span>
+                    </Link>
 
-                <div className="pt-2">
-                  <LogoutButton className="flex w-full items-center justify-center gap-2 rounded-lg border border-slate-200 bg-slate-900 px-4 py-3 text-white shadow-sm transition hover:opacity-90">
-                    <LogOut className="h-4 w-4" />
-                    <span>ログアウト</span>
-                  </LogoutButton>
-                </div>
+                    <div className="pt-2">
+                      <LogoutButton className="flex w-full items-center justify-center gap-2 rounded-lg border border-slate-200 bg-slate-900 px-4 py-3 text-white shadow-sm transition hover:opacity-90">
+                        <LogOut className="h-4 w-4" />
+                        <span>ログアウト</span>
+                      </LogoutButton>
+                    </div>
+                  </>
+                ) : (
+                  <Link
+                    href="/login"
+                    onClick={closeMenu}
+                    className="flex w-full items-center justify-center gap-2 rounded-lg bg-slate-900 px-4 py-3 text-white shadow-sm transition hover:opacity-90"
+                  >
+                    <span className="font-medium">ログイン</span>
+                  </Link>
+                )}
               </nav>
             </div>
           </>

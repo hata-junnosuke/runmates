@@ -53,7 +53,7 @@ export default function LoginForm() {
       if (result.success) {
         // リダイレクト元のURLがある場合はそこに戻る（middlewareと連携）
         const from = searchParams.get('from');
-        router.push(from || '/');
+        router.push(from || '/dashboard');
       } else {
         setError(result.error || 'ログインに失敗しました');
       }

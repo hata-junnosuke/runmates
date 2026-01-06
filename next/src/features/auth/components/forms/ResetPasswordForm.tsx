@@ -86,7 +86,7 @@ export default function ResetPasswordForm() {
 
         if (response.ok && responseData.success) {
           // パスワードリセット成功 - 自動的にログインされる
-          router.push('/');
+          router.push('/dashboard');
         } else {
           setError(
             responseData.errors?.full_messages?.join(' ') ||
