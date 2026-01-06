@@ -92,12 +92,12 @@ export default function PlanAPage() {
           <p className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-500">
             Features
           </p>
-          <h3
+          {/* <h3
             className="mt-3 text-3xl md:text-4xl"
             style={{ fontFamily: 'var(--font-display)' }}
           >
             こんなことができます
-          </h3>
+          </h3> */}
           <div className="grid gap-6 md:grid-cols-3">
             {features.map((feature, index) => (
               <div
@@ -124,16 +124,21 @@ export default function PlanAPage() {
               <p className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-500">
                 Dashboard Snapshot
               </p>
-              <h3
+              {/* <h3
                 className="text-4xl md:text-5xl"
                 style={{ fontFamily: 'var(--font-display)' }}
               >
                 実際のダッシュボードを
                 <span className="block text-blue-600">デモデータで再現</span>
-              </h3>
-              <p className="text-base text-slate-700">
-                既存のダッシュボードUIに、サンプル記録・目標・統計を入れて表示。
-                LP上でそのまま使用感を確認できます。
+              </h3> */}
+              <p className="text-xl italic text-slate-800">
+                記録・目標・統計が
+                <span className="mx-2 font-semibold text-blue-600">
+                  "可視化"
+                </span>
+                <span className="ml-2 text-slate-900 underline decoration-blue-400/70 decoration-2 underline-offset-4">
+                  もう走らずにはいられない！
+                </span>
               </p>
             </div>
             <DemoDashboard />
