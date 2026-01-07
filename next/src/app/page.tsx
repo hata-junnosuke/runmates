@@ -96,12 +96,6 @@ export default function PlanAPage() {
           <p className="text-xs font-semibold tracking-[0.3em] text-slate-500 uppercase">
             Features
           </p>
-          {/* <h3
-            className="mt-3 text-3xl md:text-4xl"
-            style={{ fontFamily: 'var(--font-display)' }}
-          >
-            こんなことができます
-          </h3> */}
           <div className="grid gap-6 md:grid-cols-3">
             {features.map((feature, index) => (
               <div
@@ -128,13 +122,6 @@ export default function PlanAPage() {
               <p className="text-xs font-semibold tracking-[0.3em] text-slate-500 uppercase">
                 Dashboard Snapshot
               </p>
-              {/* <h3
-                className="text-4xl md:text-5xl"
-                style={{ fontFamily: 'var(--font-display)' }}
-              >
-                実際のダッシュボードを
-                <span className="block text-blue-600">デモデータで再現</span>
-              </h3> */}
               <p className="text-xl text-slate-800 italic">
                 記録・目標・統計が
                 <span className="mx-2 font-semibold text-blue-600">
