@@ -3,6 +3,16 @@ import { NextResponse } from 'next/server';
 
 // 認証が不要なパス（公開ページ）
 const publicPaths = [
+  '/',
+  '/login',
+  '/create-account',
+  '/forgot-password',
+  '/reset-password',
+  '/confirm-email',
+];
+
+// 認証済みならトップへ戻す認証系ページ
+const authPages = [
   '/login',
   '/create-account',
   '/forgot-password',
@@ -28,6 +38,7 @@ export function proxy(request: NextRequest) {
   }
 
   const isPublicPath = publicPaths.some((path) => pathname === path);
+  const isAuthPage = authPages.some((path) => pathname === path);
 
   // 認証トークンの確認
   const accessToken = request.cookies.get('access-token');
@@ -36,7 +47,7 @@ export function proxy(request: NextRequest) {
   const isAuthenticated = Boolean(accessToken && client && uid);
 
   // 認証済みで公開パスへアクセスした場合はダッシュボードへ戻す
-  if (isAuthenticated && isPublicPath) {
+  if (isAuthenticated && isAuthPage) {
     const redirectUrl = new URL(request.url);
     const returnPath = request.nextUrl.searchParams.get('from');
 
@@ -45,7 +56,7 @@ export function proxy(request: NextRequest) {
       returnPath.startsWith('/') &&
       !publicPaths.includes(returnPath)
         ? returnPath
-        : '/';
+        : '/dashboard';
     redirectUrl.search = '';
     return NextResponse.redirect(redirectUrl);
   }
