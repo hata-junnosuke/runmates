@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe "Api::V1::Auth::Confirmations", type: :request do
+RSpec.describe "Api::V1::Auth::Confirmations" do
   describe "GET /api/v1/auth/confirmation" do
     context "有効な確認トークンの場合" do
       let(:user) { create(:user, confirmed_at: nil) }
@@ -28,7 +28,7 @@ RSpec.describe "Api::V1::Auth::Confirmations", type: :request do
       it "エラーレスポンスを返すこと" do
         get "/api/v1/auth/confirmation", params: { confirmation_token: "invalid_token" }
 
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(:unprocessable_content)
 
         json_response = response.parsed_body
         expect(json_response["success"]).to be false
@@ -43,7 +43,7 @@ RSpec.describe "Api::V1::Auth::Confirmations", type: :request do
       it "エラーレスポンスを返すこと" do
         get "/api/v1/auth/confirmation", params: { confirmation_token: confirmation_token }
 
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(:unprocessable_content)
 
         json_response = response.parsed_body
         expect(json_response["success"]).to be false

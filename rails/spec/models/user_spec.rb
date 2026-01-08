@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe User, type: :model do
+RSpec.describe User do
   context "factoryのデフォルト設定に従った場合" do
     let(:user) { create(:user) }
 

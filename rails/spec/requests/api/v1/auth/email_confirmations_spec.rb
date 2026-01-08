@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe "Api::V1::Auth::EmailConfirmations", type: :request do
+RSpec.describe "Api::V1::Auth::EmailConfirmations" do
   describe "GET /api/v1/auth/email_confirmation" do
     let(:user) { create(:user, email: "old@example.com", confirmed_at: 1.day.ago) }
     let(:new_email) { "new@example.com" }

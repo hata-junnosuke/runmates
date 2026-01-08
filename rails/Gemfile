@@ -77,9 +77,11 @@ group :development, :test do
   gem "shoulda-matchers"
 
   # rubocop を使えるようにする。
+  gem "rubocop-factory_bot"
   gem "rubocop-faker"
   gem "rubocop-rails"
   gem "rubocop-rspec"
+  gem "rubocop-rspec_rails"
 
   # テストカバレッジを測定・レポート生成
   gem "simplecov", require: false

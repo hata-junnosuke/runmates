@@ -1,5 +1,9 @@
 plugins:
+  - rubocop-factory_bot
+  - rubocop-faker
   - rubocop-rails
+  - rubocop-rspec
+  - rubocop-rspec_rails
 
 inherit_from:
   - config/rubocop/rubocop.yml
@@ -48,4 +52,3 @@ Rails/ReversibleMigration:
 Rails/Output:
   Exclude:
     - 'lib/tasks/**/*'
-

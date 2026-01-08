@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe UserMailerJob, type: :job do
+RSpec.describe UserMailerJob do
   include ActiveJob::TestHelper
 
   let(:user) { create(:user) }

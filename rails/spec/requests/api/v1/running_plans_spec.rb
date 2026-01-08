@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe "Api::V1::RunningPlans", type: :request do
+RSpec.describe "Api::V1::RunningPlans" do
   let(:user) { create(:user) }
   let(:headers) { user.create_new_auth_token }
 
@@ -68,7 +68,7 @@ RSpec.describe "Api::V1::RunningPlans", type: :request do
 
         post "/api/v1/running_plans", params: invalid_params, headers: headers
 
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(:unprocessable_content)
         expect(response.parsed_body["errors"]).to be_present
       end
     end

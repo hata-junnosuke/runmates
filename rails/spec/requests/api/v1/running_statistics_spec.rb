@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe "Api::V1::RunningStatistics", type: :request do
+RSpec.describe "Api::V1::RunningStatistics" do
   let(:user) { create(:user) }
   let(:headers) { user.create_new_auth_token }
 

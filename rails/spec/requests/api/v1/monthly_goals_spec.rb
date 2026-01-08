@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe "Api::V1::MonthlyGoals", type: :request do
+RSpec.describe "Api::V1::MonthlyGoals" do
   let(:user) { create(:user) }
   let(:headers) { user.create_new_auth_token }
 
@@ -99,7 +99,7 @@ RSpec.describe "Api::V1::MonthlyGoals", type: :request do
         it "422を返し、エラーメッセージを含む" do
           post "/api/v1/monthly_goals", params: invalid_params, headers: headers
 
-          expect(response).to have_http_status(:unprocessable_entity)
+          expect(response).to have_http_status(:unprocessable_content)
           json = response.parsed_body
           expect(json["errors"]).to be_present
         end
@@ -113,7 +113,7 @@ RSpec.describe "Api::V1::MonthlyGoals", type: :request do
         it "422を返し、重複エラーを含む" do
           post "/api/v1/monthly_goals", params: valid_params, headers: headers
 
-          expect(response).to have_http_status(:unprocessable_entity)
+          expect(response).to have_http_status(:unprocessable_content)
           json = response.parsed_body
           expect(json["errors"]).to be_present
           expect(json["errors"].join).to include("すでに存在")
@@ -164,7 +164,7 @@ RSpec.describe "Api::V1::MonthlyGoals", type: :request do
           patch "/api/v1/monthly_goals/#{monthly_goal.id}",
                 params: invalid_params, headers: headers
 
-          expect(response).to have_http_status(:unprocessable_entity)
+          expect(response).to have_http_status(:unprocessable_content)
           json = response.parsed_body
           expect(json["errors"]).to be_present
         end
