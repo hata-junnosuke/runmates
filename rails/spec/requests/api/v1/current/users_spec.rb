@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe "Api::V1::Current::Users", type: :request do
+RSpec.describe "Api::V1::Current::Users" do
   describe "GET api/v1/current/user" do
     subject { get(api_v1_current_user_path, headers:) }
 
@@ -82,7 +82,7 @@ RSpec.describe "Api::V1::Current::Users", type: :request do
                  params: { password: "wrongpassword" },
                  headers: headers
 
-          expect(response).to have_http_status(:unprocessable_entity)
+          expect(response).to have_http_status(:unprocessable_content)
           res = response.parsed_body
           expect(res["errors"]).to include("パスワードが正しくありません")
           expect(User.exists?(current_user.id)).to be true
@@ -93,7 +93,7 @@ RSpec.describe "Api::V1::Current::Users", type: :request do
         it "エラーが返される" do
           delete api_v1_current_user_path, headers: headers
 
-          expect(response).to have_http_status(:unprocessable_entity)
+          expect(response).to have_http_status(:unprocessable_content)
           res = response.parsed_body
           expect(res["errors"]).to include("パスワードが必要です")
           expect(User.exists?(current_user.id)).to be true
@@ -114,7 +114,7 @@ RSpec.describe "Api::V1::Current::Users", type: :request do
                    headers: headers
           }.not_to change { User.count }
 
-          expect(response).to have_http_status(:unprocessable_entity)
+          expect(response).to have_http_status(:unprocessable_content)
           res = response.parsed_body
           expect(res["errors"]).to include("アカウントの削除に失敗しました")
           expect(Rails.logger).to have_received(:error).with(/User deletion failed/)

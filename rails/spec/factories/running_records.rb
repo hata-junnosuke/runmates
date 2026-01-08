@@ -1,6 +1,6 @@
 FactoryBot.define do
   factory :running_record do
-    association :user
+    user
     sequence(:date) {|n| Date.new(2025, 1, 1) + n.days }
     distance { 5.0 }
 

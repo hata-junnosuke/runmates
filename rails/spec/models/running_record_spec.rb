@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe RunningRecord, type: :model do
+RSpec.describe RunningRecord do
   describe "アソシエーション" do
     it { should belong_to(:user) }
   end

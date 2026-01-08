@@ -1,6 +1,6 @@
 FactoryBot.define do
   factory :yearly_goal do
-    association :user
+    user
     year { Date.current.year }
     distance_goal { 1200.0 }
 

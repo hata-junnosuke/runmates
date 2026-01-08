@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe YearlyGoal, type: :model do
+RSpec.describe YearlyGoal do
   describe "アソシエーション" do
     it { should belong_to(:user) }
   end

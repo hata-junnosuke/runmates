@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe "Api::V1::Auth::Passwords", type: :request do
+RSpec.describe "Api::V1::Auth::Passwords" do
   let(:user) { create(:user, email: "test@example.com") }
 
   describe "POST /api/v1/auth/password" do
@@ -85,7 +85,7 @@ RSpec.describe "Api::V1::Auth::Passwords", type: :request do
       it "エラーレスポンスを返すこと" do
         put "/api/v1/auth/password", params: invalid_params
 
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(:unprocessable_content)
 
         json_response = response.parsed_body
         expect(json_response["success"]).to be false
@@ -108,7 +108,7 @@ RSpec.describe "Api::V1::Auth::Passwords", type: :request do
       it "エラーレスポンスを返すこと" do
         put "/api/v1/auth/password", params: mismatched_params
 
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(:unprocessable_content)
 
         json_response = response.parsed_body
         expect(json_response["success"]).to be false
@@ -134,7 +134,7 @@ RSpec.describe "Api::V1::Auth::Passwords", type: :request do
       it "エラーレスポンスを返すこと" do
         put "/api/v1/auth/password", params: empty_password_params
 
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(:unprocessable_content)
 
         json_response = response.parsed_body
         expect(json_response["success"]).to be false

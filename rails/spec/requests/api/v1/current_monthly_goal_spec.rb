@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe "Api::V1::CurrentMonthlyGoal", type: :request do
+RSpec.describe "Api::V1::CurrentMonthlyGoal" do
   let(:user) { create(:user) }
   let(:headers) { user.create_new_auth_token }
   let(:current_year) { Date.current.year }
@@ -130,7 +130,7 @@ RSpec.describe "Api::V1::CurrentMonthlyGoal", type: :request do
                params: { monthly_goal: { year: current_year, month: current_month, distance_goal: 0 } },
                headers: headers
 
-          expect(response).to have_http_status(:unprocessable_entity)
+          expect(response).to have_http_status(:unprocessable_content)
 
           json_response = response.parsed_body
           expect(json_response["errors"]).to be_present

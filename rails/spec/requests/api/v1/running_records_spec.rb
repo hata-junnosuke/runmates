@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe "Api::V1::RunningRecords", type: :request do
+RSpec.describe "Api::V1::RunningRecords" do
   let(:user) { create(:user) }
   let(:headers) { user.create_new_auth_token }
 
@@ -154,7 +154,7 @@ RSpec.describe "Api::V1::RunningRecords", type: :request do
         it "422を返し、エラーメッセージを含む" do
           post "/api/v1/running_records", params: invalid_params, headers: headers
 
-          expect(response).to have_http_status(:unprocessable_entity)
+          expect(response).to have_http_status(:unprocessable_content)
           json = response.parsed_body
           expect(json["errors"]).to be_present
         end
@@ -169,7 +169,7 @@ RSpec.describe "Api::V1::RunningRecords", type: :request do
 
           post "/api/v1/running_records", params: params, headers: headers
 
-          expect(response).to have_http_status(:unprocessable_entity)
+          expect(response).to have_http_status(:unprocessable_content)
           json = response.parsed_body
           expect(json["errors"]).to include("日付は2025年1月1日以降の日付を入力してください")
         end
@@ -184,7 +184,7 @@ RSpec.describe "Api::V1::RunningRecords", type: :request do
 
           post "/api/v1/running_records", params: params, headers: headers
 
-          expect(response).to have_http_status(:unprocessable_entity)
+          expect(response).to have_http_status(:unprocessable_content)
           json = response.parsed_body
           expect(json["errors"]).to include("日付はYYYY-MM-DD形式で入力してください")
         end
@@ -234,7 +234,7 @@ RSpec.describe "Api::V1::RunningRecords", type: :request do
           patch "/api/v1/running_records/#{running_record.id}",
                 params: invalid_params, headers: headers
 
-          expect(response).to have_http_status(:unprocessable_entity)
+          expect(response).to have_http_status(:unprocessable_content)
           json = response.parsed_body
           expect(json["errors"]).to be_present
         end
