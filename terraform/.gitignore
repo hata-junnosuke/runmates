@@ -1,1 +1,6 @@
 aws-infra-inventory.md
+.terraform/
+*.tfstate
+*.tfstate.*
+crash.log
+crash.*.log
