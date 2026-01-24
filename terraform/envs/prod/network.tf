@@ -160,42 +160,6 @@ resource "aws_security_group_rule" "alb_ingress_https_ipv6" {
   ipv6_cidr_blocks  = ["::/0"]
 }
 
-resource "aws_security_group_rule" "ecs_ingress_http_ipv4" {
-  type              = "ingress"
-  from_port         = 80
-  to_port           = 80
-  protocol          = "tcp"
-  security_group_id = aws_security_group.ecs.id
-  cidr_blocks       = ["0.0.0.0/0"]
-}
-
-resource "aws_security_group_rule" "ecs_ingress_http_ipv6" {
-  type              = "ingress"
-  from_port         = 80
-  to_port           = 80
-  protocol          = "tcp"
-  security_group_id = aws_security_group.ecs.id
-  ipv6_cidr_blocks  = ["::/0"]
-}
-
-resource "aws_security_group_rule" "ecs_ingress_https_ipv4" {
-  type              = "ingress"
-  from_port         = 443
-  to_port           = 443
-  protocol          = "tcp"
-  security_group_id = aws_security_group.ecs.id
-  cidr_blocks       = ["0.0.0.0/0"]
-}
-
-resource "aws_security_group_rule" "ecs_ingress_https_ipv6" {
-  type              = "ingress"
-  from_port         = 443
-  to_port           = 443
-  protocol          = "tcp"
-  security_group_id = aws_security_group.ecs.id
-  ipv6_cidr_blocks  = ["::/0"]
-}
-
 resource "aws_security_group_rule" "ecs_egress_all_ipv4" {
   # -1 は「全て」を表す（プロトコル・ポートともに全許可）。
   type              = "egress"
