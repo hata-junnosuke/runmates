@@ -97,15 +97,6 @@ resource "aws_security_group" "ecs" {
   vpc_id      = aws_vpc.runmates.id
 }
 
-resource "aws_security_group_rule" "alb_from_ecs_tcp0" {
-  type                     = "ingress"
-  from_port                = 0
-  to_port                  = 0
-  protocol                 = "tcp"
-  security_group_id        = aws_security_group.alb.id
-  source_security_group_id = aws_security_group.ecs.id
-}
-
 resource "aws_security_group_rule" "alb_to_ecs_tcp80" {
   type                     = "egress"
   from_port                = 80
@@ -115,10 +106,10 @@ resource "aws_security_group_rule" "alb_to_ecs_tcp80" {
   source_security_group_id = aws_security_group.ecs.id
 }
 
-resource "aws_security_group_rule" "ecs_from_alb_tcp0" {
+resource "aws_security_group_rule" "ecs_from_alb_tcp80" {
   type                     = "ingress"
-  from_port                = 0
-  to_port                  = 0
+  from_port                = 80
+  to_port                  = 80
   protocol                 = "tcp"
   security_group_id        = aws_security_group.ecs.id
   source_security_group_id = aws_security_group.alb.id
