@@ -85,11 +85,6 @@ resource "aws_route_table_association" "public_1c" {
   route_table_id = aws_route_table.public.id
 }
 
-resource "aws_route_table" "private" {
-  vpc_id = aws_vpc.runmates.id
-}
-
-
 resource "aws_security_group" "alb" {
   name        = "runmates-alb-backend-security-group"
   description = "runmates-alb-backend-security-group"
