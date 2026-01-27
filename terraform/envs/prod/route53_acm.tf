@@ -69,32 +69,44 @@ resource "aws_acm_certificate" "runmates" {
 // locals は「このファイル内だけで使う定数/変数」をまとめる領域。
 // for を使う理由: SANの数に応じて検証レコードが増減するため、
 // 手書きではなく自動で配列/マップを作って差分や漏れを防ぐ。
+// 固定のCNAMEにしてしまうと、証明書の再作成やSAN変更で検証に失敗する。
 locals {
-  acm_validation_records_grouped = {
-    for option in aws_acm_certificate.runmates.domain_validation_options :
-    option.resource_record_name => {
-      name   = option.resource_record_name
-      record = option.resource_record_value
-      type   = option.resource_record_type
-    }...
-  }
+  acm_domain_names = toset(concat(
+    [aws_acm_certificate.runmates.domain_name],
+    tolist(aws_acm_certificate.runmates.subject_alternative_names)
+  ))
 
-  acm_validation_records = {
-    for name, records in local.acm_validation_records_grouped :
-    name => records[0]
-  }
+  // wildcard は apex と同一の検証CNAMEになることが多いため重複を避ける
+  acm_validation_domains = toset([
+    for name in local.acm_domain_names :
+    name if name != "*.${aws_acm_certificate.runmates.domain_name}"
+  ])
 }
 
 // ACMの検証CNAMEは再発行時に変わるため、domain_validation_options から動的生成する。
-// wildcardとapexで同じCNAMEが返る場合があるので、重複は1件にまとめて管理する。
+// for_each は plan 時に確定する domain_name をキーにする（record_name は作成後に確定）。
+// wildcardとapexで同名CNAMEになる場合があるため、上書きを許容する。
 resource "aws_route53_record" "acm_validation" {
-  for_each = local.acm_validation_records
+  for_each = local.acm_validation_domains
 
   zone_id = data.aws_route53_zone.runmates.zone_id
-  name    = each.value.name
-  type    = each.value.type
+  // 各ドメインに対応する検証レコード名
+  name = one([
+    for option in aws_acm_certificate.runmates.domain_validation_options :
+    option.resource_record_name
+    if option.domain_name == each.key
+  ])
+  // 各ドメインに対応する検証レコード種別
+  type = one([
+    for option in aws_acm_certificate.runmates.domain_validation_options :
+    option.resource_record_type
+    if option.domain_name == each.key
+  ])
   ttl     = 300
-  records = [each.value.record]
+  // レコード値（通常は1つ）。重複があれば distinct で1件にまとめる。
+  records = distinct([for option in aws_acm_certificate.runmates.domain_validation_options : option.resource_record_value if option.domain_name == each.key])
+
+  allow_overwrite = true
 }
 
 resource "aws_acm_certificate_validation" "runmates" {
