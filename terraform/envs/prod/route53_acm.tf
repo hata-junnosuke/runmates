@@ -18,8 +18,8 @@ resource "aws_route53_record" "backend_alias_a" {
   type    = "A"
 
   alias {
-    name                   = "dualstack.runmates-alb-backend-653256300.ap-northeast-1.elb.amazonaws.com."
-    zone_id                = "Z14GRHDCWA56QT"
+    name                   = "dualstack.${aws_lb.backend.dns_name}"
+    zone_id                = aws_lb.backend.zone_id
     evaluate_target_health = true
   }
 }
