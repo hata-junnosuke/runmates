@@ -23,3 +23,13 @@ output "rds_endpoint" {
   description = "RDS endpoint address."
   value       = aws_db_instance.main.endpoint
 }
+
+output "ecr_rails_repository_url" {
+  description = "ECR repository URL for Rails application image."
+  value       = aws_ecr_repository.rails.repository_url
+}
+
+output "ecr_nginx_repository_url" {
+  description = "ECR repository URL for Nginx reverse proxy image."
+  value       = aws_ecr_repository.nginx.repository_url
+}
