@@ -24,42 +24,6 @@ resource "aws_route53_record" "backend_alias_a" {
   }
 }
 
-resource "aws_route53_record" "dmarc_txt" {
-  zone_id = data.aws_route53_zone.runmates.zone_id
-  name    = "_dmarc.runmates.net"
-  type    = "TXT"
-  ttl     = 300
-
-  records = ["v=DMARC1; p=none;"]
-}
-
-resource "aws_route53_record" "ses_dkim_1" {
-  zone_id = data.aws_route53_zone.runmates.zone_id
-  name    = "clhu3amxs6v6at6avp7sm2ygja6ifr4i._domainkey.runmates.net"
-  type    = "CNAME"
-  ttl     = 1800
-
-  records = ["clhu3amxs6v6at6avp7sm2ygja6ifr4i.dkim.amazonses.com"]
-}
-
-resource "aws_route53_record" "ses_dkim_2" {
-  zone_id = data.aws_route53_zone.runmates.zone_id
-  name    = "csl3csfhgybfq4o3enw6oeins3lmvdp6._domainkey.runmates.net"
-  type    = "CNAME"
-  ttl     = 1800
-
-  records = ["csl3csfhgybfq4o3enw6oeins3lmvdp6.dkim.amazonses.com"]
-}
-
-resource "aws_route53_record" "ses_dkim_3" {
-  zone_id = data.aws_route53_zone.runmates.zone_id
-  name    = "d6p6xajgsnkpap7qiy4iuwlwwg3bzkdu._domainkey.runmates.net"
-  type    = "CNAME"
-  ttl     = 1800
-
-  records = ["d6p6xajgsnkpap7qiy4iuwlwwg3bzkdu.dkim.amazonses.com"]
-}
-
 resource "aws_acm_certificate" "runmates" {
   domain_name               = "runmates.net"
   subject_alternative_names = ["*.runmates.net"]
