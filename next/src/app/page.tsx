@@ -2,8 +2,6 @@ import { Bebas_Neue, Manrope } from 'next/font/google';
 import Image from 'next/image';
 import Link from 'next/link';
 
-import HeaderNav from '@/components/layout/HeaderNav';
-
 import DemoDashboard from './components/DemoDashboard';
 
 const display = Bebas_Neue({
@@ -39,8 +37,6 @@ export default function PlanAPage() {
       className={`${display.variable} ${body.variable} min-h-screen bg-[#eef4ff] text-slate-900`}
       style={{ fontFamily: 'var(--font-body)' }}
     >
-      <HeaderNav isAuthenticated={false} />
-
       <main className="pt-0">
         <section className="relative -mt-16 min-h-[90vh] overflow-hidden">
           <div className="absolute inset-0">
