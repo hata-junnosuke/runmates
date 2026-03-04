@@ -24,7 +24,7 @@ export default function LogoutButton({
     <button
       onClick={handleLogout}
       disabled={isPending}
-      className={`rounded bg-red-500 px-4 py-2 font-bold text-white transition hover:bg-red-600 disabled:opacity-50 ${className}`}
+      className={`cursor-pointer transition disabled:cursor-not-allowed disabled:opacity-50 ${className}`}
     >
       {children ?? (isPending ? 'ログアウト中...' : 'ログアウト')}
     </button>
