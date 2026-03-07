@@ -164,7 +164,11 @@ export default function ClientRecordForm({
         </DialogHeader>
 
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+          <form
+            noValidate
+            onSubmit={form.handleSubmit(onSubmit)}
+            className="space-y-4"
+          >
             {/* 日付はカレンダーで選択した値をhiddenで送る */}
             <FormField
               control={form.control}
@@ -187,8 +191,8 @@ export default function ClientRecordForm({
                   <FormControl>
                     <Input
                       type="number"
-                      step="0.1"
-                      min="0.1"
+                      step="any"
+                      min="1"
                       placeholder="5.0"
                       {...field}
                       onChange={(e) => {

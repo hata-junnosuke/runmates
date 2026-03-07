@@ -120,7 +120,7 @@ export default function ClientGoalForm({
                   <FormControl>
                     <Input
                       type="number"
-                      step="0.1"
+                      step="any"
                       min="1"
                       placeholder="50.0"
                       {...field}

@@ -119,7 +119,7 @@ export default function ClientYearlyGoalForm({
                   <FormControl>
                     <Input
                       type="number"
-                      step="0.1"
+                      step="any"
                       min="50"
                       max="2000"
                       placeholder="500.0"

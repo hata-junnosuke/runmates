@@ -169,6 +169,7 @@ export default function ClientPlanForm({
 
         <Form {...form}>
           <form
+            noValidate
             onSubmit={form.handleSubmit(handleSubmit)}
             className="space-y-4"
           >
@@ -181,8 +182,8 @@ export default function ClientPlanForm({
                   <FormControl>
                     <Input
                       type="number"
-                      step="0.1"
-                      min="0.1"
+                      step="any"
+                      min="1"
                       max="999"
                       placeholder="10.0"
                       {...field}
