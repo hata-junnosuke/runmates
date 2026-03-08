@@ -25,9 +25,10 @@ import {
 import { Input } from '@/components/ui/input';
 
 import { updateMonthlyGoal } from '../../actions/running-actions';
+import { monthlyGoalSchema } from '../../schemas/running-schemas';
 import type { GoalFormProps } from '../../types';
 
-const monthlyGoalSchema = z.object({
+const clientMonthlyGoalSchema = monthlyGoalSchema.extend({
   distance_goal: z.union([
     z.number().min(1, '目標距離は1km以上で入力してください'),
     z.literal('').transform(() => null),
@@ -46,7 +47,7 @@ export default function ClientGoalForm({
   showWelcomeMessage = false,
 }: GoalFormProps) {
   const form = useForm<MonthlyGoalFormData>({
-    resolver: zodResolver(monthlyGoalSchema),
+    resolver: zodResolver(clientMonthlyGoalSchema),
     defaultValues: {
       distance_goal: '',
     },
