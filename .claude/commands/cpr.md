@@ -11,5 +11,3 @@
 ```bash
 afplay /System/Library/Sounds/Submarine.aiff
 ```
-
-これは`.claude/hooks/notification-sounds.md`の設定に従っています。
