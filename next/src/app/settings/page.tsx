@@ -72,7 +72,7 @@ export default async function SettingsPage() {
 
           <div className="mt-8">
             <Link
-              href="/"
+              href="/dashboard"
               className="inline-flex items-center font-medium text-green-600 hover:text-green-700"
             >
               ← ダッシュボードに戻る
