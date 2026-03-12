@@ -14,7 +14,9 @@ type PlanPayload = {
   memo?: string;
 };
 
-function formatValidationError(issues: { path: (string | number)[] }[]): string {
+function formatValidationError(
+  issues: { path: (string | number)[] }[],
+): string {
   const field = issues[0]?.path[0];
   switch (field) {
     case 'date':
