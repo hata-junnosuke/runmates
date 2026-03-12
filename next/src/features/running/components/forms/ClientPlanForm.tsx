@@ -31,21 +31,15 @@ import { Textarea } from '@/components/ui/textarea';
 
 import { createPlan, deletePlan, updatePlan } from '../../actions/plan-actions';
 import { clientRunningPlansAPI } from '../../api/client-running-plans';
-import { planSchema } from '../../schemas/running-schemas';
 import type { RunningPlan } from '../../types';
 
-const clientPlanSchema = planSchema
-  .pick({
-    planned_distance: true,
-    memo: true,
-  })
-  .extend({
-    planned_distance: z
-      .number()
-      .min(0.1, '距離は0より大きい値を入力してください')
-      .max(999, '距離は1000km未満で入力してください'),
-    memo: z.string().max(500, 'メモは500文字以内で入力してください').optional(),
-  });
+const clientPlanSchema = z.object({
+  planned_distance: z
+    .number({ error: '距離を入力してください' })
+    .min(0.1, '距離は0より大きい値を入力してください')
+    .max(999, '距離は1000km未満で入力してください'),
+  memo: z.string().max(500, 'メモは500文字以内で入力してください').optional(),
+});
 
 type PlanFormData = z.infer<typeof clientPlanSchema>;
 

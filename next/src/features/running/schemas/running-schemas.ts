@@ -18,7 +18,7 @@ export const planSchema = z.object({
     .min(1)
     .regex(DATE_REGEX)
     .refine((v) => v >= MIN_DATE),
-  planned_distance: z.number().min(0.1).max(999),
+  planned_distance: z.number({ error: '距離を入力してください' }).min(0.1).max(999),
   memo: z.string().max(500).optional(),
 });
 

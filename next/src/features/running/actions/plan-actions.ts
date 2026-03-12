@@ -14,6 +14,20 @@ type PlanPayload = {
   memo?: string;
 };
 
+function formatValidationError(issues: { path: (string | number)[] }[]): string {
+  const field = issues[0]?.path[0];
+  switch (field) {
+    case 'date':
+      return '日付は2025年1月1日以降のYYYY-MM-DD形式で入力してください';
+    case 'planned_distance':
+      return '予定距離は0.1km以上999km以下で入力してください';
+    case 'memo':
+      return 'メモは500文字以内で入力してください';
+    default:
+      return '入力値が不正です';
+  }
+}
+
 /**
  * 予定を作成
  * 成功時は対象月の予定一覧を返す
@@ -25,7 +39,7 @@ export async function createPlan(
   if (!parsed.success) {
     return {
       success: false,
-      error: '日付は2025年1月1日以降のYYYY-MM-DD形式で入力してください',
+      error: formatValidationError(parsed.error.issues),
     };
   }
 
@@ -39,7 +53,7 @@ export async function createPlan(
   });
 
   if (!result.success) {
-    console.error('Failed to create plan:', result.errors);
+    console.error('予定の作成に失敗:', result.errors);
     return { success: false, error: '予定の保存に失敗しました' };
   }
 
@@ -51,7 +65,7 @@ export async function createPlan(
   );
 
   if (!freshResult.success) {
-    console.error('Failed to fetch fresh plans:', freshResult.errors);
+    console.error('予定一覧の取得に失敗:', freshResult.errors);
     return { success: false, error: '予定の取得に失敗しました' };
   }
 
@@ -73,7 +87,7 @@ export async function updatePlan(
   if (!parsed.success) {
     return {
       success: false,
-      error: '日付は2025年1月1日以降のYYYY-MM-DD形式で入力してください',
+      error: formatValidationError(parsed.error.issues),
     };
   }
 
@@ -87,7 +101,7 @@ export async function updatePlan(
   });
 
   if (!result.success) {
-    console.error('Failed to update plan:', result.errors);
+    console.error('予定の更新に失敗:', result.errors);
     return { success: false, error: '予定の更新に失敗しました' };
   }
 
@@ -99,7 +113,7 @@ export async function updatePlan(
   );
 
   if (!freshResult.success) {
-    console.error('Failed to fetch fresh plans:', freshResult.errors);
+    console.error('予定一覧の取得に失敗:', freshResult.errors);
     return { success: false, error: '予定の取得に失敗しました' };
   }
 
@@ -122,7 +136,7 @@ export async function deletePlan(
   });
 
   if (!result.success) {
-    console.error('Failed to delete plan:', result.errors);
+    console.error('予定の削除に失敗:', result.errors);
     return { success: false, error: '予定の削除に失敗しました' };
   }
 
@@ -134,7 +148,7 @@ export async function deletePlan(
   );
 
   if (!freshResult.success) {
-    console.error('Failed to fetch fresh plans:', freshResult.errors);
+    console.error('予定一覧の取得に失敗:', freshResult.errors);
     return { success: false, error: '予定の取得に失敗しました' };
   }
 
