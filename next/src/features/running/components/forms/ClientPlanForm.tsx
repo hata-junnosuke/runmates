@@ -33,15 +33,15 @@ import { createPlan, deletePlan, updatePlan } from '../../actions/plan-actions';
 import { clientRunningPlansAPI } from '../../api/client-running-plans';
 import type { RunningPlan } from '../../types';
 
-const planSchema = z.object({
+const clientPlanSchema = z.object({
   planned_distance: z
-    .number()
+    .number({ error: '距離を入力してください' })
     .min(0.1, '距離は0より大きい値を入力してください')
     .max(999, '距離は1000km未満で入力してください'),
   memo: z.string().max(500, 'メモは500文字以内で入力してください').optional(),
 });
 
-type PlanFormData = z.infer<typeof planSchema>;
+type PlanFormData = z.infer<typeof clientPlanSchema>;
 
 interface ClientPlanFormProps {
   date: string | null;
@@ -63,7 +63,7 @@ export default function ClientPlanForm({
   const [isPending, startTransition] = useTransition();
 
   const form = useForm<PlanFormData>({
-    resolver: zodResolver(planSchema),
+    resolver: zodResolver(clientPlanSchema),
     defaultValues: {
       planned_distance: 5,
       memo: '',

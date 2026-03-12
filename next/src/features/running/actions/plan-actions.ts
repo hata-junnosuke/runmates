@@ -1,71 +1,32 @@
 'use server';
 
-import { revalidatePath, unstable_noStore as noStore } from 'next/cache';
-import { cookies } from 'next/headers';
+import { revalidatePath } from 'next/cache';
 
+import { serverApiCall } from '@/lib/api/server-base';
+
+import { planSchema } from '../schemas/running-schemas';
 import type { RunningPlan } from '../types';
 import type { ActionResponse } from '../types/api-responses';
-
-const API_BASE_URL = process.env.INTERNAL_API_URL || 'http://rails:3000/api/v1';
-const MIN_PLAN_DATE = '2025-01-01';
-const PLAN_DATE_REGEX = /^\d{4}-\d{2}-\d{2}$/;
-
-type ExtendedRequestInit = RequestInit & {
-  next?: {
-    revalidate?: number;
-  };
-};
-
-async function apiCall<T = unknown>(
-  endpoint: string,
-  options: ExtendedRequestInit = {},
-): Promise<T> {
-  noStore();
-  const cookieStore = await cookies();
-  const url = `${API_BASE_URL}${endpoint}`;
-
-  const accessToken = cookieStore.get('access-token')?.value;
-  const client = cookieStore.get('client')?.value;
-  const uid = cookieStore.get('uid')?.value;
-
-  const defaultOptions: ExtendedRequestInit = {
-    ...options,
-    headers: {
-      'Content-Type': 'application/json',
-      ...(accessToken &&
-        client &&
-        uid && {
-          'access-token': accessToken,
-          client: client,
-          uid: uid,
-          'token-type': 'Bearer',
-        }),
-      ...options.headers,
-    },
-    cache: 'no-store',
-    next: {
-      revalidate: 0,
-    },
-  };
-
-  const response = await fetch(url, defaultOptions);
-
-  if (!response.ok) {
-    throw new Error(`API Error: ${response.status} ${response.statusText}`);
-  }
-
-  if (response.status === 204) {
-    return null as T;
-  }
-
-  return response.json() as Promise<T>;
-}
 
 type PlanPayload = {
   date: string;
   planned_distance: number;
   memo?: string;
 };
+
+function formatValidationError(issues: { path: (string | number)[] }[]): string {
+  const field = issues[0]?.path[0];
+  switch (field) {
+    case 'date':
+      return '日付は2025年1月1日以降のYYYY-MM-DD形式で入力してください';
+    case 'planned_distance':
+      return '予定距離は0.1km以上999km以下で入力してください';
+    case 'memo':
+      return 'メモは500文字以内で入力してください';
+    default:
+      return '入力値が不正です';
+  }
+}
 
 /**
  * 予定を作成
@@ -74,39 +35,42 @@ type PlanPayload = {
 export async function createPlan(
   data: PlanPayload,
 ): Promise<ActionResponse<RunningPlan[]>> {
-  try {
-    const { date, planned_distance, memo } = data;
+  const parsed = planSchema.safeParse(data);
+  if (!parsed.success) {
+    return {
+      success: false,
+      error: formatValidationError(parsed.error.issues),
+    };
+  }
 
-    if (!date || !PLAN_DATE_REGEX.test(date) || date < MIN_PLAN_DATE) {
-      return {
-        success: false,
-        error: '日付は2025年1月1日以降のYYYY-MM-DD形式で入力してください',
-      };
-    }
-    if (!planned_distance || planned_distance <= 0) {
-      return { success: false, error: '有効な予定距離を入力してください' };
-    }
+  const { date, planned_distance, memo } = parsed.data;
 
-    await apiCall('/running_plans', {
-      method: 'POST',
-      body: JSON.stringify({
-        running_plan: { date, planned_distance, memo },
-      }),
-    });
+  const result = await serverApiCall('/running_plans', {
+    method: 'POST',
+    body: JSON.stringify({
+      running_plan: { date, planned_distance, memo },
+    }),
+  });
 
-    const target = new Date(date);
-    const year = target.getFullYear();
-    const month = target.getMonth() + 1;
-    const freshMonthPlans = await apiCall<RunningPlan[]>(
-      `/running_plans?year=${year}&month=${month}`,
-    );
-
-    revalidatePath('/');
-    return { success: true, data: freshMonthPlans };
-  } catch (error) {
-    console.error('Failed to create plan:', error);
+  if (!result.success) {
+    console.error('予定の作成に失敗:', result.errors);
     return { success: false, error: '予定の保存に失敗しました' };
   }
+
+  const target = new Date(date);
+  const year = target.getFullYear();
+  const month = target.getMonth() + 1;
+  const freshResult = await serverApiCall<RunningPlan[]>(
+    `/running_plans?year=${year}&month=${month}`,
+  );
+
+  if (!freshResult.success) {
+    console.error('予定一覧の取得に失敗:', freshResult.errors);
+    return { success: false, error: '予定の取得に失敗しました' };
+  }
+
+  revalidatePath('/dashboard');
+  return { success: true, data: freshResult.data };
 }
 
 /**
@@ -117,66 +81,77 @@ export async function updatePlan(
   id: string,
   data: PlanPayload,
 ): Promise<ActionResponse<RunningPlan[]>> {
-  try {
-    const { date, planned_distance, memo } = data;
+  if (!id) return { success: false, error: '予定IDが必要です' };
 
-    if (!id) return { success: false, error: '予定IDが必要です' };
-    if (!date || !PLAN_DATE_REGEX.test(date) || date < MIN_PLAN_DATE) {
-      return {
-        success: false,
-        error: '日付は2025年1月1日以降のYYYY-MM-DD形式で入力してください',
-      };
-    }
-    if (!planned_distance || planned_distance <= 0) {
-      return { success: false, error: '有効な予定距離を入力してください' };
-    }
+  const parsed = planSchema.safeParse(data);
+  if (!parsed.success) {
+    return {
+      success: false,
+      error: formatValidationError(parsed.error.issues),
+    };
+  }
 
-    await apiCall(`/running_plans/${id}`, {
-      method: 'PATCH',
-      body: JSON.stringify({
-        running_plan: { date, planned_distance, memo },
-      }),
-    });
+  const { date, planned_distance, memo } = parsed.data;
 
-    const target = new Date(date);
-    const year = target.getFullYear();
-    const month = target.getMonth() + 1;
-    const freshMonthPlans = await apiCall<RunningPlan[]>(
-      `/running_plans?year=${year}&month=${month}`,
-    );
+  const result = await serverApiCall(`/running_plans/${id}`, {
+    method: 'PATCH',
+    body: JSON.stringify({
+      running_plan: { date, planned_distance, memo },
+    }),
+  });
 
-    revalidatePath('/');
-    return { success: true, data: freshMonthPlans };
-  } catch (error) {
-    console.error('Failed to update plan:', error);
+  if (!result.success) {
+    console.error('予定の更新に失敗:', result.errors);
     return { success: false, error: '予定の更新に失敗しました' };
   }
+
+  const target = new Date(date);
+  const year = target.getFullYear();
+  const month = target.getMonth() + 1;
+  const freshResult = await serverApiCall<RunningPlan[]>(
+    `/running_plans?year=${year}&month=${month}`,
+  );
+
+  if (!freshResult.success) {
+    console.error('予定一覧の取得に失敗:', freshResult.errors);
+    return { success: false, error: '予定の取得に失敗しました' };
+  }
+
+  revalidatePath('/dashboard');
+  return { success: true, data: freshResult.data };
 }
 
 /**
  * 予定を削除
- * 成功時は対象月の予定一覧を返す（dateを渡す想定）
+ * 成功時は対象月の予定一覧を返す
  */
 export async function deletePlan(
   id: string,
   date: string,
 ): Promise<ActionResponse<RunningPlan[]>> {
-  try {
-    if (!id) return { success: false, error: '予定IDが必要です' };
+  if (!id) return { success: false, error: '予定IDが必要です' };
 
-    await apiCall(`/running_plans/${id}`, { method: 'DELETE' });
+  const result = await serverApiCall(`/running_plans/${id}`, {
+    method: 'DELETE',
+  });
 
-    const target = new Date(date);
-    const year = target.getFullYear();
-    const month = target.getMonth() + 1;
-    const freshMonthPlans = await apiCall<RunningPlan[]>(
-      `/running_plans?year=${year}&month=${month}`,
-    );
-
-    revalidatePath('/');
-    return { success: true, data: freshMonthPlans };
-  } catch (error) {
-    console.error('Failed to delete plan:', error);
+  if (!result.success) {
+    console.error('予定の削除に失敗:', result.errors);
     return { success: false, error: '予定の削除に失敗しました' };
   }
+
+  const target = new Date(date);
+  const year = target.getFullYear();
+  const month = target.getMonth() + 1;
+  const freshResult = await serverApiCall<RunningPlan[]>(
+    `/running_plans?year=${year}&month=${month}`,
+  );
+
+  if (!freshResult.success) {
+    console.error('予定一覧の取得に失敗:', freshResult.errors);
+    return { success: false, error: '予定の取得に失敗しました' };
+  }
+
+  revalidatePath('/dashboard');
+  return { success: true, data: freshResult.data };
 }

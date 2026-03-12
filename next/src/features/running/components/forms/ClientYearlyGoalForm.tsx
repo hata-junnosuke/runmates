@@ -25,9 +25,10 @@ import {
 import { Input } from '@/components/ui/input';
 
 import { updateYearlyGoal } from '../../actions/running-actions';
+import { yearlyGoalSchema } from '../../schemas/running-schemas';
 import type { GoalFormProps } from '../../types';
 
-const yearlyGoalSchema = z.object({
+const clientYearlyGoalSchema = yearlyGoalSchema.extend({
   distance_goal: z.union([
     z.number().min(1, '年間目標距離は1km以上で入力してください'),
     z.literal('').transform(() => null),
@@ -46,7 +47,7 @@ export default function ClientYearlyGoalForm({
   showWelcomeMessage = false,
 }: GoalFormProps) {
   const form = useForm<YearlyGoalFormData>({
-    resolver: zodResolver(yearlyGoalSchema),
+    resolver: zodResolver(clientYearlyGoalSchema),
     defaultValues: {
       distance_goal: '',
     },
