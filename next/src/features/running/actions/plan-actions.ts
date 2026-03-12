@@ -15,9 +15,9 @@ type PlanPayload = {
 };
 
 function formatValidationError(
-  issues: { path: (string | number)[] }[],
+  issues: { path: PropertyKey[] }[],
 ): string {
-  const field = issues[0]?.path[0];
+  const field = String(issues[0]?.path[0]);
   switch (field) {
     case 'date':
       return '日付は2025年1月1日以降のYYYY-MM-DD形式で入力してください';
