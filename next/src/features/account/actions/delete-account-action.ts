@@ -1,5 +1,7 @@
 'use server';
 
+import { revalidatePath } from 'next/cache';
+
 import { serverApiCall } from '@/lib/api/server-base';
 
 export async function deleteAccount(password: string) {
@@ -21,6 +23,8 @@ export async function deleteAccount(password: string) {
   cookieStore.delete('access-token');
   cookieStore.delete('client');
   cookieStore.delete('uid');
+
+  revalidatePath('/');
 
   return {
     success: true,

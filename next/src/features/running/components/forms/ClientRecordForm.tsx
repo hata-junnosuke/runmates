@@ -29,14 +29,12 @@ import {
 import { Input } from '@/components/ui/input';
 
 import { createRunningRecord } from '../../actions/running-actions';
-import {
-  DATE_REGEX,
-  MIN_DATE,
-  runningRecordSchema,
-} from '../../schemas/running-schemas';
 import type { RunRecord } from '../../types';
 
-const clientRunningRecordSchema = runningRecordSchema.extend({
+const MIN_DATE = '2025-01-01';
+const DATE_REGEX = /^\d{4}-\d{2}-\d{2}$/;
+
+const runningRecordSchema = z.object({
   date: z
     .string()
     .min(1, '日付を入力してください')
@@ -83,7 +81,7 @@ export default function ClientRecordForm({
   }, [selectedDate]);
 
   const form = useForm<RunningRecordFormData>({
-    resolver: zodResolver(clientRunningRecordSchema),
+    resolver: zodResolver(runningRecordSchema),
     defaultValues: {
       date: defaultDate,
       distance: '',

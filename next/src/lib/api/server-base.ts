@@ -1,3 +1,5 @@
+import { unstable_noStore as noStore } from 'next/cache';
+
 import { getAuthHeaders } from '@/features/auth/lib/headers';
 
 type ExtendedRequestInit = RequestInit & {
@@ -20,6 +22,7 @@ export async function serverApiCall<T = unknown>(
   options: ExtendedRequestInit = {},
 ): Promise<ApiResponse<T>> {
   try {
+    noStore();
     const url = `${API_BASE_URL}${endpoint}`;
     const authHeaders = await getAuthHeaders();
 
@@ -31,6 +34,9 @@ export async function serverApiCall<T = unknown>(
         ...options.headers,
       },
       cache: 'no-store',
+      next: {
+        revalidate: 0,
+      },
     };
 
     const response = await fetch(url, defaultOptions);
