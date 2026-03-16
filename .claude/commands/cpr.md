@@ -7,7 +7,4 @@
 
 ## 通知音について
 
-このコマンドでは、各操作（git add、git commit、git push、PR作成）の前に必ず通知音を鳴らします：
-```bash
-afplay /System/Library/Sounds/Submarine.aiff
-```
+CLAUDE.mdの通知音ルールに従うこと（途中経過では鳴らさない。PR作成完了後の最後にのみGlass音を鳴らす）。
