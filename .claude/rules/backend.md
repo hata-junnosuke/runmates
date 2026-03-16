@@ -5,9 +5,10 @@ paths:
 
 # Rails ルール
 
-## Controllerの設計原則
-- アクションは7つのみ: `index`, `show`, `new`, `create`, `edit`, `update`, `destroy`
-- 追加アクションが必要な場合はコントローラーを分割する（例: `users/activations_controller.rb`）
+## Controllerの設計原則（API専用）
+- API専用構成（`config.api_only = true`）。`new`/`edit`は使わない
+- 基本アクションは5つ: `index`, `show`, `create`, `update`, `destroy`
+- カスタムアクションが必要な場合はコントローラーを分割する（例: `users/activations_controller.rb`）
 - Fat Controllerを避ける。ビジネスロジックはモデルやServiceオブジェクトに移す
 
 ## パフォーマンス
