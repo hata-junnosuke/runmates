@@ -11,7 +11,7 @@ paths:
 - データフェッチはServer Components / Server Actionsで行う。クライアント側でのfetchは避ける
 
 ## ディレクトリ構成
-- `app/` はルーティングに専念（`page.tsx`, `layout.tsx`, `not-found.tsx`のみ配置）
+- `app/` はルーティングと特殊ファイルに専念（`page.tsx`, `layout.tsx`, `not-found.tsx`, `loading.tsx`, `error.tsx`, `route.ts`, `globals.css`, `favicon.ico`等）。ドメインロジックやUIコンポーネントは置かない
 - ドメインロジックは `features/` にドメイン単位で集約する（`features/{domain}/components/`, `actions/`, `api/`, `types/`, `schemas/`, `lib/`）
 - 共通UIコンポーネントは `components/`（`common/`, `layout/`, `ui/`）に配置。`ui/` はshadcn/uiのコンポーネント
 - 共通ユーティリティは `lib/` に配置
