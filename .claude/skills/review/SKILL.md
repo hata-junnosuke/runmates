@@ -26,25 +26,13 @@ disable-model-invocation: false
 ### レビュー観点
 
 #### 1. コード品質（subagent: opus）
-スキル参照: `code-review-excellence`
-- 可読性・命名の適切さ
-- 不要なコード・デッドコードがないか
-- DRY原則・適切な責務分離
-- テストの網羅性（テストが必要な変更にテストがあるか）
+`code-review-excellence` スキルの基準に従ってレビュー
 
 #### 2. セキュリティ（subagent: opus）
-- OWASP Top 10（SQLインジェクション、XSS、CSRF等）
-- 認証・認可の適切な実装
-- 機密情報の漏洩リスク（.env、credentials等）
-- 入力バリデーションの漏れ
-- `bundle-audit`、`brakeman`、`npm audit` 等のツールチェックも実施
+`code-review-excellence` スキルのSecurityチェックリストに従い、`bundle-audit`、`brakeman`、`npm audit` 等のツールチェックも実施
 
 #### 3. Rails/Next.js ベストプラクティス（subagent: opus）
-スキル参照: `ruby-on-rails-best-practices`, `vercel-react-best-practices`
-- Railsの規約に沿っているか（fat model, skinny controller等）
-- Next.jsのパターンに沿っているか（Server Components, App Router等）
-- N+1クエリなどパフォーマンス問題
-- 既存コードのパターンとの一貫性
+`ruby-on-rails-best-practices`、`vercel-react-best-practices` スキルの基準に従ってレビュー
 
 ### 出力形式
 
