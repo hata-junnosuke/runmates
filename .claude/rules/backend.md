@@ -9,7 +9,7 @@ paths:
 - API専用構成（`config.api_only = true`）。`new`/`edit`は使わない
 - 基本アクションは5つ: `index`, `show`, `create`, `update`, `destroy`
 - カスタムアクションが必要な場合はコントローラーを分割する（例: `users/activations_controller.rb`）
-- Fat Controllerを避ける。ビジネスロジックはモデルやServiceオブジェクトに移す
+- Fat Controllerを避ける。ビジネスロジックはモデルに移す（Service Objectsは使わない）
 
 ## パフォーマンス
 - N+1クエリを防止する。関連データの取得には`includes`/`preload`を使用する
