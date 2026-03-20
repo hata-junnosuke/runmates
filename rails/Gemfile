@@ -47,8 +47,14 @@ gem "active_model_serializers"
 # Use Rack CORS for handling Cross-Origin Resource Sharing (CORS), making cross-origin Ajax possible
 gem "rack-cors"
 
+# APIレート制限（ブルートフォース攻撃・DoS対策）
+gem "rack-attack"
+
 # Solid Queue for job processing
 gem "solid_queue"
+
+# Solid Cache for database-backed caching (Redis不要)
+gem "solid_cache"
 
 # セキュリティ脆弱性対応 (CVE-2025-54314)
 gem "thor", ">= 1.4.0"

@@ -52,6 +52,12 @@ export async function loginAction(formData: FormData) {
       }
 
       return { success: true };
+    } else if (response.status === 429) {
+      return {
+        success: false,
+        error:
+          'リクエスト回数の制限に達しました。しばらくしてからお試しください。',
+      };
     } else {
       const errorData = await response.json();
       return {
@@ -104,6 +110,12 @@ export async function createAccountAction(formData: FormData) {
       return {
         success: true,
         message: '登録が完了しました。メールを確認してください。',
+      };
+    } else if (response.status === 429) {
+      return {
+        success: false,
+        error:
+          'リクエスト回数の制限に達しました。しばらくしてからお試しください。',
       };
     } else {
       const errorData = await response.json();

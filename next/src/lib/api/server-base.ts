@@ -44,6 +44,19 @@ export async function serverApiCall<T = unknown>(
         });
       }
 
+      // 429 Too Many Requests の場合（rack-attackのレート制限）
+      if (response.status === 429) {
+        const errorData = await response.json().catch(() => ({ error: null }));
+        return {
+          success: false,
+          errors: [
+            errorData.error ||
+              'リクエスト回数の制限に達しました。しばらくしてからお試しください。',
+          ],
+          status: 429,
+        };
+      }
+
       // Railsからのエラーレスポンスを取得
       const errorData = await response.json().catch(() => ({ errors: [] }));
 
