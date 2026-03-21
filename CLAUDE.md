@@ -50,6 +50,14 @@ Rails機能の開発はTDDで行う。
 3. docker-compose exec next npm run lint            # JSリント
 ```
 
+## Playwright MCPによる動作確認
+
+実装完了後、UI/APIに影響する変更がある場合はPlaywright MCPで動作確認を行う。
+
+- テストアカウント: `test@example.com` / `password123`（`rails db:seed`で作成）
+- 対象: フォーム送信、画面遷移、エラー表示など、ユーザー操作に関わる変更
+- **確認が終わったら必ず `browser_close` でブラウザを閉じること**
+
 ## コミット前の確認プロセス
 
 1. 作業が完了したら「作業完了しました」と報告

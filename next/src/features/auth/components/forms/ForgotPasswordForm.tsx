@@ -59,6 +59,13 @@ export default function ForgotPasswordForm() {
           },
         );
 
+        if (response.status === 429) {
+          setError(
+            'リクエスト回数の制限に達しました。しばらくしてからお試しください。',
+          );
+          return;
+        }
+
         const responseData = await response.json();
 
         if (response.ok && responseData.success) {
