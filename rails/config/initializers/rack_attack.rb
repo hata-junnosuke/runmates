@@ -2,7 +2,7 @@
 
 # Rack::Attack によるAPIレート制限設定
 # ブルートフォース攻撃やDoS対策として認証エンドポイントにレート制限を適用
-# キャッシュストアはRails.cacheを使用（本番: Solid Cache、開発: MemoryStore）
+# キャッシュストアはRails.cacheを使用（本番・開発ともにSolid Cache）
 
 # ログイン: 同一IPから1分間に10回まで
 Rack::Attack.throttle("auth/sign_in", limit: 10, period: 60) do |req|
