@@ -1,17 +1,17 @@
 require "rails_helper"
 
-RSpec.describe "Api::V1::CurrentYearlyGoal" do
+RSpec.describe "Api::V1::Current::YearlyGoal" do
   let(:user) { create(:user) }
   let(:headers) { user.create_new_auth_token }
   let(:current_year) { Date.current.year }
 
-  describe "GET /api/v1/current_yearly_goal" do
+  describe "GET /api/v1/current/yearly_goal" do
     context "認証済みユーザーの場合" do
       context "今年の目標が存在する場合" do
         let!(:yearly_goal) { create(:yearly_goal, :with_medium_goal, user: user, year: current_year) }
 
         it "今年の目標を返すこと" do
-          get "/api/v1/current_yearly_goal", headers: headers
+          get "/api/v1/current/yearly_goal", headers: headers
 
           expect(response).to have_http_status(:ok)
 
@@ -24,7 +24,7 @@ RSpec.describe "Api::V1::CurrentYearlyGoal" do
 
       context "今年の目標が存在しない場合" do
         it "デフォルト値を含むオブジェクトを返すこと" do
-          get "/api/v1/current_yearly_goal", headers: headers
+          get "/api/v1/current/yearly_goal", headers: headers
 
           expect(response).to have_http_status(:ok)
 
@@ -41,7 +41,7 @@ RSpec.describe "Api::V1::CurrentYearlyGoal" do
         let!(:past_goal) { create(:yearly_goal, :for_previous_year, :with_medium_low_goal_alt, user: user) }
 
         it "今年のデフォルト値を返すこと" do
-          get "/api/v1/current_yearly_goal", headers: headers
+          get "/api/v1/current/yearly_goal", headers: headers
 
           expect(response).to have_http_status(:ok)
 
@@ -55,19 +55,19 @@ RSpec.describe "Api::V1::CurrentYearlyGoal" do
 
     context "未認証ユーザーの場合" do
       it "401エラーを返すこと" do
-        get "/api/v1/current_yearly_goal"
+        get "/api/v1/current/yearly_goal"
 
         expect(response).to have_http_status(:unauthorized)
       end
     end
   end
 
-  describe "POST /api/v1/current_yearly_goal" do
+  describe "POST /api/v1/current/yearly_goal" do
     context "認証済みユーザーの場合" do
       context "新規作成の場合" do
         it "今年の目標を作成すること" do
           expect {
-            post "/api/v1/current_yearly_goal",
+            post "/api/v1/current/yearly_goal",
                  params: { yearly_goal: { year: current_year, distance_goal: 1200.0 } },
                  headers: headers
           }.to change { YearlyGoal.count }.by(1)
@@ -81,7 +81,7 @@ RSpec.describe "Api::V1::CurrentYearlyGoal" do
 
         it "年を省略した場合は今年の目標を作成すること" do
           expect {
-            post "/api/v1/current_yearly_goal",
+            post "/api/v1/current/yearly_goal",
                  params: { yearly_goal: { distance_goal: 800.0 } },
                  headers: headers
           }.to change { YearlyGoal.count }.by(1)
@@ -99,7 +99,7 @@ RSpec.describe "Api::V1::CurrentYearlyGoal" do
 
         it "既存の目標を更新すること" do
           expect {
-            post "/api/v1/current_yearly_goal",
+            post "/api/v1/current/yearly_goal",
                  params: { yearly_goal: { year: current_year, distance_goal: 1500.0 } },
                  headers: headers
           }.not_to change { YearlyGoal.count }
@@ -114,7 +114,7 @@ RSpec.describe "Api::V1::CurrentYearlyGoal" do
 
       context "無効なパラメータの場合" do
         it "エラーを返すこと" do
-          post "/api/v1/current_yearly_goal",
+          post "/api/v1/current/yearly_goal",
                params: { yearly_goal: { year: current_year, distance_goal: 0 } },
                headers: headers
 
@@ -128,7 +128,7 @@ RSpec.describe "Api::V1::CurrentYearlyGoal" do
 
     context "未認証ユーザーの場合" do
       it "401エラーを返すこと" do
-        post "/api/v1/current_yearly_goal",
+        post "/api/v1/current/yearly_goal",
              params: { yearly_goal: { distance_goal: 1000.0 } }
 
         expect(response).to have_http_status(:unauthorized)

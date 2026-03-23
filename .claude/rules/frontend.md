@@ -5,6 +5,9 @@ paths:
 
 # Next.js ルール
 
+## 基本方針
+- React/Next.jsのベストプラクティスに沿って実装する。Server Components優先、パフォーマンス最適化、適切なコンポーネント分割などVercel推奨のパターンに従う
+
 ## Server Components と Client Components の使い分け
 - デフォルトはServer Componentsを使用する
 - `"use client"` は必要最小限のコンポーネントにだけ付ける（イベントハンドラ、useState/useEffect使用時のみ）
@@ -23,3 +26,6 @@ paths:
 ## Chart.jsとSSR
 - Chart.jsコンポーネントはSSR問題を避けるため動的インポートが必要
 - `next/dynamic`で`ssr: false`オプションを指定してインポートすること
+
+## レビュー
+- Next.jsコードの変更後は必ず `vercel-react-best-practices` スキルでベストプラクティス準拠をチェックする

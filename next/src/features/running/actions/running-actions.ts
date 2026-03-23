@@ -97,7 +97,7 @@ export async function updateMonthlyGoal(
 
   const currentDate = new Date();
 
-  const result = await serverApiCall('/current_monthly_goal', {
+  const result = await serverApiCall('/current/monthly_goal', {
     method: 'POST',
     body: JSON.stringify({
       monthly_goal: {
@@ -129,7 +129,7 @@ export async function updateYearlyGoal(
 
   const currentDate = new Date();
 
-  const result = await serverApiCall('/current_yearly_goal', {
+  const result = await serverApiCall('/current/yearly_goal', {
     method: 'POST',
     body: JSON.stringify({
       yearly_goal: {

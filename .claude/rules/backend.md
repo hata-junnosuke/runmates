@@ -5,6 +5,9 @@ paths:
 
 # Rails ルール
 
+## 基本方針
+- Rails Way（Railsの規約）に沿って実装する。命名規則・ディレクトリ構成・ルーティングなどはRailsのデフォルト規約に従い、明示的な指定やオーバーライドは最小限にする
+
 ## Controllerの設計原則（API専用）
 - API専用構成（`config.api_only = true`）。`new`/`edit`は使わない
 - 基本アクションは5つ: `index`, `show`, `create`, `update`, `destroy`
@@ -21,3 +24,6 @@ paths:
 ## テスト
 - モデルテストは必須。バリデーション・スコープ・メソッドをカバーする
 - テストデータはFactoryBotを使用する（`rails/spec/factories/`配下）
+
+## レビュー
+- Railsコードの変更後は必ず `ruby-on-rails-best-practices` スキルでRails Way準拠をチェックする
