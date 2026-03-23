@@ -277,26 +277,70 @@ paths:
             application/json:
               schema:
                 "$ref": "#/components/schemas/error"
-    post:
-      summary: Create a monthly goal
+  "/api/v1/current/monthly_goal":
+    get:
+      summary: Get current monthly goal
       tags:
-      - Monthly Goals
-      description: 新しい月間目標を作成します。同じ月の目標が既に存在する場合は更新されます。
+      - Current Goals
+      description: 当月の月間目標を取得します。
+      security:
+      - bearer_auth: []
+        client_auth: []
+        uid_auth: []
+      responses:
+        '200':
+          description: 取得成功（未設定時はid・distance_goalがnullのデフォルト値を返す）
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type:
+                    - integer
+                    - 'null'
+                  year:
+                    type: integer
+                  month:
+                    type: integer
+                  distance_goal:
+                    type:
+                    - number
+                    - 'null'
+                    format: float
+                  created_at:
+                    type:
+                    - string
+                    - 'null'
+                    format: datetime
+                  updated_at:
+                    type:
+                    - string
+                    - 'null'
+                    format: datetime
+    post:
+      summary: Create or update current monthly goal
+      tags:
+      - Current Goals
+      description: 当月の月間目標を作成または更新します。
       security:
       - bearer_auth: []
         client_auth: []
         uid_auth: []
       parameters: []
       responses:
-        '201':
-          description: 作成成功
+        '200':
+          description: 既存目標の更新成功
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  monthly_goal:
-                    "$ref": "#/components/schemas/monthly_goal"
+                "$ref": "#/components/schemas/monthly_goal"
+        '201':
+          description: 新規目標の作成成功
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/monthly_goal"
         '422':
           description: バリデーションエラー
           content:
@@ -305,11 +349,9 @@ paths:
                 type: object
                 properties:
                   errors:
-                    type: object
-                    additionalProperties:
-                      type: array
-                      items:
-                        type: string
+                    type: array
+                    items:
+                      type: string
       requestBody:
         content:
           application/json:
@@ -319,139 +361,14 @@ paths:
                 monthly_goal:
                   type: object
                   properties:
-                    month:
-                      type: string
-                      format: date
-                      example: '2024-01-01'
                     distance_goal:
                       type: number
                       format: float
                       example: 100.0
                   required:
-                  - month
                   - distance_goal
               required:
               - monthly_goal
-  "/api/v1/monthly_goals/{id}":
-    parameters:
-    - name: id
-      in: path
-      description: 月間目標ID
-      required: true
-      schema:
-        type: integer
-    get:
-      summary: Show a monthly goal
-      tags:
-      - Monthly Goals
-      description: 特定の月間目標を取得します。
-      security:
-      - bearer_auth: []
-        client_auth: []
-        uid_auth: []
-      responses:
-        '200':
-          description: 取得成功
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  monthly_goal:
-                    "$ref": "#/components/schemas/monthly_goal"
-        '404':
-          description: 目標が見つからない
-          content:
-            application/json:
-              schema:
-                "$ref": "#/components/schemas/error"
-    put:
-      summary: Update a monthly goal
-      tags:
-      - Monthly Goals
-      description: 月間目標を更新します。
-      security:
-      - bearer_auth: []
-        client_auth: []
-        uid_auth: []
-      parameters: []
-      responses:
-        '200':
-          description: 更新成功
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  monthly_goal:
-                    "$ref": "#/components/schemas/monthly_goal"
-        '422':
-          description: バリデーションエラー
-          content:
-            application/json:
-              schema:
-                "$ref": "#/components/schemas/error"
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                monthly_goal:
-                  type: object
-                  properties:
-                    distance_goal:
-                      type: number
-                      format: float
-              required:
-              - monthly_goal
-    delete:
-      summary: Delete a monthly goal
-      tags:
-      - Monthly Goals
-      description: 月間目標を削除します。
-      security:
-      - bearer_auth: []
-        client_auth: []
-        uid_auth: []
-      responses:
-        '204':
-          description: 削除成功
-        '404':
-          description: 目標が見つからない
-          content:
-            application/json:
-              schema:
-                "$ref": "#/components/schemas/error"
-  "/api/v1/current_monthly_goal":
-    get:
-      summary: Get current monthly goal
-      tags:
-      - Monthly Goals
-      description: 当月の月間目標を取得します。
-      security:
-      - bearer_auth: []
-        client_auth: []
-        uid_auth: []
-      responses:
-        '200':
-          description: 取得成功
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  monthly_goal:
-                    "$ref": "#/components/schemas/monthly_goal"
-        '404':
-          description: 当月の目標が設定されていない
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  error:
-                    type: string
   "/api/v1/running_records":
     get:
       summary: List running records
@@ -847,54 +764,68 @@ paths:
                           format: float
                         months_active:
                           type: integer
-  "/api/v1/yearly_goals":
+  "/api/v1/current/yearly_goal":
     get:
-      summary: List yearly goals
+      summary: Get current yearly goal
       tags:
-      - Yearly Goals
-      description: ログインユーザーの年間目標一覧を取得します。
+      - Current Goals
+      description: 当年の年間目標を取得します。
       security:
       - bearer_auth: []
         client_auth: []
         uid_auth: []
       responses:
         '200':
-          description: 取得成功
+          description: 取得成功（未設定時はid・distance_goalがnullのデフォルト値を返す）
           content:
             application/json:
               schema:
                 type: object
                 properties:
-                  yearly_goals:
-                    type: array
-                    items:
-                      "$ref": "#/components/schemas/yearly_goal"
-        '401':
-          description: 認証エラー
-          content:
-            application/json:
-              schema:
-                "$ref": "#/components/schemas/error"
+                  id:
+                    type:
+                    - integer
+                    - 'null'
+                  year:
+                    type: integer
+                  distance_goal:
+                    type:
+                    - number
+                    - 'null'
+                    format: float
+                  created_at:
+                    type:
+                    - string
+                    - 'null'
+                    format: datetime
+                  updated_at:
+                    type:
+                    - string
+                    - 'null'
+                    format: datetime
     post:
-      summary: Create a yearly goal
+      summary: Create or update current yearly goal
       tags:
-      - Yearly Goals
-      description: 新しい年間目標を作成します。同じ年の目標が既に存在する場合はエラーになります。
+      - Current Goals
+      description: 当年の年間目標を作成または更新します。
       security:
       - bearer_auth: []
         client_auth: []
         uid_auth: []
       parameters: []
       responses:
-        '201':
-          description: 作成成功
+        '200':
+          description: 既存目標の更新成功
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  yearly_goal:
-                    "$ref": "#/components/schemas/yearly_goal"
+                "$ref": "#/components/schemas/yearly_goal"
+        '201':
+          description: 新規目標の作成成功
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/yearly_goal"
         '422':
           description: バリデーションエラー
           content:
@@ -903,11 +834,9 @@ paths:
                 type: object
                 properties:
                   errors:
-                    type: object
-                    additionalProperties:
-                      type: array
-                      items:
-                        type: string
+                    type: array
+                    items:
+                      type: string
       requestBody:
         content:
           application/json:
@@ -917,138 +846,14 @@ paths:
                 yearly_goal:
                   type: object
                   properties:
-                    year:
-                      type: integer
-                      example: 2024
                     distance_goal:
                       type: number
                       format: float
                       example: 1200.0
                   required:
-                  - year
                   - distance_goal
               required:
               - yearly_goal
-  "/api/v1/yearly_goals/{id}":
-    parameters:
-    - name: id
-      in: path
-      description: 年間目標ID
-      required: true
-      schema:
-        type: integer
-    get:
-      summary: Show a yearly goal
-      tags:
-      - Yearly Goals
-      description: 特定の年間目標を取得します。
-      security:
-      - bearer_auth: []
-        client_auth: []
-        uid_auth: []
-      responses:
-        '200':
-          description: 取得成功
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  yearly_goal:
-                    "$ref": "#/components/schemas/yearly_goal"
-        '404':
-          description: 目標が見つからない
-          content:
-            application/json:
-              schema:
-                "$ref": "#/components/schemas/error"
-    put:
-      summary: Update a yearly goal
-      tags:
-      - Yearly Goals
-      description: 年間目標を更新します。
-      security:
-      - bearer_auth: []
-        client_auth: []
-        uid_auth: []
-      parameters: []
-      responses:
-        '200':
-          description: 更新成功
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  yearly_goal:
-                    "$ref": "#/components/schemas/yearly_goal"
-        '422':
-          description: バリデーションエラー
-          content:
-            application/json:
-              schema:
-                "$ref": "#/components/schemas/error"
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                yearly_goal:
-                  type: object
-                  properties:
-                    distance_goal:
-                      type: number
-                      format: float
-              required:
-              - yearly_goal
-    delete:
-      summary: Delete a yearly goal
-      tags:
-      - Yearly Goals
-      description: 年間目標を削除します。
-      security:
-      - bearer_auth: []
-        client_auth: []
-        uid_auth: []
-      responses:
-        '204':
-          description: 削除成功
-        '404':
-          description: 目標が見つからない
-          content:
-            application/json:
-              schema:
-                "$ref": "#/components/schemas/error"
-  "/api/v1/current_yearly_goal":
-    get:
-      summary: Get current yearly goal
-      tags:
-      - Yearly Goals
-      description: 当年の年間目標を取得します。
-      security:
-      - bearer_auth: []
-        client_auth: []
-        uid_auth: []
-      responses:
-        '200':
-          description: 取得成功
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  yearly_goal:
-                    "$ref": "#/components/schemas/yearly_goal"
-        '404':
-          description: 当年の目標が設定されていない
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  error:
-                    type: string
 servers:
 - url: http://localhost:3000
   description: Development server
@@ -1119,9 +924,12 @@ components:
       properties:
         id:
           type: integer
+        year:
+          type: integer
+          description: "年（例: 2024）"
         month:
-          type: string
-          format: date
+          type: integer
+          description: "月（1-12）"
         distance_goal:
           type: number
           format: float
@@ -1135,6 +943,7 @@ components:
           format: datetime
       required:
       - id
+      - year
       - month
       - distance_goal
       - user_id
