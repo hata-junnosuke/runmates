@@ -1,4 +1,4 @@
-class Api::V1::CurrentYearlyGoalController < Api::V1::BaseController
+class Api::V1::Current::YearlyGoalsController < Api::V1::BaseController
   before_action :authenticate_user!
 
   def show

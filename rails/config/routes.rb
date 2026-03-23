@@ -19,9 +19,11 @@ Rails.application.routes.draw do # rubocop:disable Metrics/BlockLength
       }
       get "auth/email_confirmation", to: "auth/email_confirmations#show"
 
-      # ユーザー管理
+      # 現在のユーザー・目標管理
       namespace :current do
         resource :user, only: [:show, :update, :destroy]
+        resource :monthly_goal, only: [:show, :create]
+        resource :yearly_goal, only: [:show, :create]
       end
 
       # ランニング記録
@@ -30,10 +32,7 @@ Rails.application.routes.draw do # rubocop:disable Metrics/BlockLength
       resources :running_plans, only: [:index, :create, :update, :destroy, :show]
 
       # 目標管理
-      resources :monthly_goals
-      resource :current_monthly_goal, only: [:show, :create], controller: "current_monthly_goal"
-      resources :yearly_goals
-      resource :current_yearly_goal, only: [:show, :create], controller: "current_yearly_goal"
+      resources :monthly_goals, only: [:index]
     end
   end
 end
