@@ -1,0 +1,17 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "jq -r '.tool_input.command // \"\"' | { read -r cmd; echo \"$cmd\" | grep -qE '^git commit(\\s|$)' || exit 0; bash .claude/hooks/pre-commit-check.sh; }",
+            "timeout": 300,
+            "statusMessage": "Running pre-commit checks (rspec, rubocop, lint)..."
+          }
+        ]
+      }
+    ]
+  }
+}
