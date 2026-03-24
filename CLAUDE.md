@@ -8,9 +8,9 @@
 
 ```bash
 # ✅ 正しい例（必ずこの形式で実行）
-docker-compose exec rails bundle exec rubocop
-docker-compose exec rails rails console
-docker-compose exec next npm run dev
+docker compose exec rails bundle exec rubocop
+docker compose exec rails rails console
+docker compose exec next npm run dev
 
 # ❌ 間違った例（絶対に実行しない）
 bundle exec rubocop  # ローカル実行
