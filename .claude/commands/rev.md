@@ -1,6 +1,6 @@
 ---
 name: review
-description: git diffの変更差分を3つの観点（コード品質・セキュリティ・ベストプラクティス）で並列レビューする
+description: git diffの変更差分を4つの観点（コード品質・セキュリティ・ベストプラクティス・必要性）で並列レビューする
 user-invocable: true
 disable-model-invocation: false
 ---
@@ -12,7 +12,7 @@ disable-model-invocation: false
 ### 手順
 
 1. `git diff` と `git diff --cached` で変更差分を取得
-2. サブエージェントを3つ並列で起動し、以下の観点でレビュー
+2. サブエージェントを4つ並列で起動し、以下の観点でレビュー
 3. 結果をまとめて表示
 
 ### スキル活用
@@ -33,6 +33,12 @@ disable-model-invocation: false
 
 #### 3. Rails/Next.js ベストプラクティス（subagent: opus）
 `ruby-on-rails-best-practices`、`vercel-react-best-practices` スキルの基準に従ってレビュー
+
+#### 4. 必要性チェック（subagent: lazy-skeptic-reviewer）
+変更の必要性を懐疑的に検証する:
+- この変更は本当に必要か？既存コードで代替できないか？
+- 過剰な実装・不要な複雑さはないか？
+- 新しいファイル・依存関係は本当に必要か？
 
 ### 出力形式
 
@@ -55,6 +61,11 @@ disable-model-invocation: false
 - 🔴 問題（必ず修正）: ...
 - 🟡 提案（改善推奨）: ...
 - 🟢 良い点: ...
+
+### 必要性チェック
+- 🔴 不要（削除推奨）: ...
+- 🟡 疑問（要検討）: ...
+- 🟢 妥当: ...
 
 ### 総合評価
 問題がなければ「コミットOK」、修正が必要なら具体的な修正箇所を提示

@@ -41,14 +41,10 @@ Rails機能の開発はTDDで行う。
 2. **Green** — テストを通す最小限の実装を書く
 3. **Refactor** — テストが通った状態でリファクタリングする
 
-## 🚨 必須: コミット前チェック
+## コミット前チェック
 
-```bash
-# この順序で必ず実行
-1. docker-compose exec rails bundle exec rspec      # テスト
-2. docker-compose exec rails bundle exec rubocop    # Rubyリント
-3. docker-compose exec next npm run lint            # JSリント
-```
+コミット時にGit pre-commit hookが自動でrspec・rubocop・npm run lintを実行する。
+hookが失敗した場合は原因を修正して再コミットすること。
 
 ## Playwright MCPによる動作確認
 
@@ -60,10 +56,9 @@ Rails機能の開発はTDDで行う。
 
 ## 実装後のチェックフロー
 
-1. 実装完了後、`lazy-skeptic-reviewer` エージェントを起動して変更の必要性をチェックする
+1. `/review` でセルフレビュー（必要性チェック含む）
 2. 「作業完了しました」と報告
-3. ユーザーが変更内容を確認
-4. ユーザーの承認を得てから `git add` を実行
+3. ユーザーの承認を得てから `git add` を実行
 
 ## Rubocopへの対応方針
 
