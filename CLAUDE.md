@@ -43,8 +43,9 @@ Rails機能の開発はTDDで行う。
 
 ## コミット前チェック
 
-コミット時にGit pre-commit hookが自動でrspec・rubocop・npm run lintを実行する。
-hookが失敗した場合は原因を修正して再コミットすること。
+Claude Codeでのコミット時にPreToolUseフック（`.claude/settings.json`）が自動でrspec・rubocop・npm run lintを実行する。
+チェックが失敗した場合は原因を修正して再コミットすること。
+※ 通常の端末からの `git commit` ではこのチェックは発火しない。
 
 ## Playwright MCPによる動作確認
 
