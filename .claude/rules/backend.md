@@ -14,6 +14,10 @@ paths:
 - カスタムアクションが必要な場合はコントローラーを分割する（例: `users/activations_controller.rb`）
 - Fat Controllerを避ける。ビジネスロジックはモデルに移す（Service Objectsは使わない）
 
+## Swaggerドキュメント
+- APIのエンドポイント追加・変更・削除を行った場合は `rails/swagger/v1/swagger.yaml` も合わせて更新する
+- パラメータ、レスポンス形式、ステータスコードの変更も反映する
+
 ## パフォーマンス
 - N+1クエリを防止する。関連データの取得には`includes`/`preload`を使用する
 
