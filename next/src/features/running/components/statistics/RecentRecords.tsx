@@ -107,12 +107,15 @@ export default function RecentRecords({
               <div key={group.date} className="space-y-2">
                 {/* 日付ヘッダー */}
                 <div className="px-2 text-sm font-semibold text-emerald-700">
-                  {new Date(group.date).toLocaleDateString('ja-JP', {
-                    year: 'numeric',
-                    month: 'long',
-                    day: 'numeric',
-                    weekday: 'short',
-                  })}
+                  {new Date(`${group.date}T00:00:00`).toLocaleDateString(
+                    'ja-JP',
+                    {
+                      year: 'numeric',
+                      month: 'long',
+                      day: 'numeric',
+                      weekday: 'short',
+                    },
+                  )}
                 </div>
 
                 {/* 同じ日の記録一覧 */}
