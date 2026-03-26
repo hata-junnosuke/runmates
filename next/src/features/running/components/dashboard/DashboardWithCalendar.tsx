@@ -6,7 +6,6 @@ import { LoadingSpinner } from '@/components/common/LoadingSpinner';
 
 import { clientRunningPlansAPI } from '../../api/client-running-plans';
 import { clientRunningRecordsAPI } from '../../api/client-running-records';
-import { eventBus, EVENTS } from '../../lib/events';
 import type { MonthlyGoal, RunningPlan, RunRecord } from '../../types';
 import ClientRunningCalendar from '../calendar/ClientRunningCalendar';
 import RunningChartWrapper from '../charts/RunningChartWrapper';
@@ -155,38 +154,19 @@ export default function DashboardWithCalendar({
     }
   };
 
-  // イベントリスナーを登録して、削除時にデータを再取得
+  // router.refresh()によるServer Component再実行時にpropsの変更をstateに同期
+  // initialRecords/initialPlansは常に当月分なので、別の月を表示中は上書きしない
+  const now = new Date();
+  const isInitialMonth =
+    currentDate.getFullYear() === now.getFullYear() &&
+    currentDate.getMonth() === now.getMonth();
+
   useEffect(() => {
-    if (!eventBus) return;
-
-    const handleRecordDeleted = async () => {
-      // クライアントAPIで即座にデータを更新
-      const year = currentDate.getFullYear();
-      const month = currentDate.getMonth() + 1;
-      try {
-        const [recordsResult, plansResult] = await Promise.all([
-          clientRunningRecordsAPI.getByMonth(year, month),
-          clientRunningPlansAPI.getByMonth(year, month),
-        ]);
-        if (recordsResult.success) {
-          setCurrentMonthRecords(recordsResult.data);
-        }
-        if (plansResult.success) {
-          setCurrentMonthPlans(plansResult.data);
-        }
-      } catch (error) {
-        console.error('Error refreshing data:', error);
-      }
-    };
-
-    eventBus.on(EVENTS.RUNNING_RECORD_DELETED, handleRecordDeleted);
-
-    return () => {
-      if (eventBus) {
-        eventBus.off(EVENTS.RUNNING_RECORD_DELETED, handleRecordDeleted);
-      }
-    };
-  }, [currentDate]); // currentDateを依存配列に追加
+    if (isInitialMonth) {
+      setCurrentMonthRecords(initialRecords);
+      setCurrentMonthPlans(initialPlans);
+    }
+  }, [initialRecords, initialPlans, isInitialMonth]);
 
   return (
     <div className="space-y-6">

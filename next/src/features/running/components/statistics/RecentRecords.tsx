@@ -107,7 +107,11 @@ export default function RecentRecords({
               <div key={group.date} className="space-y-2">
                 {/* 日付ヘッダー */}
                 <div className="px-2 text-sm font-semibold text-emerald-700">
-                  {group.date} ({group.totalDistance.toFixed(1)} km)
+                  {new Date(group.date).toLocaleDateString('ja-JP', {
+                    month: 'long',
+                    day: 'numeric',
+                    weekday: 'short',
+                  })}
                 </div>
 
                 {/* 同じ日の記録一覧 */}
@@ -133,9 +137,6 @@ export default function RecentRecords({
                       <div>
                         <p className="font-semibold text-slate-900">
                           {Number(record.distance).toFixed(1)} km
-                        </p>
-                        <p className="text-xs text-gray-500">
-                          {record.created_at || ''}
                         </p>
                       </div>
                     </div>
