@@ -108,6 +108,7 @@ export default function RecentRecords({
                 {/* 日付ヘッダー */}
                 <div className="px-2 text-sm font-semibold text-emerald-700">
                   {new Date(group.date).toLocaleDateString('ja-JP', {
+                    year: 'numeric',
                     month: 'long',
                     day: 'numeric',
                     weekday: 'short',
