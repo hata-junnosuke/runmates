@@ -155,7 +155,8 @@ export default function DashboardWithCalendar({
   };
 
   // router.refresh()によるServer Component再実行時にpropsの変更をstateに同期
-  // initialRecords/initialPlansは常に当月分なので、別の月を表示中は上書きしない
+  // initialRecords/initialPlansは常に当月分なので、当月表示中はそのまま同期し、
+  // 別の月を表示中はfetchMonthDataで表示中月のデータを再取得する
   const now = new Date();
   const isInitialMonth =
     currentDate.getFullYear() === now.getFullYear() &&
@@ -165,8 +166,13 @@ export default function DashboardWithCalendar({
     if (isInitialMonth) {
       setCurrentMonthRecords(initialRecords);
       setCurrentMonthPlans(initialPlans);
+    } else {
+      fetchMonthData(currentDate).catch((error) =>
+        console.error('Error refreshing data after mutation:', error),
+      );
     }
-  }, [initialRecords, initialPlans, isInitialMonth]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [initialRecords, initialPlans]);
 
   return (
     <div className="space-y-6">
