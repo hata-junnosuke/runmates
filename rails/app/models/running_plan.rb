@@ -33,4 +33,26 @@ class RunningPlan < ApplicationRecord
        validate: true
 
   scope :for_month, ->(year, month) { where("YEAR(date) = ? AND MONTH(date) = ?", year, month) }
+
+  def self.update_statuses(user:, date:)
+    plans = user.running_plans.where(date: date).order(:created_at, :id)
+    return if plans.empty?
+
+    remaining_distance = user.running_records.where(date: date).sum(:distance)
+
+    plans.each do |plan|
+      plan.status = status_for_distance(plan, remaining_distance)
+      # 同日複数の予定がある場合に実績距離を順に充当するため、残距離を更新して次の予定に渡す
+      remaining_distance = [remaining_distance - plan.planned_distance, 0].max
+      plan.save! if plan.changed?
+    end
+  end
+
+  def self.status_for_distance(plan, remaining_distance)
+    return "planned" if remaining_distance <= 0
+    return "completed" if remaining_distance >= plan.planned_distance
+
+    "partial"
+  end
+  private_class_method :status_for_distance
 end

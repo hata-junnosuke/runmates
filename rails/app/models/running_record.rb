@@ -45,7 +45,7 @@ class RunningRecord < ApplicationRecord
       end
 
       affected_dates.compact.uniq.each do |target_date|
-        RunningPlanStatusUpdater.call(user:, date: target_date)
+        RunningPlan.update_statuses(user:, date: target_date)
       end
     end
 end

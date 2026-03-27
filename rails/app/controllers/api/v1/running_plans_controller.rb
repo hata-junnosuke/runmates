@@ -25,7 +25,7 @@ class Api::V1::RunningPlansController < Api::V1::BaseController
     running_plan = current_user.running_plans.build(running_plan_params)
 
     if running_plan.save
-      RunningPlanStatusUpdater.call(user: current_user, date: running_plan.date)
+      RunningPlan.update_statuses(user: current_user, date: running_plan.date)
       render json: running_plan, serializer: RunningPlanSerializer, status: :created
     else
       render json: { errors: running_plan.errors.full_messages }, status: :unprocessable_entity
@@ -37,7 +37,7 @@ class Api::V1::RunningPlansController < Api::V1::BaseController
 
     if @running_plan.update(running_plan_params)
       [old_date, @running_plan.date].compact.uniq.each do |target_date|
-        RunningPlanStatusUpdater.call(user: current_user, date: target_date)
+        RunningPlan.update_statuses(user: current_user, date: target_date)
       end
       render json: @running_plan, serializer: RunningPlanSerializer
     else
@@ -48,7 +48,7 @@ class Api::V1::RunningPlansController < Api::V1::BaseController
   def destroy
     date = @running_plan.date
     @running_plan.destroy!
-    RunningPlanStatusUpdater.call(user: current_user, date:)
+    RunningPlan.update_statuses(user: current_user, date:)
     head :no_content
   end
 
