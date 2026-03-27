@@ -1,9 +1,9 @@
-module DateOnOrAfterMinDate
+module DateValidation
   extend ActiveSupport::Concern
   DEFAULT_MIN_DATE = Date.new(2025, 1, 1)
 
   included do
-    validate :date_on_or_after_min_date
+    validate :validate_date
   end
 
   private
@@ -17,7 +17,7 @@ module DateOnOrAfterMinDate
       end
     end
 
-    def date_on_or_after_min_date
+    def validate_date
       return if date.blank?
 
       threshold = min_date

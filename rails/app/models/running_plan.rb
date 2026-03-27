@@ -19,7 +19,7 @@
 #
 
 class RunningPlan < ApplicationRecord
-  include DateOnOrAfterMinDate
+  include DateValidation
   belongs_to :user
 
   validates :date, presence: true
