@@ -97,14 +97,6 @@ export default function RecordDetailModal({
               </p>
             </div>
 
-            {/* 記録情報 */}
-            <div className="space-y-1 text-xs text-gray-500">
-              {record.created_at && <p>記録日時: {record.created_at}</p>}
-              {record.updated_at && record.updated_at !== record.created_at && (
-                <p>更新日時: {record.updated_at}</p>
-              )}
-            </div>
-
             {/* アクションボタン */}
             <div className="flex justify-end space-x-2 pt-4">
               <Button variant="outline" onClick={onClose} disabled={isPending}>
