@@ -63,17 +63,14 @@ export default function ClientRecordForm({
   onClose,
   onSwitchToPlan,
 }: ClientRecordFormProps) {
-  const defaultDate = (() => {
-    if (
-      selectedDate &&
-      DATE_REGEX.test(selectedDate) &&
-      selectedDate >= MIN_DATE
-    ) {
-      return selectedDate;
-    }
-    const today = new Date().toISOString().split('T')[0];
-    return today >= MIN_DATE ? today : MIN_DATE;
-  })();
+  const isSelectedDateValid =
+    selectedDate && DATE_REGEX.test(selectedDate) && selectedDate >= MIN_DATE;
+  const today = new Date().toISOString().split('T')[0];
+  const defaultDate = isSelectedDateValid
+    ? selectedDate
+    : today >= MIN_DATE
+      ? today
+      : MIN_DATE;
 
   const form = useForm<RunningRecordFormData>({
     resolver: zodResolver(clientRunningRecordSchema),
@@ -96,12 +93,13 @@ export default function ClientRecordForm({
 
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
-  const dateLabel = (() => {
-    const date = defaultDate || '';
-    if (!date || !DATE_REGEX.test(date)) return date;
-    const [y, m, d] = date.split('-').map((v) => Number(v));
-    return `${y}年${m}月${d}日`;
-  })();
+  const dateParts =
+    defaultDate && DATE_REGEX.test(defaultDate)
+      ? defaultDate.split('-').map((v) => Number(v))
+      : null;
+  const dateLabel = dateParts
+    ? `${dateParts[0]}年${dateParts[1]}月${dateParts[2]}日`
+    : defaultDate || '';
 
   const handleClose = (freshMonthRecords?: RunRecord[]) => {
     form.reset({

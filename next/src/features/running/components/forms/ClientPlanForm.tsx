@@ -76,11 +76,10 @@ export default function ClientPlanForm({
     }
   }, [isOpen, form]);
 
-  const dateLabel = (() => {
-    if (!date) return '';
-    const d = new Date(date);
-    return `${d.getFullYear()}年${d.getMonth() + 1}月${d.getDate()}日`;
-  })();
+  const parsedDate = date ? new Date(date) : null;
+  const dateLabel = parsedDate
+    ? `${parsedDate.getFullYear()}年${parsedDate.getMonth() + 1}月${parsedDate.getDate()}日`
+    : '';
 
   const selectedPlanId = editingPlan?.id ?? null;
 
