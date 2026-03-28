@@ -1,13 +1,7 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import {
-  useCallback,
-  useEffect,
-  useMemo,
-  useState,
-  useTransition,
-} from 'react';
+import { useEffect, useState, useTransition } from 'react';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
 
@@ -69,8 +63,7 @@ export default function ClientRecordForm({
   onClose,
   onSwitchToPlan,
 }: ClientRecordFormProps) {
-  // selectedDateに変化がない限り今日の日付計算を再実行しないようメモ化しておく
-  const defaultDate = useMemo(() => {
+  const defaultDate = (() => {
     if (
       selectedDate &&
       DATE_REGEX.test(selectedDate) &&
@@ -80,7 +73,7 @@ export default function ClientRecordForm({
     }
     const today = new Date().toISOString().split('T')[0];
     return today >= MIN_DATE ? today : MIN_DATE;
-  }, [selectedDate]);
+  })();
 
   const form = useForm<RunningRecordFormData>({
     resolver: zodResolver(clientRunningRecordSchema),
@@ -103,26 +96,23 @@ export default function ClientRecordForm({
 
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
-  const dateLabel = useMemo(() => {
+  const dateLabel = (() => {
     const date = defaultDate || '';
     if (!date || !DATE_REGEX.test(date)) return date;
     const [y, m, d] = date.split('-').map((v) => Number(v));
     return `${y}年${m}月${d}日`;
-  }, [defaultDate]);
+  })();
 
-  const handleClose = useCallback(
-    (freshMonthRecords?: RunRecord[]) => {
-      form.reset({
-        date: defaultDate,
-        distance: '',
-      });
-      setError(null);
-      if (onClose) {
-        onClose(freshMonthRecords);
-      }
-    },
-    [form, onClose, defaultDate],
-  );
+  const handleClose = (freshMonthRecords?: RunRecord[]) => {
+    form.reset({
+      date: defaultDate,
+      distance: '',
+    });
+    setError(null);
+    if (onClose) {
+      onClose(freshMonthRecords);
+    }
+  };
 
   const onSubmit = async (data: RunningRecordFormData) => {
     setError(null);

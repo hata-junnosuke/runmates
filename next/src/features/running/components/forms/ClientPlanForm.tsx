@@ -1,13 +1,7 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import {
-  useCallback,
-  useEffect,
-  useMemo,
-  useState,
-  useTransition,
-} from 'react';
+import { useEffect, useState, useTransition } from 'react';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
 
@@ -82,15 +76,15 @@ export default function ClientPlanForm({
     }
   }, [isOpen, form]);
 
-  const dateLabel = useMemo(() => {
+  const dateLabel = (() => {
     if (!date) return '';
     const d = new Date(date);
     return `${d.getFullYear()}年${d.getMonth() + 1}月${d.getDate()}日`;
-  }, [date]);
+  })();
 
   const selectedPlanId = editingPlan?.id ?? null;
 
-  const refreshMonthPlans = useCallback(async () => {
+  const refreshMonthPlans = async () => {
     if (!date) return [];
     const targetDate = new Date(date);
     const result = await clientRunningPlansAPI.getByMonth(
@@ -98,7 +92,7 @@ export default function ClientPlanForm({
       targetDate.getMonth() + 1,
     );
     return result.success ? result.data : [];
-  }, [date]);
+  };
 
   const handleSubmit = (data: PlanFormData) => {
     if (!date) return;
