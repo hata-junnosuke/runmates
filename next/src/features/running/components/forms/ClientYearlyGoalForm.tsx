@@ -1,7 +1,7 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useCallback, useState, useTransition } from 'react';
+import { useState, useTransition } from 'react';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
 
@@ -56,13 +56,13 @@ export default function ClientYearlyGoalForm({
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
 
-  const handleClose = useCallback(() => {
+  const handleClose = () => {
     form.reset();
     setError(null);
     if (onClose) {
       onClose();
     }
-  }, [form, onClose]);
+  };
 
   const onSubmit = async (data: YearlyGoalFormData) => {
     setError(null);

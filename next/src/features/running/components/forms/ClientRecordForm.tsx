@@ -1,13 +1,7 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import {
-  useCallback,
-  useEffect,
-  useMemo,
-  useState,
-  useTransition,
-} from 'react';
+import { useEffect, useState, useTransition } from 'react';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
 
@@ -69,18 +63,14 @@ export default function ClientRecordForm({
   onClose,
   onSwitchToPlan,
 }: ClientRecordFormProps) {
-  // selectedDateに変化がない限り今日の日付計算を再実行しないようメモ化しておく
-  const defaultDate = useMemo(() => {
-    if (
-      selectedDate &&
-      DATE_REGEX.test(selectedDate) &&
-      selectedDate >= MIN_DATE
-    ) {
-      return selectedDate;
-    }
-    const today = new Date().toISOString().split('T')[0];
-    return today >= MIN_DATE ? today : MIN_DATE;
-  }, [selectedDate]);
+  const isSelectedDateValid =
+    selectedDate && DATE_REGEX.test(selectedDate) && selectedDate >= MIN_DATE;
+  const today = new Date().toISOString().split('T')[0];
+  const defaultDate = isSelectedDateValid
+    ? selectedDate
+    : today >= MIN_DATE
+      ? today
+      : MIN_DATE;
 
   const form = useForm<RunningRecordFormData>({
     resolver: zodResolver(clientRunningRecordSchema),
@@ -103,26 +93,24 @@ export default function ClientRecordForm({
 
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
-  const dateLabel = useMemo(() => {
-    const date = defaultDate || '';
-    if (!date || !DATE_REGEX.test(date)) return date;
-    const [y, m, d] = date.split('-').map((v) => Number(v));
-    return `${y}年${m}月${d}日`;
-  }, [defaultDate]);
+  const dateParts =
+    defaultDate && DATE_REGEX.test(defaultDate)
+      ? defaultDate.split('-').map((v) => Number(v))
+      : null;
+  const dateLabel = dateParts
+    ? `${dateParts[0]}年${dateParts[1]}月${dateParts[2]}日`
+    : defaultDate || '';
 
-  const handleClose = useCallback(
-    (freshMonthRecords?: RunRecord[]) => {
-      form.reset({
-        date: defaultDate,
-        distance: '',
-      });
-      setError(null);
-      if (onClose) {
-        onClose(freshMonthRecords);
-      }
-    },
-    [form, onClose, defaultDate],
-  );
+  const handleClose = (freshMonthRecords?: RunRecord[]) => {
+    form.reset({
+      date: defaultDate,
+      distance: '',
+    });
+    setError(null);
+    if (onClose) {
+      onClose(freshMonthRecords);
+    }
+  };
 
   const onSubmit = async (data: RunningRecordFormData) => {
     setError(null);
