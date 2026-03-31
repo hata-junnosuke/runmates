@@ -2,10 +2,12 @@
 
 import { useState } from 'react';
 
+import { markAchievementNotified } from '../../actions/running-actions';
 import type { DashboardStatisticsProps } from '../../types';
 import ClientGoalForm from '../forms/ClientGoalForm';
 import ClientYearlyGoalForm from '../forms/ClientYearlyGoalForm';
 import StatisticsCards from '../statistics/StatisticsCards';
+import CelebrationModal from './CelebrationModal';
 
 export default function DashboardStatistics({
   thisYearDistance,
@@ -15,6 +17,8 @@ export default function DashboardStatistics({
   yearlyGoal,
   yearlyGoalProgress,
   monthlyRunDays,
+  shouldShowMonthlyCelebration,
+  shouldShowYearlyCelebration,
 }: DashboardStatisticsProps) {
   const [monthlyGoalModalOpen, setMonthlyGoalModalOpen] = useState(false);
   const [yearlyGoalModalOpen, setYearlyGoalModalOpen] = useState(false);
@@ -53,6 +57,20 @@ export default function DashboardStatistics({
         isOpen={yearlyGoalModalOpen}
         onClose={() => setYearlyGoalModalOpen(false)}
       />
+
+      {shouldShowMonthlyCelebration && (
+        <CelebrationModal
+          type="monthly"
+          onDismiss={() => markAchievementNotified('monthly')}
+        />
+      )}
+
+      {!shouldShowMonthlyCelebration && shouldShowYearlyCelebration && (
+        <CelebrationModal
+          type="yearly"
+          onDismiss={() => markAchievementNotified('yearly')}
+        />
+      )}
     </div>
   );
 }

@@ -79,6 +79,16 @@ async function DashboardData() {
     // recordsはすでに現在月のデータのみなのでフィルタ不要
     const monthlyRunDays = new Set(records.map((record) => record.date)).size;
 
+    // 目標達成お祝いモーダルの表示判定
+    const shouldShowMonthlyCelebration =
+      monthlyGoalProgress >= 100 &&
+      monthlyGoal?.achieved_notified_at == null &&
+      monthlyGoal?.id != null;
+    const shouldShowYearlyCelebration =
+      yearlyGoalProgress >= 100 &&
+      yearlyGoal?.achieved_notified_at == null &&
+      yearlyGoal?.id != null;
+
     return (
       <div className="space-y-6">
         {/* 統計カード - クリック可能なカード */}
@@ -90,6 +100,8 @@ async function DashboardData() {
           yearlyGoal={yearlyGoalValue}
           yearlyGoalProgress={yearlyGoalProgress}
           monthlyRunDays={monthlyRunDays}
+          shouldShowMonthlyCelebration={shouldShowMonthlyCelebration}
+          shouldShowYearlyCelebration={shouldShowYearlyCelebration}
         />
 
         {/* カレンダーとアクションボタン */}

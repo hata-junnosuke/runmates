@@ -34,6 +34,7 @@ export interface MonthlyGoal {
   year: number;
   month: number;
   distance_goal: number;
+  achieved_notified_at?: string | null;
   created_at?: string;
   updated_at?: string;
 }
@@ -45,6 +46,7 @@ export interface YearlyGoal {
   id?: string;
   year: number;
   distance_goal: number;
+  achieved_notified_at?: string | null;
   created_at?: string;
   updated_at?: string;
 }
@@ -74,6 +76,8 @@ export interface DashboardStatisticsProps {
   yearlyGoal: number | null;
   yearlyGoalProgress: number;
   monthlyRunDays: number;
+  shouldShowMonthlyCelebration: boolean;
+  shouldShowYearlyCelebration: boolean;
 }
 
 /**

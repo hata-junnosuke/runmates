@@ -2,12 +2,13 @@
 #
 # Table name: yearly_goals
 #
-#  id            :integer          not null, primary key
-#  user_id       :integer          not null
-#  year          :integer          not null
-#  distance_goal :decimal(6, 2)
-#  created_at    :datetime         not null
-#  updated_at    :datetime         not null
+#  id                   :integer          not null, primary key
+#  user_id              :integer          not null
+#  year                 :integer          not null
+#  distance_goal        :decimal(6, 2)
+#  created_at           :datetime         not null
+#  updated_at           :datetime         not null
+#  achieved_notified_at :datetime
 #
 # Indexes
 #
@@ -25,4 +26,20 @@ class YearlyGoal < ApplicationRecord
   validates :user_id, uniqueness: { scope: :year }
 
   scope :for_current_year, -> { where(year: Date.current.year) }
+
+  before_update :reset_achieved_notified_at, if: :distance_goal_changed?
+
+  def self.find_or_initialize_for(user, params)
+    year = params[:year]&.to_i || Date.current.year
+    goal = user.yearly_goals.find_or_initialize_by(year: year)
+    goal.distance_goal = params[:distance_goal] if params.has_key?(:distance_goal)
+    goal.achieved_notified_at = Time.current if params.has_key?(:dismiss_notification)
+    goal
+  end
+
+  private
+
+    def reset_achieved_notified_at
+      self.achieved_notified_at = nil
+    end
 end

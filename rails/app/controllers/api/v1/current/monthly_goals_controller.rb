@@ -13,6 +13,7 @@ class Api::V1::Current::MonthlyGoalsController < Api::V1::BaseController
         year: Date.current.year,
         month: Date.current.month,
         distance_goal: nil,
+        achieved_notified_at: nil,
         created_at: nil,
         updated_at: nil,
       }, status: :ok
@@ -21,11 +22,7 @@ class Api::V1::Current::MonthlyGoalsController < Api::V1::BaseController
 
   def create
     goal_params = monthly_goal_params
-    year = goal_params[:year]&.to_i || Date.current.year
-    month = goal_params[:month]&.to_i || Date.current.month
-
-    @monthly_goal = current_user.monthly_goals.find_or_initialize_by(year: year, month: month)
-    @monthly_goal.distance_goal = goal_params[:distance_goal]
+    @monthly_goal = MonthlyGoal.find_or_initialize_for(current_user, goal_params)
 
     if @monthly_goal.save
       render json: @monthly_goal, status: @monthly_goal.previously_new_record? ? :created : :ok
@@ -37,6 +34,6 @@ class Api::V1::Current::MonthlyGoalsController < Api::V1::BaseController
   private
 
     def monthly_goal_params
-      params.expect(monthly_goal: [:year, :month, :distance_goal])
+      params.expect(monthly_goal: [:year, :month, :distance_goal, :dismiss_notification])
     end
 end

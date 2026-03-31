@@ -69,6 +69,25 @@ RSpec.describe YearlyGoal do
     end
   end
 
+  describe "コールバック" do
+    describe "achieved_notified_atのリセット" do
+      let(:user) { create(:user) }
+
+      it "distance_goalを変更するとachieved_notified_atがnilにリセットされる" do
+        goal = create(:yearly_goal, user: user, achieved_notified_at: Time.current)
+        goal.update!(distance_goal: 200.0)
+        expect(goal.reload.achieved_notified_at).to be_nil
+      end
+
+      it "distance_goal以外の変更ではリセットされない" do
+        notified_time = Time.current
+        goal = create(:yearly_goal, user: user, achieved_notified_at: notified_time)
+        goal.update!(updated_at: Time.current)
+        expect(goal.reload.achieved_notified_at).to be_within(1.second).of(notified_time)
+      end
+    end
+  end
+
   describe "スコープ" do
     let(:user) { create(:user) }
     let!(:current_year_goal) { create(:yearly_goal, user: user, year: Date.current.year) }

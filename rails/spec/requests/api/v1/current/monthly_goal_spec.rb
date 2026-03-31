@@ -23,6 +23,7 @@ RSpec.describe "Api::V1::Current::MonthlyGoal" do
           expect(json_response["year"]).to eq(current_year)
           expect(json_response["month"]).to eq(current_month)
           expect(json_response["distance_goal"]).to eq("100.0")
+          expect(json_response).to have_key("achieved_notified_at")
         end
       end
 
@@ -39,6 +40,7 @@ RSpec.describe "Api::V1::Current::MonthlyGoal" do
           expect(json_response["distance_goal"]).to be_nil
           expect(json_response["created_at"]).to be_nil
           expect(json_response["updated_at"]).to be_nil
+          expect(json_response["achieved_notified_at"]).to be_nil
         end
       end
 
@@ -121,6 +123,36 @@ RSpec.describe "Api::V1::Current::MonthlyGoal" do
           json_response = response.parsed_body
           expect(json_response["id"]).to eq(existing_goal.id)
           expect(json_response["distance_goal"]).to eq("150.0")
+        end
+      end
+
+      context "achieved_notified_atの更新" do
+        let!(:existing_goal) {
+          create(:monthly_goal, user: user, year: current_year, month: current_month, distance_goal: 100.0)
+        }
+
+        it "dismiss_notificationフラグでachieved_notified_atを更新できること" do
+          post "/api/v1/current/monthly_goal",
+               params: { monthly_goal: { year: current_year, month: current_month, dismiss_notification: true } },
+               headers: headers
+
+          expect(response).to have_http_status(:ok)
+          json_response = response.parsed_body
+          expect(json_response["achieved_notified_at"]).not_to be_nil
+          expect(json_response["distance_goal"]).to eq("100.0")
+        end
+
+        it "distance_goalを変更するとachieved_notified_atがリセットされること" do
+          existing_goal.update!(achieved_notified_at: Time.current)
+
+          post "/api/v1/current/monthly_goal",
+               params: { monthly_goal: { year: current_year, month: current_month, distance_goal: 200.0 } },
+               headers: headers
+
+          expect(response).to have_http_status(:ok)
+          json_response = response.parsed_body
+          expect(json_response["achieved_notified_at"]).to be_nil
+          expect(json_response["distance_goal"]).to eq("200.0")
         end
       end
 

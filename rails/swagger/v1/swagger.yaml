@@ -308,6 +308,11 @@ paths:
                     - number
                     - 'null'
                     format: float
+                  achieved_notified_at:
+                    type:
+                    - string
+                    - 'null'
+                    format: datetime
                   created_at:
                     type:
                     - string
@@ -365,8 +370,9 @@ paths:
                       type: number
                       format: float
                       example: 100.0
-                  required:
-                  - distance_goal
+                    dismiss_notification:
+                      type: boolean
+                      description: trueを送信すると達成通知を既読にする
               required:
               - monthly_goal
   "/api/v1/running_records":
@@ -793,6 +799,11 @@ paths:
                     - number
                     - 'null'
                     format: float
+                  achieved_notified_at:
+                    type:
+                    - string
+                    - 'null'
+                    format: datetime
                   created_at:
                     type:
                     - string
@@ -850,8 +861,9 @@ paths:
                       type: number
                       format: float
                       example: 1200.0
-                  required:
-                  - distance_goal
+                    dismiss_notification:
+                      type: boolean
+                      description: trueを送信すると達成通知を既読にする
               required:
               - yearly_goal
 servers:
@@ -933,6 +945,10 @@ components:
         distance_goal:
           type: number
           format: float
+        achieved_notified_at:
+          type: string
+          format: datetime
+          nullable: true
         user_id:
           type: integer
         created_at:
@@ -957,6 +973,10 @@ components:
         distance_goal:
           type: number
           format: float
+        achieved_notified_at:
+          type: string
+          format: datetime
+          nullable: true
         user_id:
           type: integer
         created_at:
