@@ -19,6 +19,7 @@ disable-model-invocation: true
    - `[Bug]` → `fix/issue-{番号}-{概要}`
    - それ以外 → `refactor/issue-{番号}-{概要}`
 4. **TDD実装**: CLAUDE.mdのTDDルールに従う（Red → Green → Refactor）
-5. **セルフレビュー**: `/rev` を実行。問題があれば修正
-6. **完了報告**: 「作業完了しました」と報告し、ユーザーの承認後に `/cpr` でPR作成
-7. **かんばん更新**: `gh project item-list` と `gh project item-edit` でIssueのステータスを「In review」に更新（プロジェクトIDは `gh project list --owner hata-junnosuke` で動的に取得する）
+5. **実装後チェック**: CLAUDE.mdの「実装後のチェックフロー」に従う
+6. **動作確認**: フロント（Next.js）の変更がある場合は、Playwright MCPで動作確認を行う（CLAUDE.mdのPlaywright MCP手順に従う）
+7. **完了報告**: 「作業完了しました」と報告し、ユーザーの承認後に `/cpr` でPR作成
+8. **かんばん更新**: `gh project item-list` と `gh project item-edit` でIssueのステータスを「In review」に更新（プロジェクトIDは `gh project list --owner hata-junnosuke` で動的に取得する）
