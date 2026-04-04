@@ -117,6 +117,39 @@ export async function updateMonthlyGoal(
   return { success: true };
 }
 
+export async function markAchievementNotified(
+  type: 'monthly' | 'yearly',
+): Promise<ActionResponse> {
+  const currentDate = new Date();
+  const isMonthly = type === 'monthly';
+  const endpoint = isMonthly ? '/current/monthly_goal' : '/current/yearly_goal';
+  const paramKey = isMonthly ? 'monthly_goal' : 'yearly_goal';
+
+  const body: Record<string, unknown> = {
+    year: currentDate.getFullYear(),
+    dismiss_notification: true,
+  };
+  if (isMonthly) {
+    body.month = currentDate.getMonth() + 1;
+  }
+
+  const result = await serverApiCall(endpoint, {
+    method: 'POST',
+    body: JSON.stringify({ [paramKey]: body }),
+  });
+
+  if (!result.success) {
+    console.error(
+      `Failed to mark ${type} achievement notified:`,
+      result.errors,
+    );
+    return { success: false, error: '通知の更新に失敗しました' };
+  }
+
+  revalidatePath('/dashboard');
+  return { success: true };
+}
+
 export async function updateYearlyGoal(
   data: YearlyGoalInput,
 ): Promise<ActionResponse> {

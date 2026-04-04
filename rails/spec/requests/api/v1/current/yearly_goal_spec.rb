@@ -19,6 +19,7 @@ RSpec.describe "Api::V1::Current::YearlyGoal" do
           expect(json_response["id"]).to eq(yearly_goal.id)
           expect(json_response["year"]).to eq(current_year)
           expect(json_response["distance_goal"]).to eq("1000.0")
+          expect(json_response).to have_key("achieved_notified_at")
         end
       end
 
@@ -34,6 +35,7 @@ RSpec.describe "Api::V1::Current::YearlyGoal" do
           expect(json_response["distance_goal"]).to be_nil
           expect(json_response["created_at"]).to be_nil
           expect(json_response["updated_at"]).to be_nil
+          expect(json_response["achieved_notified_at"]).to be_nil
         end
       end
 
@@ -109,6 +111,37 @@ RSpec.describe "Api::V1::Current::YearlyGoal" do
           json_response = response.parsed_body
           expect(json_response["id"]).to eq(existing_goal.id)
           expect(json_response["distance_goal"]).to eq("1500.0")
+        end
+      end
+
+      context "achieved_notified_atの更新" do
+        let!(:existing_goal) {
+          create(:yearly_goal, user: user, year: current_year, distance_goal: 1000.0)
+        }
+
+        it "dismiss_notificationフラグでachieved_notified_atを更新できること" do
+          post "/api/v1/current/yearly_goal",
+               params: { yearly_goal: { year: current_year, dismiss_notification: true } },
+               headers: headers,
+               as: :json
+
+          expect(response).to have_http_status(:ok)
+          json_response = response.parsed_body
+          expect(json_response["achieved_notified_at"]).not_to be_nil
+          expect(json_response["distance_goal"]).to eq("1000.0")
+        end
+
+        it "distance_goalを変更するとachieved_notified_atがリセットされること" do
+          existing_goal.update!(achieved_notified_at: Time.current)
+
+          post "/api/v1/current/yearly_goal",
+               params: { yearly_goal: { year: current_year, distance_goal: 2000.0 } },
+               headers: headers
+
+          expect(response).to have_http_status(:ok)
+          json_response = response.parsed_body
+          expect(json_response["achieved_notified_at"]).to be_nil
+          expect(json_response["distance_goal"]).to eq("2000.0")
         end
       end
 

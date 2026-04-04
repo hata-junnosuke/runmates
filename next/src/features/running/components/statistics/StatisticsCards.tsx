@@ -1,5 +1,10 @@
 import type { DashboardStatisticsProps } from '../../types';
 
+type StatisticsCardsProps = Omit<
+  DashboardStatisticsProps,
+  'shouldShowMonthlyCelebration' | 'shouldShowYearlyCelebration'
+>;
+
 export default function StatisticsCards({
   thisYearDistance,
   thisMonthDistance,
@@ -10,7 +15,7 @@ export default function StatisticsCards({
   monthlyRunDays,
   onYearlyGoalClick,
   onMonthlyGoalClick,
-}: DashboardStatisticsProps & {
+}: StatisticsCardsProps & {
   onYearlyGoalClick: () => void;
   onMonthlyGoalClick: () => void;
 }) {
