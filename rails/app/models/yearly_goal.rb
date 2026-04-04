@@ -33,7 +33,7 @@ class YearlyGoal < ApplicationRecord
     year = params[:year]&.to_i || Date.current.year
     goal = user.yearly_goals.find_or_initialize_by(year: year)
     goal.distance_goal = params[:distance_goal] if params.has_key?(:distance_goal)
-    goal.achieved_notified_at = Time.current if ActiveModel::Type::Boolean.new.cast(params[:dismiss_notification])
+    goal.achieved_notified_at = Time.current if params[:dismiss_notification] == true
     goal
   end
 

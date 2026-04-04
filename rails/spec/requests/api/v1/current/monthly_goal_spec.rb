@@ -134,7 +134,8 @@ RSpec.describe "Api::V1::Current::MonthlyGoal" do
         it "dismiss_notificationフラグでachieved_notified_atを更新できること" do
           post "/api/v1/current/monthly_goal",
                params: { monthly_goal: { year: current_year, month: current_month, dismiss_notification: true } },
-               headers: headers
+               headers: headers,
+               as: :json
 
           expect(response).to have_http_status(:ok)
           json_response = response.parsed_body
