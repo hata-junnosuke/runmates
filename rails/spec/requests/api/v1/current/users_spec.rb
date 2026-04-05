@@ -2,7 +2,7 @@ require "rails_helper"
 
 RSpec.describe "Api::V1::Current::Users" do
   describe "GET api/v1/current/user" do
-    subject { get(api_v1_current_user_path, headers:) }
+    subject { get(api_v1_current_user_path, headers:, as: :json) }
 
     let(:current_user) { create(:user) }
     let(:headers) { current_user.create_new_auth_token }
@@ -41,7 +41,8 @@ RSpec.describe "Api::V1::Current::Users" do
           expect {
             delete api_v1_current_user_path,
                    params: { password: "password123" },
-                   headers: headers
+                   headers: headers,
+                   as: :json
           }.to change { User.count }.by(-1)
 
           expect(response).to have_http_status(:ok)
@@ -58,7 +59,8 @@ RSpec.describe "Api::V1::Current::Users" do
           expect {
             delete api_v1_current_user_path,
                    params: { password: "password123" },
-                   headers: headers
+                   headers: headers,
+                   as: :json
           }.to change { RunningRecord.count }.by(-1).
                  and change { MonthlyGoal.count }.by(-1).
                        and change { YearlyGoal.count }.by(-1)
@@ -69,7 +71,8 @@ RSpec.describe "Api::V1::Current::Users" do
 
           delete api_v1_current_user_path,
                  params: { password: "password123" },
-                 headers: headers
+                 headers: headers,
+                 as: :json
 
           expect(Rails.logger).to have_received(:info).with(/User deletion initiated/)
           expect(Rails.logger).to have_received(:info).with(/User deletion completed/)
@@ -80,7 +83,8 @@ RSpec.describe "Api::V1::Current::Users" do
         it "エラーが返されユーザーは削除されない" do
           delete api_v1_current_user_path,
                  params: { password: "wrongpassword" },
-                 headers: headers
+                 headers: headers,
+                 as: :json
 
           expect(response).to have_http_status(:unprocessable_content)
           res = response.parsed_body
@@ -91,7 +95,7 @@ RSpec.describe "Api::V1::Current::Users" do
 
       context "パスワードが提供されない場合" do
         it "エラーが返される" do
-          delete api_v1_current_user_path, headers: headers
+          delete api_v1_current_user_path, headers: headers, as: :json
 
           expect(response).to have_http_status(:unprocessable_content)
           res = response.parsed_body
@@ -111,7 +115,8 @@ RSpec.describe "Api::V1::Current::Users" do
           expect {
             delete api_v1_current_user_path,
                    params: { password: "password123" },
-                   headers: headers
+                   headers: headers,
+                   as: :json
           }.not_to change { User.count }
 
           expect(response).to have_http_status(:unprocessable_content)
@@ -124,7 +129,7 @@ RSpec.describe "Api::V1::Current::Users" do
 
     context "未認証の場合" do
       it "unauthorized エラーが返る" do
-        delete api_v1_current_user_path, params: { password: "password123" }
+        delete api_v1_current_user_path, params: { password: "password123" }, as: :json
         expect(response).to have_http_status(:unauthorized)
       end
     end

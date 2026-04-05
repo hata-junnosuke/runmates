@@ -9,13 +9,15 @@ RSpec.describe "Rack::Attack", :rack_attack do
     it "10回までは許可し、11回目で429を返す" do
       10.times do
         post "/api/v1/auth/sign_in",
-             params: { email: "test@example.com", password: "password" }.to_json,
-             headers: { "CONTENT_TYPE" => "application/json", "REMOTE_ADDR" => ip }
+             params: { email: "test@example.com", password: "password" },
+             headers: { "REMOTE_ADDR" => ip },
+             as: :json
       end
 
       post "/api/v1/auth/sign_in",
-           params: { email: "test@example.com", password: "password" }.to_json,
-           headers: { "CONTENT_TYPE" => "application/json", "REMOTE_ADDR" => ip }
+           params: { email: "test@example.com", password: "password" },
+           headers: { "REMOTE_ADDR" => ip },
+           as: :json
 
       expect(response).to have_http_status(:too_many_requests)
     end
@@ -25,13 +27,15 @@ RSpec.describe "Rack::Attack", :rack_attack do
     it "5回までは許可し、6回目で429を返す" do
       5.times do
         post "/api/v1/auth/password",
-             params: { email: "test@example.com" }.to_json,
-             headers: { "CONTENT_TYPE" => "application/json", "REMOTE_ADDR" => ip }
+             params: { email: "test@example.com" },
+             headers: { "REMOTE_ADDR" => ip },
+             as: :json
       end
 
       post "/api/v1/auth/password",
-           params: { email: "test@example.com" }.to_json,
-           headers: { "CONTENT_TYPE" => "application/json", "REMOTE_ADDR" => ip }
+           params: { email: "test@example.com" },
+           headers: { "REMOTE_ADDR" => ip },
+           as: :json
 
       expect(response).to have_http_status(:too_many_requests)
     end
@@ -41,13 +45,15 @@ RSpec.describe "Rack::Attack", :rack_attack do
     it "3回までは許可し、4回目で429を返す" do
       3.times do
         post "/api/v1/auth",
-             params: { email: "test@example.com", password: "password", password_confirmation: "password" }.to_json,
-             headers: { "CONTENT_TYPE" => "application/json", "REMOTE_ADDR" => ip }
+             params: { email: "test@example.com", password: "password", password_confirmation: "password" },
+             headers: { "REMOTE_ADDR" => ip },
+             as: :json
       end
 
       post "/api/v1/auth",
-           params: { email: "test@example.com", password: "password", password_confirmation: "password" }.to_json,
-           headers: { "CONTENT_TYPE" => "application/json", "REMOTE_ADDR" => ip }
+           params: { email: "test@example.com", password: "password", password_confirmation: "password" },
+           headers: { "REMOTE_ADDR" => ip },
+           as: :json
 
       expect(response).to have_http_status(:too_many_requests)
     end
@@ -57,8 +63,9 @@ RSpec.describe "Rack::Attack", :rack_attack do
     it "JSON形式でエラーメッセージとRetry-Afterヘッダーを返す" do
       11.times do
         post "/api/v1/auth/sign_in",
-             params: { email: "test@example.com", password: "password" }.to_json,
-             headers: { "CONTENT_TYPE" => "application/json", "REMOTE_ADDR" => ip }
+             params: { email: "test@example.com", password: "password" },
+             headers: { "REMOTE_ADDR" => ip },
+             as: :json
       end
 
       expect(response.content_type).to include("application/json")
@@ -72,13 +79,15 @@ RSpec.describe "Rack::Attack", :rack_attack do
     it "異なるIPからは制限を受けない" do
       10.times do
         post "/api/v1/auth/sign_in",
-             params: { email: "test@example.com", password: "password" }.to_json,
-             headers: { "CONTENT_TYPE" => "application/json", "REMOTE_ADDR" => ip }
+             params: { email: "test@example.com", password: "password" },
+             headers: { "REMOTE_ADDR" => ip },
+             as: :json
       end
 
       post "/api/v1/auth/sign_in",
-           params: { email: "test@example.com", password: "password" }.to_json,
-           headers: { "CONTENT_TYPE" => "application/json", "REMOTE_ADDR" => "5.6.7.8" }
+           params: { email: "test@example.com", password: "password" },
+           headers: { "REMOTE_ADDR" => "5.6.7.8" },
+           as: :json
 
       expect(response).not_to have_http_status(:too_many_requests)
     end

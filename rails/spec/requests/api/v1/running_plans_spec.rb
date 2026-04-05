@@ -13,7 +13,7 @@ RSpec.describe "Api::V1::RunningPlans" do
       end
 
       it "現在月の予定一覧を返す" do
-        get "/api/v1/running_plans", headers: headers
+        get "/api/v1/running_plans", headers: headers, as: :json
 
         expect(response).to have_http_status(:ok)
         json = response.parsed_body
@@ -31,7 +31,7 @@ RSpec.describe "Api::V1::RunningPlans" do
 
     context "未認証ユーザーの場合" do
       it "401を返す" do
-        get "/api/v1/running_plans"
+        get "/api/v1/running_plans", as: :json
         expect(response).to have_http_status(:unauthorized)
       end
     end
@@ -51,7 +51,7 @@ RSpec.describe "Api::V1::RunningPlans" do
     context "認証済みユーザーの場合" do
       it "予定を作成する" do
         expect {
-          post "/api/v1/running_plans", params: valid_params, headers: headers
+          post "/api/v1/running_plans", params: valid_params, headers: headers, as: :json
         }.to change { RunningPlan.count }.by(1)
 
         expect(response).to have_http_status(:created)
@@ -66,7 +66,7 @@ RSpec.describe "Api::V1::RunningPlans" do
           },
         }
 
-        post "/api/v1/running_plans", params: invalid_params, headers: headers
+        post "/api/v1/running_plans", params: invalid_params, headers: headers, as: :json
 
         expect(response).to have_http_status(:unprocessable_content)
         expect(response.parsed_body["errors"]).to be_present
@@ -75,7 +75,7 @@ RSpec.describe "Api::V1::RunningPlans" do
 
     context "未認証ユーザーの場合" do
       it "401を返す" do
-        post "/api/v1/running_plans", params: valid_params
+        post "/api/v1/running_plans", params: valid_params, as: :json
         expect(response).to have_http_status(:unauthorized)
       end
     end
@@ -88,7 +88,8 @@ RSpec.describe "Api::V1::RunningPlans" do
       it "予定を更新する" do
         patch "/api/v1/running_plans/#{plan.id}",
               params: { running_plan: { planned_distance: 8.0 } },
-              headers: headers
+              headers: headers,
+              as: :json
 
         expect(response).to have_http_status(:ok)
         expect(plan.reload.planned_distance).to eq(8.0)
@@ -101,7 +102,8 @@ RSpec.describe "Api::V1::RunningPlans" do
 
         patch "/api/v1/running_plans/#{other_plan.id}",
               params: { running_plan: { planned_distance: 9.0 } },
-              headers: headers
+              headers: headers,
+              as: :json
 
         expect(response.status).to be_in([404, 401, 403])
       end
@@ -109,7 +111,7 @@ RSpec.describe "Api::V1::RunningPlans" do
 
     context "未認証ユーザーの場合" do
       it "401を返す" do
-        patch "/api/v1/running_plans/#{plan.id}", params: { running_plan: { planned_distance: 8.0 } }
+        patch "/api/v1/running_plans/#{plan.id}", params: { running_plan: { planned_distance: 8.0 } }, as: :json
         expect(response).to have_http_status(:unauthorized)
       end
     end
@@ -121,7 +123,7 @@ RSpec.describe "Api::V1::RunningPlans" do
     context "認証済みユーザーの場合" do
       it "予定を削除する" do
         expect {
-          delete "/api/v1/running_plans/#{plan.id}", headers: headers
+          delete "/api/v1/running_plans/#{plan.id}", headers: headers, as: :json
         }.to change { RunningPlan.count }.by(-1)
 
         expect(response).to have_http_status(:no_content)
@@ -130,7 +132,7 @@ RSpec.describe "Api::V1::RunningPlans" do
 
     context "未認証ユーザーの場合" do
       it "401を返す" do
-        delete "/api/v1/running_plans/#{plan.id}"
+        delete "/api/v1/running_plans/#{plan.id}", as: :json
         expect(response).to have_http_status(:unauthorized)
       end
     end

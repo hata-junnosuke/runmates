@@ -13,7 +13,7 @@ RSpec.describe "Api::V1::MonthlyGoals" do
       end
 
       it "月次目標一覧を年月の降順で返す" do
-        get "/api/v1/monthly_goals", headers: headers
+        get "/api/v1/monthly_goals", headers: headers, as: :json
 
         expect(response).to have_http_status(:ok)
         json = response.parsed_body
@@ -25,7 +25,7 @@ RSpec.describe "Api::V1::MonthlyGoals" do
 
     context "未認証ユーザーの場合" do
       it "401を返す" do
-        get "/api/v1/monthly_goals"
+        get "/api/v1/monthly_goals", as: :json
         expect(response).to have_http_status(:unauthorized)
       end
     end
