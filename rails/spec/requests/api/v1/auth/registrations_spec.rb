@@ -14,19 +14,19 @@ RSpec.describe "Api::V1::Auth::Registrations" do
     context "有効なパラメータの場合" do
       it "新しいユーザーを作成すること" do
         expect {
-          post "/api/v1/auth", params: valid_params
+          post "/api/v1/auth", params: valid_params, as: :json
         }.to change { User.count }.by(1)
       end
 
       it "確認メールを送信すること" do
         expect {
-          post "/api/v1/auth", params: valid_params
+          post "/api/v1/auth", params: valid_params, as: :json
         }.to have_enqueued_job(UserMailerJob).
                with("confirmation_email", instance_of(User), instance_of(String))
       end
 
       it "認証ヘッダーが設定されないこと" do
-        post "/api/v1/auth", params: valid_params
+        post "/api/v1/auth", params: valid_params, as: :json
         # 確認が完了していないため、認証トークンは設定されない
         expect(response.headers["access-token"]).to be_nil
         expect(response.headers["client"]).to be_nil
@@ -34,7 +34,7 @@ RSpec.describe "Api::V1::Auth::Registrations" do
       end
 
       it "成功レスポンスを返すこと" do
-        post "/api/v1/auth", params: valid_params
+        post "/api/v1/auth", params: valid_params, as: :json
         expect(response).to have_http_status(:ok)
         json = response.parsed_body
         expect(json["status"]).to eq("success")
@@ -47,18 +47,18 @@ RSpec.describe "Api::V1::Auth::Registrations" do
 
       it "ユーザーを作成しないこと" do
         expect {
-          post "/api/v1/auth", params: invalid_params
+          post "/api/v1/auth", params: invalid_params, as: :json
         }.not_to change { User.count }
       end
 
       it "メールを送信しないこと" do
         expect {
-          post "/api/v1/auth", params: invalid_params
+          post "/api/v1/auth", params: invalid_params, as: :json
         }.not_to have_enqueued_job(ActionMailer::MailDeliveryJob)
       end
 
       it "エラーレスポンスを返すこと" do
-        post "/api/v1/auth", params: invalid_params
+        post "/api/v1/auth", params: invalid_params, as: :json
         expect(response).to have_http_status(:unprocessable_content)
         json = response.parsed_body
         expect(json["status"]).to eq("error")

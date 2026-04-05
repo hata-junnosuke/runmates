@@ -28,6 +28,7 @@ paths:
 ## テスト
 - モデルテストは必須。バリデーション・スコープ・メソッドをカバーする
 - テストデータはFactoryBotを使用する（`rails/spec/factories/`配下）
+- request specではHTTPリクエストに `as: :json` を必ず指定する（本番のAPI呼び出しと同じJSON送信にするため）。ただしGETリクエストでparamsを渡す場合は `as: :json` を付けない（paramsがJSON bodyとして送信されクエリパラメータとして認識されないため）
 
 ## レビュー
 - Railsコードの変更後は必ず `ruby-on-rails-best-practices` スキルでRails Way準拠をチェックする

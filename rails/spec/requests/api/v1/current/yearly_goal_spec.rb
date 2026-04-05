@@ -11,7 +11,7 @@ RSpec.describe "Api::V1::Current::YearlyGoal" do
         let!(:yearly_goal) { create(:yearly_goal, :with_medium_goal, user: user, year: current_year) }
 
         it "今年の目標を返すこと" do
-          get "/api/v1/current/yearly_goal", headers: headers
+          get "/api/v1/current/yearly_goal", headers: headers, as: :json
 
           expect(response).to have_http_status(:ok)
 
@@ -25,7 +25,7 @@ RSpec.describe "Api::V1::Current::YearlyGoal" do
 
       context "今年の目標が存在しない場合" do
         it "デフォルト値を含むオブジェクトを返すこと" do
-          get "/api/v1/current/yearly_goal", headers: headers
+          get "/api/v1/current/yearly_goal", headers: headers, as: :json
 
           expect(response).to have_http_status(:ok)
 
@@ -43,7 +43,7 @@ RSpec.describe "Api::V1::Current::YearlyGoal" do
         let!(:past_goal) { create(:yearly_goal, :for_previous_year, :with_medium_low_goal_alt, user: user) }
 
         it "今年のデフォルト値を返すこと" do
-          get "/api/v1/current/yearly_goal", headers: headers
+          get "/api/v1/current/yearly_goal", headers: headers, as: :json
 
           expect(response).to have_http_status(:ok)
 
@@ -57,7 +57,7 @@ RSpec.describe "Api::V1::Current::YearlyGoal" do
 
     context "未認証ユーザーの場合" do
       it "401エラーを返すこと" do
-        get "/api/v1/current/yearly_goal"
+        get "/api/v1/current/yearly_goal", as: :json
 
         expect(response).to have_http_status(:unauthorized)
       end
@@ -71,7 +71,8 @@ RSpec.describe "Api::V1::Current::YearlyGoal" do
           expect {
             post "/api/v1/current/yearly_goal",
                  params: { yearly_goal: { year: current_year, distance_goal: 1200.0 } },
-                 headers: headers
+                 headers: headers,
+                 as: :json
           }.to change { YearlyGoal.count }.by(1)
 
           expect(response).to have_http_status(:created)
@@ -85,7 +86,8 @@ RSpec.describe "Api::V1::Current::YearlyGoal" do
           expect {
             post "/api/v1/current/yearly_goal",
                  params: { yearly_goal: { distance_goal: 800.0 } },
-                 headers: headers
+                 headers: headers,
+                 as: :json
           }.to change { YearlyGoal.count }.by(1)
 
           expect(response).to have_http_status(:created)
@@ -103,7 +105,8 @@ RSpec.describe "Api::V1::Current::YearlyGoal" do
           expect {
             post "/api/v1/current/yearly_goal",
                  params: { yearly_goal: { year: current_year, distance_goal: 1500.0 } },
-                 headers: headers
+                 headers: headers,
+                 as: :json
           }.not_to change { YearlyGoal.count }
 
           expect(response).to have_http_status(:ok)
@@ -136,7 +139,8 @@ RSpec.describe "Api::V1::Current::YearlyGoal" do
 
           post "/api/v1/current/yearly_goal",
                params: { yearly_goal: { year: current_year, distance_goal: 2000.0 } },
-               headers: headers
+               headers: headers,
+               as: :json
 
           expect(response).to have_http_status(:ok)
           json_response = response.parsed_body
@@ -149,7 +153,8 @@ RSpec.describe "Api::V1::Current::YearlyGoal" do
         it "エラーを返すこと" do
           post "/api/v1/current/yearly_goal",
                params: { yearly_goal: { year: current_year, distance_goal: 0 } },
-               headers: headers
+               headers: headers,
+               as: :json
 
           expect(response).to have_http_status(:unprocessable_content)
 
@@ -162,7 +167,8 @@ RSpec.describe "Api::V1::Current::YearlyGoal" do
     context "未認証ユーザーの場合" do
       it "401エラーを返すこと" do
         post "/api/v1/current/yearly_goal",
-             params: { yearly_goal: { distance_goal: 1000.0 } }
+             params: { yearly_goal: { distance_goal: 1000.0 } },
+             as: :json
 
         expect(response).to have_http_status(:unauthorized)
       end

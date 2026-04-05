@@ -14,13 +14,13 @@ RSpec.describe "Api::V1::Auth::Passwords" do
     context "存在するメールアドレスの場合" do
       it "パスワードリセットメールを送信すること" do
         expect {
-          post "/api/v1/auth/password", params: valid_params
+          post "/api/v1/auth/password", params: valid_params, as: :json
         }.to have_enqueued_job(UserMailerJob).
                with("password_reset", user, instance_of(String))
       end
 
       it "成功レスポンスを返すこと" do
-        post "/api/v1/auth/password", params: valid_params
+        post "/api/v1/auth/password", params: valid_params, as: :json
         expect(response).to have_http_status(:ok)
         json = response.parsed_body
         expect(json["success"]).to be true
@@ -32,7 +32,7 @@ RSpec.describe "Api::V1::Auth::Passwords" do
       let(:invalid_params) { valid_params.merge(email: "notfound@example.com") }
 
       it "エラーレスポンスを返すこと" do
-        post "/api/v1/auth/password", params: invalid_params
+        post "/api/v1/auth/password", params: invalid_params, as: :json
         expect(response).to have_http_status(:not_found)
         json = response.parsed_body
         expect(json["success"]).to be false
@@ -54,7 +54,7 @@ RSpec.describe "Api::V1::Auth::Passwords" do
       end
 
       it "パスワードを更新し、認証クッキーを設定すること" do
-        put "/api/v1/auth/password", params: valid_params
+        put "/api/v1/auth/password", params: valid_params, as: :json
 
         expect(response).to have_http_status(:ok)
 
@@ -83,7 +83,7 @@ RSpec.describe "Api::V1::Auth::Passwords" do
       end
 
       it "エラーレスポンスを返すこと" do
-        put "/api/v1/auth/password", params: invalid_params
+        put "/api/v1/auth/password", params: invalid_params, as: :json
 
         expect(response).to have_http_status(:unprocessable_content)
 
@@ -106,7 +106,7 @@ RSpec.describe "Api::V1::Auth::Passwords" do
       end
 
       it "エラーレスポンスを返すこと" do
-        put "/api/v1/auth/password", params: mismatched_params
+        put "/api/v1/auth/password", params: mismatched_params, as: :json
 
         expect(response).to have_http_status(:unprocessable_content)
 
@@ -132,7 +132,7 @@ RSpec.describe "Api::V1::Auth::Passwords" do
       end
 
       it "エラーレスポンスを返すこと" do
-        put "/api/v1/auth/password", params: empty_password_params
+        put "/api/v1/auth/password", params: empty_password_params, as: :json
 
         expect(response).to have_http_status(:unprocessable_content)
 
@@ -164,7 +164,7 @@ RSpec.describe "Api::V1::Auth::Passwords" do
       end
 
       it "期限切れでもパスワードリセットを行うこと" do
-        put "/api/v1/auth/password", params: expired_params
+        put "/api/v1/auth/password", params: expired_params, as: :json
 
         # DeviseTokenAuthは期限切れトークンでも処理を行う場合がある
         expect(response).to have_http_status(:ok)
