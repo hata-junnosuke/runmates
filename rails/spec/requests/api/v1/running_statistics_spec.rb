@@ -25,7 +25,7 @@ RSpec.describe "Api::V1::RunningStatistics" do
       end
 
       it "統計情報を返すこと" do
-        get "/api/v1/running_statistics", headers: headers
+        get "/api/v1/running_statistics", headers: headers, as: :json
 
         expect(response).to have_http_status(:ok)
 
@@ -52,7 +52,7 @@ RSpec.describe "Api::V1::RunningStatistics" do
         end
 
         it "0の統計情報を返すこと" do
-          get "/api/v1/running_statistics", headers: headers
+          get "/api/v1/running_statistics", headers: headers, as: :json
 
           expect(response).to have_http_status(:ok)
 
@@ -68,7 +68,7 @@ RSpec.describe "Api::V1::RunningStatistics" do
 
     context "未認証ユーザーの場合" do
       it "401エラーを返すこと" do
-        get "/api/v1/running_statistics"
+        get "/api/v1/running_statistics", as: :json
 
         expect(response).to have_http_status(:unauthorized)
       end

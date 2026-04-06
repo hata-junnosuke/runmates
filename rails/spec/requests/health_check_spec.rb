@@ -2,7 +2,7 @@ require "rails_helper"
 
 RSpec.describe "HealthCheck" do
   describe "GET /api/v1/health_check" do
-    subject { get(api_v1_health_check_path) }
+    subject { get(api_v1_health_check_path, as: :json) }
 
     it "正常にレスポンスが返る" do
       subject

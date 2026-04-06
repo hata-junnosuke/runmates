@@ -10,7 +10,7 @@ RSpec.describe "Api::V1::Auth::EmailConfirmations" do
         user.request_email_change(new_email)
       end
 
-      it "メールアドレスを変更し、成功レスポンスを返すこと" do # rubocop:disable RSpec/ExampleLength
+      it "メールアドレスを変更し、成功レスポンスを返すこと" do
         token = user.instance_variable_get(:@confirmation_token) ||
                 SecureRandom.urlsafe_base64(32)
         # トークンを再生成して保存
@@ -47,7 +47,7 @@ RSpec.describe "Api::V1::Auth::EmailConfirmations" do
 
     context "トークンが提供されない場合" do
       it "エラーレスポンスを返すこと" do
-        get "/api/v1/auth/email_confirmation"
+        get "/api/v1/auth/email_confirmation", as: :json
 
         expect(response).to have_http_status(:bad_request)
         json = response.parsed_body

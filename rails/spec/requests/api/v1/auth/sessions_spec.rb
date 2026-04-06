@@ -7,7 +7,7 @@ RSpec.describe "Api::V1::Auth::Sessions" do
 
       context "正しい認証情報の場合" do
         it "ログインに成功し、認証クッキーを設定すること" do
-          post "/api/v1/auth/sign_in", params: { email: user.email, password: "password123" }
+          post "/api/v1/auth/sign_in", params: { email: user.email, password: "password123" }, as: :json
 
           expect(response).to have_http_status(:ok)
 
@@ -23,7 +23,7 @@ RSpec.describe "Api::V1::Auth::Sessions" do
 
       context "誤ったパスワードの場合" do
         it "ログインに失敗すること" do
-          post "/api/v1/auth/sign_in", params: { email: user.email, password: "wrong_password" }
+          post "/api/v1/auth/sign_in", params: { email: user.email, password: "wrong_password" }, as: :json
 
           expect(response).to have_http_status(:unauthorized)
 
@@ -39,7 +39,7 @@ RSpec.describe "Api::V1::Auth::Sessions" do
 
       context "存在しないメールアドレスの場合" do
         it "ログインに失敗すること" do
-          post "/api/v1/auth/sign_in", params: { email: "nonexistent@example.com", password: "password123" }
+          post "/api/v1/auth/sign_in", params: { email: "nonexistent@example.com", password: "password123" }, as: :json
 
           expect(response).to have_http_status(:unauthorized)
 
@@ -53,7 +53,7 @@ RSpec.describe "Api::V1::Auth::Sessions" do
       let(:unconfirmed_user) { create(:user, confirmed_at: nil, password: "password123") }
 
       it "ログインに失敗し、確認が必要なメッセージを返すこと" do
-        post "/api/v1/auth/sign_in", params: { email: unconfirmed_user.email, password: "password123" }
+        post "/api/v1/auth/sign_in", params: { email: unconfirmed_user.email, password: "password123" }, as: :json
 
         expect(response).to have_http_status(:unauthorized)
 
@@ -77,7 +77,7 @@ RSpec.describe "Api::V1::Auth::Sessions" do
       let(:headers) { user.create_new_auth_token }
 
       it "ログアウトに成功し、認証クッキーをクリアすること" do
-        delete "/api/v1/auth/sign_out", headers: headers
+        delete "/api/v1/auth/sign_out", headers: headers, as: :json
 
         expect(response).to have_http_status(:ok)
 
@@ -92,7 +92,7 @@ RSpec.describe "Api::V1::Auth::Sessions" do
 
     context "未認証ユーザーの場合" do
       it "404エラーを返すこと" do
-        delete "/api/v1/auth/sign_out"
+        delete "/api/v1/auth/sign_out", as: :json
 
         expect(response).to have_http_status(:not_found)
       end

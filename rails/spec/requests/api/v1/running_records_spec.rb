@@ -14,7 +14,7 @@ RSpec.describe "Api::V1::RunningRecords" do
       end
 
       it "ランニングレコード一覧を返す" do
-        get "/api/v1/running_records", headers: headers
+        get "/api/v1/running_records", headers: headers, as: :json
 
         expect(response).to have_http_status(:ok)
         json = response.parsed_body
@@ -31,7 +31,7 @@ RSpec.describe "Api::V1::RunningRecords" do
         create(:running_record, user: user, date: Date.current.beginning_of_month)
         create(:running_record, user: user, date: Date.current)
 
-        get "/api/v1/running_records", headers: headers
+        get "/api/v1/running_records", headers: headers, as: :json
 
         expect(response).to have_http_status(:ok)
         json = response.parsed_body
@@ -56,7 +56,7 @@ RSpec.describe "Api::V1::RunningRecords" do
 
     context "未認証ユーザーの場合" do
       it "401を返す" do
-        get "/api/v1/running_records"
+        get "/api/v1/running_records", as: :json
         expect(response).to have_http_status(:unauthorized)
       end
     end
@@ -67,7 +67,7 @@ RSpec.describe "Api::V1::RunningRecords" do
 
     context "認証済みユーザーの場合" do
       it "指定されたランニングレコードを返す" do
-        get "/api/v1/running_records/#{running_record.id}", headers: headers
+        get "/api/v1/running_records/#{running_record.id}", headers: headers, as: :json
 
         expect(response).to have_http_status(:ok)
         json = response.parsed_body
@@ -79,7 +79,7 @@ RSpec.describe "Api::V1::RunningRecords" do
         other_user = create(:user)
         other_record = create(:running_record, user: other_user)
 
-        get "/api/v1/running_records/#{other_record.id}", headers: headers
+        get "/api/v1/running_records/#{other_record.id}", headers: headers, as: :json
         # レコードが見つからない場合の動作を確認
         # 実装によってはステータスが違う可能性があるため、現在の実装を受け入れる
         expect(response.status).to be_in([404, 401, 403])
@@ -88,7 +88,7 @@ RSpec.describe "Api::V1::RunningRecords" do
 
     context "未認証ユーザーの場合" do
       it "401を返す" do
-        get "/api/v1/running_records/#{running_record.id}"
+        get "/api/v1/running_records/#{running_record.id}", as: :json
         expect(response).to have_http_status(:unauthorized)
       end
     end
@@ -108,7 +108,7 @@ RSpec.describe "Api::V1::RunningRecords" do
       context "有効なパラメータの場合" do
         it "新しいランニングレコードを作成する" do
           expect {
-            post "/api/v1/running_records", params: valid_params, headers: headers
+            post "/api/v1/running_records", params: valid_params, headers: headers, as: :json
           }.to change { RunningRecord.count }.by(1)
 
           expect(response).to have_http_status(:created)
@@ -116,9 +116,9 @@ RSpec.describe "Api::V1::RunningRecords" do
           expect(json["distance"]).to eq("5.0")
         end
 
-        it "同じ日付で複数のレコードを作成できる" do # rubocop:disable RSpec/ExampleLength
+        it "同じ日付で複数のレコードを作成できる" do
           # 1つ目のレコード
-          post "/api/v1/running_records", params: valid_params, headers: headers
+          post "/api/v1/running_records", params: valid_params, headers: headers, as: :json
           expect(response).to have_http_status(:created)
 
           # 2つ目のレコード（同じ日付）
@@ -129,7 +129,7 @@ RSpec.describe "Api::V1::RunningRecords" do
             },
           }
           expect {
-            post "/api/v1/running_records", params: second_params, headers: headers
+            post "/api/v1/running_records", params: second_params, headers: headers, as: :json
           }.to change { RunningRecord.count }.by(1)
 
           expect(response).to have_http_status(:created)
@@ -152,7 +152,7 @@ RSpec.describe "Api::V1::RunningRecords" do
         end
 
         it "422を返し、エラーメッセージを含む" do
-          post "/api/v1/running_records", params: invalid_params, headers: headers
+          post "/api/v1/running_records", params: invalid_params, headers: headers, as: :json
 
           expect(response).to have_http_status(:unprocessable_content)
           json = response.parsed_body
@@ -167,7 +167,7 @@ RSpec.describe "Api::V1::RunningRecords" do
             },
           }
 
-          post "/api/v1/running_records", params: params, headers: headers
+          post "/api/v1/running_records", params: params, headers: headers, as: :json
 
           expect(response).to have_http_status(:unprocessable_content)
           json = response.parsed_body
@@ -182,7 +182,7 @@ RSpec.describe "Api::V1::RunningRecords" do
             },
           }
 
-          post "/api/v1/running_records", params: params, headers: headers
+          post "/api/v1/running_records", params: params, headers: headers, as: :json
 
           expect(response).to have_http_status(:unprocessable_content)
           json = response.parsed_body
@@ -193,7 +193,7 @@ RSpec.describe "Api::V1::RunningRecords" do
 
     context "未認証ユーザーの場合" do
       it "401を返す" do
-        post "/api/v1/running_records", params: valid_params
+        post "/api/v1/running_records", params: valid_params, as: :json
         expect(response).to have_http_status(:unauthorized)
       end
     end
@@ -213,7 +213,7 @@ RSpec.describe "Api::V1::RunningRecords" do
       context "有効なパラメータの場合" do
         it "ランニングレコードを更新する" do
           patch "/api/v1/running_records/#{running_record.id}",
-                params: update_params, headers: headers
+                params: update_params, headers: headers, as: :json
 
           expect(response).to have_http_status(:ok)
           running_record.reload
@@ -232,7 +232,7 @@ RSpec.describe "Api::V1::RunningRecords" do
 
         it "422を返し、エラーメッセージを含む" do
           patch "/api/v1/running_records/#{running_record.id}",
-                params: invalid_params, headers: headers
+                params: invalid_params, headers: headers, as: :json
 
           expect(response).to have_http_status(:unprocessable_content)
           json = response.parsed_body
@@ -243,7 +243,7 @@ RSpec.describe "Api::V1::RunningRecords" do
 
     context "未認証ユーザーの場合" do
       it "401を返す" do
-        patch "/api/v1/running_records/#{running_record.id}", params: update_params
+        patch "/api/v1/running_records/#{running_record.id}", params: update_params, as: :json
         expect(response).to have_http_status(:unauthorized)
       end
     end
@@ -255,7 +255,7 @@ RSpec.describe "Api::V1::RunningRecords" do
     context "認証済みユーザーの場合" do
       it "ランニングレコードを削除する" do
         expect {
-          delete "/api/v1/running_records/#{running_record.id}", headers: headers
+          delete "/api/v1/running_records/#{running_record.id}", headers: headers, as: :json
         }.to change { RunningRecord.count }.by(-1)
 
         expect(response).to have_http_status(:no_content)
@@ -266,7 +266,7 @@ RSpec.describe "Api::V1::RunningRecords" do
         other_record = create(:running_record, user: other_user)
 
         expect {
-          delete "/api/v1/running_records/#{other_record.id}", headers: headers
+          delete "/api/v1/running_records/#{other_record.id}", headers: headers, as: :json
         }.not_to change { RunningRecord.count }
 
         expect(response.status).to be_in([404, 401, 403])
@@ -274,7 +274,7 @@ RSpec.describe "Api::V1::RunningRecords" do
 
       it "存在しないレコードを削除しようとすると404を返す" do
         non_existent_id = 99999
-        delete "/api/v1/running_records/#{non_existent_id}", headers: headers
+        delete "/api/v1/running_records/#{non_existent_id}", headers: headers, as: :json
 
         expect(response).to have_http_status(:not_found)
       end
@@ -282,7 +282,7 @@ RSpec.describe "Api::V1::RunningRecords" do
 
     context "未認証ユーザーの場合" do
       it "401を返す" do
-        delete "/api/v1/running_records/#{running_record.id}"
+        delete "/api/v1/running_records/#{running_record.id}", as: :json
         expect(response).to have_http_status(:unauthorized)
       end
     end
