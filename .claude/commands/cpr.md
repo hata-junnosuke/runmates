@@ -17,8 +17,12 @@ disable-model-invocation: true
      - 更新する場合: コミット・プッシュ後、`gh pr edit` でPRのタイトル・本文を更新する
      - 新規作成する場合: 通常のPR作成フローに進む
    - **既存PRがない場合**: 新規PR作成フローに進む
-3. コミットしてPRを作成（または更新）する
+3. `git status` と `git diff` で変更内容をユーザーに提示し、`git add` の承認を得る
+   - **承認を得るまで `git add` は実行しない**
+4. コミットしてPRを作成（または更新）する
+   - `.github/PULL_REQUEST_TEMPLATE.md` のテンプレートに沿って本文を作成する
+   - 関連Issueは `Fixes #番号` で紐付ける
    - pre-commit hookが自動でrspec/rubocop/npm run lintを実行する
    - hookが失敗した場合は原因を修正して再コミットする
-4. issueの内容も更新する
-5. ライブラリを追加した場合はPRに用途と使い方を記載する
+5. issueの内容も更新する
+6. ライブラリを追加した場合はPRに用途と使い方を記載する
