@@ -29,9 +29,10 @@ disable-model-invocation: true
    - Issue番号、タイトル、本文（Phase 0で取得した内容）
    - Issueのラベル（Feature / Bug）
    - 仕様書の出力先パス
-5. Plannerが仕様書を出力する
-6. 仕様書の内容をユーザーに提示し、AskUserQuestionで承認を得る
-   - 修正が必要な場合はPlannerを再度起動して修正する
+5. Plannerの結果を確認する:
+   - **不要と判断された場合**: 理由と代替案をユーザーに報告し、処理を終了する
+   - **仕様書が生成された場合**: 仕様書の内容をユーザーに提示し、AskUserQuestionで承認を得る
+     - 修正が必要な場合はPlannerを再度起動して修正する
 
 ### Phase 2: 実装（Generator エージェント）
 
