@@ -635,6 +635,10 @@ paths:
                         type: number
                         format: float
                         description: 最長走行距離（km）
+                      this_month_planned_distance:
+                        type: number
+                        format: float
+                        description: 今月かつ今日以降の未完了予定（status=planned）の planned_distance 合計（km）
                       current_month:
                         type: object
                         properties:

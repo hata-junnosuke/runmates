@@ -12,6 +12,7 @@ import CelebrationModal from './CelebrationModal';
 export default function DashboardStatistics({
   thisYearDistance,
   thisMonthDistance,
+  thisMonthPlannedDistance,
   monthlyGoalProgress,
   monthlyGoal,
   yearlyGoal,
@@ -36,6 +37,7 @@ export default function DashboardStatistics({
       <StatisticsCards
         thisYearDistance={thisYearDistance}
         thisMonthDistance={thisMonthDistance}
+        thisMonthPlannedDistance={thisMonthPlannedDistance}
         monthlyGoalProgress={monthlyGoalProgress}
         monthlyGoal={monthlyGoal}
         yearlyGoal={yearlyGoal}
