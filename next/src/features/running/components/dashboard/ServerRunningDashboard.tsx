@@ -54,6 +54,9 @@ async function DashboardData() {
 
     const thisYearDistance = Number(statistics?.this_year_distance || 0);
     const thisMonthDistance = Number(statistics?.this_month_distance || 0);
+    const thisMonthPlannedDistance = Number(
+      statistics?.this_month_planned_distance || 0,
+    );
 
     // 今月の目標を取得(設定してなければnull)
     const monthlyGoalValue = monthlyGoal?.distance_goal
@@ -95,6 +98,7 @@ async function DashboardData() {
         <DashboardStatistics
           thisYearDistance={thisYearDistance}
           thisMonthDistance={thisMonthDistance}
+          thisMonthPlannedDistance={thisMonthPlannedDistance}
           monthlyGoalProgress={monthlyGoalProgress}
           monthlyGoal={monthlyGoalValue}
           yearlyGoal={yearlyGoalValue}

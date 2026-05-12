@@ -8,6 +8,7 @@ type StatisticsCardsProps = Omit<
 export default function StatisticsCards({
   thisYearDistance,
   thisMonthDistance,
+  thisMonthPlannedDistance,
   monthlyGoalProgress,
   monthlyGoal,
   yearlyGoal,
@@ -98,6 +99,12 @@ export default function StatisticsCards({
             <p className="text-4xl font-black text-slate-900">
               {thisMonthDistance.toFixed(1)} km
             </p>
+            {thisMonthPlannedDistance > 0 && (
+              <p className="text-sm font-semibold text-cyan-700">
+                到達予定:{' '}
+                {(thisMonthDistance + thisMonthPlannedDistance).toFixed(1)} km
+              </p>
+            )}
             <p className="text-sm font-semibold text-cyan-800">
               練習日: {monthlyRunDays}日
             </p>

@@ -119,6 +119,7 @@ export default function DemoDashboard() {
       <StatisticsCards
         thisYearDistance={thisYearDistance}
         thisMonthDistance={thisMonthDistance}
+        thisMonthPlannedDistance={0}
         monthlyGoalProgress={monthlyGoalProgress}
         monthlyGoal={currentMonthGoal}
         yearlyGoal={yearlyGoal}

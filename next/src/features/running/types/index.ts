@@ -57,6 +57,7 @@ export interface YearlyGoal {
 export interface RunningStatistics {
   this_year_distance: number;
   this_month_distance: number;
+  this_month_planned_distance: number;
   total_records: number;
   recent_records: RunRecord[];
 }
@@ -71,6 +72,7 @@ export interface RunningStatistics {
 export interface DashboardStatisticsProps {
   thisYearDistance: number;
   thisMonthDistance: number;
+  thisMonthPlannedDistance: number;
   monthlyGoalProgress: number;
   monthlyGoal: number | null;
   yearlyGoal: number | null;
