@@ -2,7 +2,7 @@ import { Bebas_Neue, Manrope } from 'next/font/google';
 import Image from 'next/image';
 import Link from 'next/link';
 
-import DemoDashboard from './components/DemoDashboard';
+import DemoDashboard from '@/features/running/components/dashboard/DemoDashboard';
 
 const display = Bebas_Neue({
   subsets: ['latin'],
