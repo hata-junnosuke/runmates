@@ -17,6 +17,8 @@ disable-model-invocation: true
 
 ## 手順
 
+**重要**: 各サブエージェントは必ず `Agent` ツールの `subagent_type` パラメータに `"planner"` / `"generator"` / `"evaluator"` を指定して起動すること。`general-purpose` で代用しないこと（色分け・モデル指定が効かなくなる）。
+
 ### Phase 0: 準備
 
 1. `gh issue view $ARGUMENTS --json title,body,labels,assignees,number` でIssue内容を取得する
@@ -25,29 +27,29 @@ disable-model-invocation: true
 
 ### Phase 1: 計画（Planner エージェント）
 
-4. サブエージェント `planner` を起動する。以下の情報を渡す:
+4. `Agent` ツールを `subagent_type: "planner"` で起動する。以下の情報を渡す:
    - Issue番号、タイトル、本文（Phase 0で取得した内容）
    - Issueのラベル（Feature / Bug）
    - 仕様書の出力先パス
 5. Plannerの結果を確認する:
    - **不要と判断された場合**: 理由と代替案をユーザーに報告し、処理を終了する
    - **仕様書が生成された場合**: 仕様書の内容をユーザーに提示し、AskUserQuestionで承認を得る
-     - 修正が必要な場合はPlannerを再度起動して修正する
+     - 修正が必要な場合はPlannerを再度起動して修正する（同じく `subagent_type: "planner"`）
 
 ### Phase 2: 実装（Generator エージェント）
 
-7. サブエージェント `generator` を起動する。以下の情報を渡す:
+7. `Agent` ツールを `subagent_type: "generator"` で起動する。以下の情報を渡す:
    - 仕様書ファイルのパス
 8. Generatorが仕様書に基づいてTDDで実装する
 
 ### Phase 3: 評価（Evaluator エージェント）
 
-9. サブエージェント `evaluator` を起動する。以下の情報を渡す:
+9. `Agent` ツールを `subagent_type: "evaluator"` で起動する。以下の情報を渡す:
    - 仕様書ファイルのパス
 10. Evaluatorが総合評価を実施する（コード品質・テスト・受け入れ基準）
 11. 評価結果が **FAIL** の場合:
-    - 問題内容をまとめてGeneratorを再起動し修正する
-    - 修正後、再度Evaluatorで評価する
+    - 問題内容をまとめてGeneratorを再起動し修正する（同じく `subagent_type: "generator"`）
+    - 修正後、再度Evaluatorで評価する（同じく `subagent_type: "evaluator"`）
     - **最大3回まで**繰り返す。3回で解決しない場合はユーザーに報告して判断を仰ぐ
 12. 評価結果が **ALL PASS** の場合、完了処理へ進む
 
