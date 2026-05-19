@@ -1,22 +1,26 @@
 'use client';
 import { zodResolver } from '@hookform/resolvers/zod';
-import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState, useTransition } from 'react';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
 
-import { Button } from '@/components/ui/button';
 import {
   Form,
-  FormControl,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
 import { createAccountAction } from '@/features/auth/actions/auth-actions';
+
+import {
+  EmailControl,
+  labelClass,
+  messageClass,
+  PasswordControl,
+  submitButtonClass,
+} from './auth-fields';
 
 const createAccountSchema = z
   .object({
@@ -70,26 +74,19 @@ export default function CreateAccountForm() {
     });
   };
 
+  const disabled = isPending || form.formState.isSubmitting;
+
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
+      <form onSubmit={form.handleSubmit(onSubmit)} noValidate>
         <FormField
           control={form.control}
           name="email"
           render={({ field }) => (
-            <FormItem>
-              <FormLabel className="font-semibold text-gray-700">
-                メールアドレス
-              </FormLabel>
-              <FormControl>
-                <Input
-                  type="email"
-                  className="w-full rounded border px-4 py-2 focus:ring-2 focus:ring-green-400 focus:outline-none"
-                  disabled={isPending || form.formState.isSubmitting}
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
+            <FormItem className="mb-3 gap-1.5">
+              <FormLabel className={labelClass}>メールアドレス</FormLabel>
+              <EmailControl field={field} disabled={disabled} />
+              <FormMessage className={messageClass} />
             </FormItem>
           )}
         />
@@ -97,19 +94,14 @@ export default function CreateAccountForm() {
           control={form.control}
           name="password"
           render={({ field }) => (
-            <FormItem>
-              <FormLabel className="font-semibold text-gray-700">
-                パスワード
-              </FormLabel>
-              <FormControl>
-                <Input
-                  type="password"
-                  className="w-full rounded border px-4 py-2 focus:ring-2 focus:ring-green-400 focus:outline-none"
-                  disabled={isPending || form.formState.isSubmitting}
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
+            <FormItem className="mb-3 gap-1.5">
+              <FormLabel className={labelClass}>パスワード</FormLabel>
+              <PasswordControl
+                field={field}
+                disabled={disabled}
+                autoComplete="new-password"
+              />
+              <FormMessage className={messageClass} />
             </FormItem>
           )}
         />
@@ -117,43 +109,38 @@ export default function CreateAccountForm() {
           control={form.control}
           name="passwordConfirmation"
           render={({ field }) => (
-            <FormItem>
-              <FormLabel className="font-semibold text-gray-700">
-                パスワード（確認）
-              </FormLabel>
-              <FormControl>
-                <Input
-                  type="password"
-                  className="w-full rounded border px-4 py-2 focus:ring-2 focus:ring-green-400 focus:outline-none"
-                  disabled={isPending || form.formState.isSubmitting}
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
+            <FormItem className="mb-3 gap-1.5">
+              <FormLabel className={labelClass}>パスワード（確認）</FormLabel>
+              <PasswordControl
+                field={field}
+                disabled={disabled}
+                autoComplete="new-password"
+              />
+              <FormMessage className={messageClass} />
             </FormItem>
           )}
         />
+        {/*
+          サーバーアクション（registerAction）の失敗メッセージ。
+          「既に登録済みのメール」等サーバーに問い合わせないと分からないエラー用で、
+          フォーム全体に対して1つ表示する。
+          入力値の形式チェック（必須・メール形式・パスワード長等）は各欄の
+          <FormMessage /> が react-hook-form 経由で別途表示するため、役割が重複しない。
+        */}
         {error && (
-          <div className="text-center text-sm text-red-500">{error}</div>
+          <div className="my-1 text-center text-[13px] text-[#dc2626]">
+            {error}
+          </div>
         )}
+        {/* サーバー処理の成功メッセージ（登録完了の案内など）。上の error と排他 */}
         {success && (
-          <div className="text-center text-sm text-green-600">{success}</div>
+          <div className="my-1 rounded-xl bg-[#E4F6EC] px-4 py-3 text-center text-[13px] text-[#169A66]">
+            {success}
+          </div>
         )}
-        <Button
-          type="submit"
-          className="w-full rounded bg-green-600 py-2 font-bold text-white transition hover:bg-green-700 disabled:opacity-50"
-          disabled={form.formState.isSubmitting}
-        >
+        <button type="submit" className={submitButtonClass} disabled={disabled}>
           {isPending ? '送信中...' : 'アカウント作成'}
-        </Button>
-        <div className="mt-2 text-center">
-          <Link
-            href="/login"
-            className="text-sm text-green-500 hover:underline"
-          >
-            すでにアカウントをお持ちの方
-          </Link>
-        </div>
+        </button>
       </form>
     </Form>
   );

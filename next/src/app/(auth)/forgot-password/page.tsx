@@ -1,5 +1,8 @@
 import { Metadata } from 'next';
+import Link from 'next/link';
 
+import AuthShell from '@/features/auth/components/AuthShell';
+import { linkClass } from '@/features/auth/components/forms/auth-fields';
 import ForgotPasswordForm from '@/features/auth/components/forms/ForgotPasswordForm';
 
 export const metadata: Metadata = {
@@ -9,17 +12,18 @@ export const metadata: Metadata = {
 
 export default function ForgotPasswordPage() {
   return (
-    <div className="flex min-h-screen items-center justify-center px-4 py-8">
-      <div className="w-full max-w-md rounded-xl bg-white p-6 shadow-lg md:p-8">
-        <h2 className="mb-6 text-center text-2xl font-bold text-green-700 md:text-3xl">
-          パスワードをリセット
-        </h2>
-        <p className="mb-6 text-center text-sm text-gray-600">
-          登録したメールアドレスを入力してください。
-          パスワードリセット用のリンクをメールで送信します。
+    <AuthShell
+      title="パスワードをリセット"
+      subtitle="登録したメールアドレスにリセット用リンクを送信します"
+      footer={
+        <p>
+          <Link href="/login" className={linkClass}>
+            ログインに戻る
+          </Link>
         </p>
-        <ForgotPasswordForm />
-      </div>
-    </div>
+      }
+    >
+      <ForgotPasswordForm />
+    </AuthShell>
   );
 }

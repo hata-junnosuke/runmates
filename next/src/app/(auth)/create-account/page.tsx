@@ -1,14 +1,24 @@
+import Link from 'next/link';
+
+import AuthShell from '@/features/auth/components/AuthShell';
+import { linkClass } from '@/features/auth/components/forms/auth-fields';
 import CreateAccountForm from '@/features/auth/components/forms/CreateAccountForm';
 
 export default function CreateAccountPage() {
   return (
-    <div className="flex min-h-screen items-center justify-center px-4 py-8">
-      <div className="w-full max-w-md rounded-xl bg-white p-6 shadow-lg md:p-8">
-        <h2 className="mb-6 text-center text-2xl font-bold text-green-700 md:text-3xl">
-          アカウント作成
-        </h2>
-        <CreateAccountForm />
-      </div>
-    </div>
+    <AuthShell
+      title="アカウント作成"
+      subtitle="メールアドレスとパスワードを登録してください"
+      footer={
+        <p>
+          すでにアカウントをお持ちの方は{' '}
+          <Link href="/login" className={linkClass}>
+            ログイン
+          </Link>
+        </p>
+      }
+    >
+      <CreateAccountForm />
+    </AuthShell>
   );
 }

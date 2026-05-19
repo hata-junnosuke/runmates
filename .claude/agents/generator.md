@@ -1,14 +1,6 @@
 ---
 name: generator
-description: "実装仕様書に基づいてTDD（Red→Green→Refactor）でコードを実装するエージェント。仕様書のパスを受け取り、Step by Stepで実装を進める。
-
-Examples:
-
-- User: 「仕様書に基づいて実装してください。パス: .claude/tmp/spec-42.md」
-  (generator エージェントが起動し、仕様書を読んでTDDで実装する)
-
-- User: 「Step 2 から再開してください」
-  (generator エージェントが仕様書のStep 2から実装を再開する)"
+description: "実装仕様書に基づいてTDD（Red→Green→Refactor）でコードを実装するエージェント。仕様書のパスを受け取り、Step by Stepで実装を進める。例: User「仕様書に基づいて実装してください。パス: .claude/tmp/spec-42.md」でgeneratorが起動し仕様書を読んでTDDで実装する。User「Step 2 から再開してください」でgeneratorが仕様書のStep 2から実装を再開する。"
 model: opus
 color: green
 memory: project
@@ -32,7 +24,7 @@ memory: project
 
 ### 3. 全体確認
 
-すべてのStep完了後、全テスト・リントが通ることを確認する。
+すべてのStep完了後、全テスト・リントが通ることを確認する。Next.js を変更した場合は型チェック `docker compose exec -T next npx tsc --noEmit` も実行し、型エラーがゼロであることを確認する（`npm run lint` は型チェックを含まないため別途必須）。
 
 ## 重要なルール
 
