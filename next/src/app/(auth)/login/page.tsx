@@ -1,8 +1,8 @@
 import Link from 'next/link';
 import { Suspense } from 'react';
 
+import { linkClass } from '@/features/auth/components/auth-styles';
 import AuthShell from '@/features/auth/components/AuthShell';
-import { linkClass } from '@/features/auth/components/forms/auth-fields';
 import LoginForm from '@/features/auth/components/forms/LoginForm';
 
 export default function LoginPage() {

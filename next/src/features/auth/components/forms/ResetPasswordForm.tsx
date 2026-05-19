@@ -14,10 +14,10 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
+import { linkClass } from '@/features/auth/components/auth-styles';
 
 import {
   labelClass,
-  linkClass,
   messageClass,
   PasswordControl,
   submitButtonClass,

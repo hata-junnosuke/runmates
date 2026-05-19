@@ -1,7 +1,7 @@
 import Link from 'next/link';
 
+import { linkClass } from '@/features/auth/components/auth-styles';
 import AuthShell from '@/features/auth/components/AuthShell';
-import { linkClass } from '@/features/auth/components/forms/auth-fields';
 import CreateAccountForm from '@/features/auth/components/forms/CreateAccountForm';
 
 export default function CreateAccountPage() {

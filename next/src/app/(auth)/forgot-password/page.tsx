@@ -1,8 +1,8 @@
 import { Metadata } from 'next';
 import Link from 'next/link';
 
+import { linkClass } from '@/features/auth/components/auth-styles';
 import AuthShell from '@/features/auth/components/AuthShell';
-import { linkClass } from '@/features/auth/components/forms/auth-fields';
 import ForgotPasswordForm from '@/features/auth/components/forms/ForgotPasswordForm';
 
 export const metadata: Metadata = {
