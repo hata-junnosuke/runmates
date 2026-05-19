@@ -1,7 +1,6 @@
 import { Metadata } from 'next';
 import Link from 'next/link';
 
-import { linkClass } from '@/features/auth/components/auth-styles';
 import AuthShell from '@/features/auth/components/AuthShell';
 import ForgotPasswordForm from '@/features/auth/components/forms/ForgotPasswordForm';
 
@@ -17,7 +16,10 @@ export default function ForgotPasswordPage() {
       subtitle="登録したメールアドレスにリセット用リンクを送信します"
       footer={
         <p>
-          <Link href="/login" className={linkClass}>
+          <Link
+            href="/login"
+            className="font-semibold text-[#3B8FE3] no-underline"
+          >
             ログインに戻る
           </Link>
         </p>

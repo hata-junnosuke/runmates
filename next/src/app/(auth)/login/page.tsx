@@ -1,7 +1,6 @@
 import Link from 'next/link';
 import { Suspense } from 'react';
 
-import { linkClass } from '@/features/auth/components/auth-styles';
 import AuthShell from '@/features/auth/components/AuthShell';
 import LoginForm from '@/features/auth/components/forms/LoginForm';
 
@@ -14,12 +13,18 @@ export default function LoginPage() {
         <>
           <p>
             アカウントをお持ちでない方は{' '}
-            <Link href="/create-account" className={linkClass}>
+            <Link
+              href="/create-account"
+              className="font-semibold text-[#3B8FE3] no-underline"
+            >
               新規登録
             </Link>
           </p>
           <p className="mt-4">
-            <Link href="/forgot-password" className={linkClass}>
+            <Link
+              href="/forgot-password"
+              className="font-semibold text-[#3B8FE3] no-underline"
+            >
               パスワードをお忘れの方
             </Link>
           </p>

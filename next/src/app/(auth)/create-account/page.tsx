@@ -1,6 +1,5 @@
 import Link from 'next/link';
 
-import { linkClass } from '@/features/auth/components/auth-styles';
 import AuthShell from '@/features/auth/components/AuthShell';
 import CreateAccountForm from '@/features/auth/components/forms/CreateAccountForm';
 
@@ -12,7 +11,10 @@ export default function CreateAccountPage() {
       footer={
         <p>
           すでにアカウントをお持ちの方は{' '}
-          <Link href="/login" className={linkClass}>
+          <Link
+            href="/login"
+            className="font-semibold text-[#3B8FE3] no-underline"
+          >
             ログイン
           </Link>
         </p>

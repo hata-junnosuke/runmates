@@ -11,8 +11,6 @@ export const labelClass = 'text-xs font-semibold text-[#3a4a63]';
 const inputClass =
   'w-full rounded-xl border border-[#E5EAF1] bg-white px-[42px] py-3 text-sm text-[#0F1A2B] outline-none transition-[border-color,box-shadow] duration-150 focus:border-[#3B8FE3] focus:shadow-[0_0_0_4px_rgba(59,143,227,0.12)] disabled:opacity-60';
 export const messageClass = 'mt-1.5 text-xs text-[#dc2626]';
-// リンク共通スタイル(linkClass)はサーバーページからも参照するため
-// server-safe な ../auth-styles.ts に分離（このファイルは 'use client'）
 export const submitButtonClass =
   'mt-1.5 flex w-full cursor-pointer items-center justify-center gap-2 rounded-xl border-0 bg-[#3B8FE3] py-[14px] text-sm font-bold tracking-[0.02em] text-white shadow-[0_6px_14px_rgba(59,143,227,0.3)] transition-colors duration-150 hover:bg-[#2B7BD0] disabled:cursor-not-allowed disabled:opacity-60';
 

@@ -14,7 +14,6 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
-import { linkClass } from '@/features/auth/components/auth-styles';
 
 import {
   labelClass,
@@ -116,7 +115,10 @@ export default function ResetPasswordForm() {
           {error}
         </div>
         <div className="mt-4 text-center text-[13px]">
-          <Link href="/forgot-password" className={linkClass}>
+          <Link
+            href="/forgot-password"
+            className="font-semibold text-[#3B8FE3] no-underline"
+          >
             パスワードリセットをもう一度行う
           </Link>
         </div>
