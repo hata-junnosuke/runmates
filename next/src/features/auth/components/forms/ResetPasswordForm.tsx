@@ -7,16 +7,20 @@ import { useEffect, useState, useTransition } from 'react';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
 
-import { Button } from '@/components/ui/button';
 import {
   Form,
-  FormControl,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
+
+import {
+  labelClass,
+  messageClass,
+  PasswordControl,
+  submitButtonClass,
+} from './auth-fields';
 
 const resetPasswordSchema = z
   .object({
@@ -101,14 +105,19 @@ export default function ResetPasswordForm() {
 
   if (!token) {
     return (
-      <div className="space-y-5">
-        <div className="rounded-md bg-red-50 p-4">
-          <p className="text-sm text-red-800">{error}</p>
+      <div>
+        {/*
+          URL に token が無い／無効な場合の早期return。
+          useEffect で setError 済みのメッセージ（無効なリンク）を表示する。
+          フォーム自体をレンダリングしないため、ここでは error を直接表示する。
+        */}
+        <div className="my-1 text-center text-[13px] text-[#dc2626]">
+          {error}
         </div>
-        <div className="text-center">
+        <div className="mt-4 text-center text-[13px]">
           <Link
             href="/forgot-password"
-            className="text-sm text-green-500 hover:underline"
+            className="font-semibold text-[#3B8FE3] no-underline"
           >
             パスワードリセットをもう一度行う
           </Link>
@@ -117,28 +126,23 @@ export default function ResetPasswordForm() {
     );
   }
 
+  const disabled = isPending || form.formState.isSubmitting;
+
   return (
     <Form {...form}>
-      <form className="space-y-5" onSubmit={form.handleSubmit(onSubmit)}>
+      <form onSubmit={form.handleSubmit(onSubmit)} noValidate>
         <FormField
           control={form.control}
           name="password"
           render={({ field }) => (
-            <FormItem>
-              <FormLabel className="font-semibold text-gray-700">
-                新しいパスワード
-              </FormLabel>
-              <FormControl>
-                <Input
-                  type="password"
-                  placeholder="6文字以上で入力"
-                  className="w-full rounded border px-4 py-2 focus:ring-2 focus:ring-green-400 focus:outline-none"
-                  disabled={isPending || form.formState.isSubmitting}
-                  autoComplete="new-password"
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
+            <FormItem className="mb-3 gap-1.5">
+              <FormLabel className={labelClass}>新しいパスワード</FormLabel>
+              <PasswordControl
+                field={field}
+                disabled={disabled}
+                autoComplete="new-password"
+              />
+              <FormMessage className={messageClass} />
             </FormItem>
           )}
         />
@@ -146,47 +150,34 @@ export default function ResetPasswordForm() {
           control={form.control}
           name="passwordConfirmation"
           render={({ field }) => (
-            <FormItem>
-              <FormLabel className="font-semibold text-gray-700">
-                パスワード（確認）
-              </FormLabel>
-              <FormControl>
-                <Input
-                  type="password"
-                  placeholder="もう一度入力"
-                  className="w-full rounded border px-4 py-2 focus:ring-2 focus:ring-green-400 focus:outline-none"
-                  disabled={isPending || form.formState.isSubmitting}
-                  autoComplete="new-password"
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
+            <FormItem className="mb-3 gap-1.5">
+              <FormLabel className={labelClass}>パスワード（確認）</FormLabel>
+              <PasswordControl
+                field={field}
+                disabled={disabled}
+                autoComplete="new-password"
+              />
+              <FormMessage className={messageClass} />
             </FormItem>
           )}
         />
 
+        {/*
+          パスワード更新（resetPasswordAction）の失敗メッセージ。
+          「トークン期限切れ」等サーバーに問い合わせないと分からないエラー用で、
+          フォーム全体に対して1つ表示する。
+          入力値の形式チェック（必須・パスワード一致等）は各欄の
+          <FormMessage /> が react-hook-form 経由で別途表示するため、役割が重複しない。
+        */}
         {error && (
-          <div className="rounded-md bg-red-50 p-4">
-            <p className="text-sm text-red-800">{error}</p>
+          <div className="my-1 text-center text-[13px] text-[#dc2626]">
+            {error}
           </div>
         )}
 
-        <Button
-          type="submit"
-          disabled={isPending || form.formState.isSubmitting}
-          className="w-full rounded bg-green-600 py-2 font-bold text-white transition hover:bg-green-700 disabled:opacity-50"
-        >
+        <button type="submit" className={submitButtonClass} disabled={disabled}>
           {isPending ? '設定中...' : 'パスワードを設定'}
-        </Button>
-
-        <div className="mt-2 text-center">
-          <Link
-            href="/login"
-            className="text-sm text-green-500 hover:underline"
-          >
-            ログインに戻る
-          </Link>
-        </div>
+        </button>
       </form>
     </Form>
   );

@@ -1,22 +1,26 @@
 'use client';
 import { zodResolver } from '@hookform/resolvers/zod';
-import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
 
-import { Button } from '@/components/ui/button';
 import {
   Form,
-  FormControl,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
 import { loginAction } from '@/features/auth/actions/auth-actions';
+
+import {
+  EmailControl,
+  labelClass,
+  messageClass,
+  PasswordControl,
+  submitButtonClass,
+} from './auth-fields';
 
 const loginSchema = z.object({
   email: z.string().email('有効なメールアドレスを入力してください'),
@@ -62,26 +66,19 @@ export default function LoginForm() {
     }
   };
 
+  const disabled = isPending || form.formState.isSubmitting;
+
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
+      <form onSubmit={form.handleSubmit(onSubmit)} noValidate>
         <FormField
           control={form.control}
           name="email"
           render={({ field }) => (
-            <FormItem>
-              <FormLabel className="font-semibold text-gray-700">
-                メールアドレス
-              </FormLabel>
-              <FormControl>
-                <Input
-                  type="email"
-                  className="w-full rounded border px-4 py-2 focus:ring-2 focus:ring-green-400 focus:outline-none"
-                  disabled={isPending || form.formState.isSubmitting}
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
+            <FormItem className="mb-3 gap-1.5">
+              <FormLabel className={labelClass}>メールアドレス</FormLabel>
+              <EmailControl field={field} disabled={disabled} />
+              <FormMessage className={messageClass} />
             </FormItem>
           )}
         />
@@ -89,46 +86,28 @@ export default function LoginForm() {
           control={form.control}
           name="password"
           render={({ field }) => (
-            <FormItem>
-              <FormLabel className="font-semibold text-gray-700">
-                パスワード
-              </FormLabel>
-              <FormControl>
-                <Input
-                  type="password"
-                  className="w-full rounded border px-4 py-2 focus:ring-2 focus:ring-green-400 focus:outline-none"
-                  disabled={isPending || form.formState.isSubmitting}
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
+            <FormItem className="mb-3 gap-1.5">
+              <FormLabel className={labelClass}>パスワード</FormLabel>
+              <PasswordControl field={field} disabled={disabled} />
+              <FormMessage className={messageClass} />
             </FormItem>
           )}
         />
+        {/*
+          サーバーアクション（loginAction）の失敗メッセージ。
+          「パスワードが違う」等サーバーに問い合わせないと分からないエラー用で、
+          フォーム全体に対して1つ表示する。
+          入力値の形式チェック（必須・メール形式等）は各欄の
+          <FormMessage /> が react-hook-form 経由で別途表示するため、役割が重複しない。
+        */}
         {error && (
-          <div className="text-center text-sm text-red-500">{error}</div>
+          <div className="my-1 text-center text-[13px] text-[#dc2626]">
+            {error}
+          </div>
         )}
-        <Button
-          type="submit"
-          className="w-full rounded bg-green-600 py-2 font-bold text-white transition hover:bg-green-700 disabled:opacity-50"
-          disabled={isPending || form.formState.isSubmitting}
-        >
+        <button type="submit" className={submitButtonClass} disabled={disabled}>
           {isPending ? '送信中...' : 'ログイン'}
-        </Button>
-        <div className="mt-2 space-y-2 text-center">
-          <Link
-            href="/create-account"
-            className="block text-sm text-green-500 hover:underline"
-          >
-            アカウントをお持ちでない方
-          </Link>
-          <Link
-            href="/forgot-password"
-            className="block text-sm text-gray-600 hover:underline"
-          >
-            パスワードをお忘れの方
-          </Link>
-        </div>
+        </button>
       </form>
     </Form>
   );

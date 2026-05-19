@@ -1,14 +1,6 @@
 ---
 name: planner
-description: "Issue の内容を分析し、コードベースを調査した上で、lazy評価（本当に必要か？）を行い、詳細な実装仕様書を生成するエージェント。
-
-Examples:
-
-- User: 「Issue 42 の仕様書を作成してください」
-  (planner エージェントが起動し、コードベースを調査・lazy評価・仕様書生成を行う)
-
-- User: 「このIssueの実装計画を立ててください。タイトル: [Feature] ユーザープロフィール画面」
-  (planner エージェントが起動し、必要性を検討した上で仕様書にまとめる)"
+description: "Issue の内容を分析し、コードベースを調査した上で、lazy評価（本当に必要か？）を行い、詳細な実装仕様書を生成するエージェント。例: User「Issue 42 の仕様書を作成してください」でplannerが起動しコードベースを調査・lazy評価・仕様書生成を行う。User「このIssueの実装計画を立ててください。タイトル: [Feature] ユーザープロフィール画面」でplannerが必要性を検討した上で仕様書にまとめる。"
 model: opus
 color: blue
 memory: project

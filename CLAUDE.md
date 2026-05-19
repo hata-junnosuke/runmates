@@ -35,7 +35,8 @@ main              # 本番環境（保護ブランチ）
 
 ## コミット前チェック
 
-Claude Codeでのコミット時にPreToolUseフック（`.claude/settings.json`）が自動でrspec・rubocop・npm run lintを実行する。
+Claude Codeでのコミット時にPreToolUseフック（`.claude/settings.json`）が自動でrspec・rubocop・npm run lint・tsc（型チェック）を実行する。
+※ `npm run lint` は ESLint/Prettier のみで型チェックを含まないため、ビルドを落とす型エラー検出用に `npx tsc --noEmit` を別途実行する。
 チェックが失敗した場合は原因を修正して再コミットすること。
 ※ 通常の端末からの `git commit` ではこのチェックは発火しない。
 

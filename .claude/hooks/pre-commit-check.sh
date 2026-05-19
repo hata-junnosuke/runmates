@@ -31,8 +31,11 @@ RUBOCOP_SUMMARY="${RUBOCOP_SUMMARY:-OK}"
 # Next.js lint
 LINT_OUT=$(docker compose exec -T next npm run lint 2>&1) || deny "Next.js lint failed. Fix lint errors before committing." "$LINT_OUT"
 
+# Next.js 型チェック（npm run lint には含まれないため、ビルドを落とす型エラーをここで検出）
+TSC_OUT=$(docker compose exec -T next npx tsc --noEmit 2>&1) || deny "TypeScript type check failed. Fix type errors before committing (this would break next build)." "$TSC_OUT"
+
 # All checks passed
-SUMMARY="All checks passed. [RSpec] $RSPEC_SUMMARY [Rubocop] $RUBOCOP_SUMMARY [Lint] OK"
+SUMMARY="All checks passed. [RSpec] $RSPEC_SUMMARY [Rubocop] $RUBOCOP_SUMMARY [Lint] OK [tsc] OK"
 jq -n --arg ctx "$SUMMARY" '{
   hookSpecificOutput: {
     hookEventName: "PreToolUse",
