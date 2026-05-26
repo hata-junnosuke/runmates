@@ -1,8 +1,29 @@
-#!/bin/bash
+#!/usr/bin/env bash
 set -euo pipefail
 
-# Claude Code PreToolUse hook: git commit時にrspec/rubocop/lintを実行
-# 通常の端末からのgit commitでは発火しない
+# pre-commit-check.sh
+# イベント: PreToolUse(matcher: Bash)
+# 役割: tool_input.command が `git commit ...` のときだけ rspec/rubocop/lint/tsc を実行し、
+#       失敗したらコミットをブロックする。通常端末からの git commit では発火しない。
+# 入力: stdin に JSON({ tool_input: { command } })。
+# 終了コード: 0=許可(allow JSON を返す) / 0+deny JSON=ブロック(permissionDecision: deny)。
+#
+# なぜ自力でゲート判定するか:
+#   settings.json の matcher は "Bash" 単位でしか絞れず(コマンド引数までは絞れない)、
+#   本フックは Claude が Bash を叩くたびに毎回発火する。判定なしで通すと `ls` や
+#   `cat foo` 1 つにつき rspec/rubocop/lint/tsc が走って数分待たされてしまう。
+#   そこで stdin の tool_input.command を覗いて、`git commit ...` 以外は即 exit 0 で
+#   素通りさせ、本当に重いチェックが必要な瞬間だけ後続処理に進む。
+
+INPUT="$(cat)"
+
+if command -v jq >/dev/null 2>&1; then
+  CMD=$(printf '%s' "$INPUT" | jq -r '.tool_input.command // ""')
+else
+  CMD=$(printf '%s' "$INPUT" | python3 -c 'import json,sys; d=json.load(sys.stdin); print(d.get("tool_input",{}).get("command",""))')
+fi
+
+echo "$CMD" | grep -qE '^git commit([[:space:]]|$)' || exit 0
 
 deny() {
   local reason="$1"

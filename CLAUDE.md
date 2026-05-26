@@ -33,12 +33,10 @@ main              # 本番環境（保護ブランチ）
 
 **重要:** この3種類のみ使用。`chore/*` や `docs/*` は使わない。
 
-## コミット前チェック
+## フック（hooks）
 
-Claude Codeでのコミット時にPreToolUseフック（`.claude/settings.json`）が自動でrspec・rubocop・npm run lint・tsc（型チェック）を実行する。
-※ `npm run lint` は ESLint/Prettier のみで型チェックを含まないため、ビルドを落とす型エラー検出用に `npx tsc --noEmit` を別途実行する。
-チェックが失敗した場合は原因を修正して再コミットすること。
-※ 通常の端末からの `git commit` ではこのチェックは発火しない。
+Claude Code 実行時に `.claude/hooks/scripts/` 配下のフックが自動発火する（コミット前チェック・破壊コマンド遮断・秘密情報スキャン・ブランチ警告）。
+詳細・ヘッダ規約は [`.claude/rules/hooks.md`](.claude/rules/hooks.md) 参照（`.claude/hooks/**` / `.claude/settings.json` 編集時に自動ロード）。
 
 ## Playwright MCPによる動作確認
 

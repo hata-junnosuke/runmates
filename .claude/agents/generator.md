@@ -1,9 +1,9 @@
 ---
 name: generator
 description: "実装仕様書に基づいてTDD（Red→Green→Refactor）でコードを実装するエージェント。仕様書のパスを受け取り、Step by Stepで実装を進める。例: User「仕様書に基づいて実装してください。パス: .claude/tmp/spec-42.md」でgeneratorが起動し仕様書を読んでTDDで実装する。User「Step 2 から再開してください」でgeneratorが仕様書のStep 2から実装を再開する。"
+tools: Read, Write, Edit, MultiEdit, Grep, Glob, Bash, AskUserQuestion
 model: opus
 color: green
-memory: project
 ---
 
 仕様書に忠実に、TDD原則に従ってコードを実装します。
