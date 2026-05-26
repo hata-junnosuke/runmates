@@ -72,10 +72,13 @@ SCAN="$(printf '%s' "$CONTENT" | grep -v 'pragma: allowlist secret')"
 PATTERNS='-----BEGIN [A-Z ]*PRIVATE KEY-----|AKIA[0-9A-Z]{16}|sk-[A-Za-z0-9]{20,}|gh[poasu]_[A-Za-z0-9]{20,}|xox[baprs]-[A-Za-z0-9-]{10,}|AIza[0-9A-Za-z_\-]{35}|(API[_-]?KEY|SECRET|TOKEN|PASSWORD|PRIVATE[_-]?KEY|ACCESS[_-]?KEY|CLIENT[_-]?SECRET|SECRET[_-]?KEY[_-]?BASE)[[:space:]]*[:=][[:space:]]*["'\''][A-Za-z0-9/+_\-]{16,}["'\'']|(postgres(ql)?|mysql|redis|amqp)://[^:@/[:space:]]+:[^@/[:space:]]+@|Authorization:[[:space:]]*Bearer[[:space:]]+[A-Za-z0-9._\-]{20,}'
 
 HITS="$(printf '%s' "$SCAN" | grep -niE -e "$PATTERNS")"
-# プレースホルダは許容(誤検知を減らす)
-# 注意: 'example' は単独除外しない(example.com ホストの実シークレット URL を見逃すため)。
-#       明示的プレースホルダ語彙のみホワイトリスト化する。
-HITS="$(printf '%s' "$HITS" | grep -viE 'replace-with|your[-_]|changeme|placeholder|xxxx|dummy|<[^>]+>|\$\{|process\.env|ENV\[|Rails\.application\.credentials|USER:PASSWORD|user:password')"
+# プレースホルダ"値"のみ許容(誤検知を減らす)
+# 注意:
+# - 'example' は単独除外しない(example.com ホストの実シークレット URL を見逃すため)。
+# - process.env / ENV[ / Rails.application.credentials などの"参照表記"は除外しない。
+#   行ごと grep -v すると、`token = "sk-realsecret" // process.env.X fallback` のような
+#   参照とリテラルが同居した行で実シークレットを見逃すため。
+HITS="$(printf '%s' "$HITS" | grep -viE 'replace-with|your[-_]|changeme|placeholder|xxxx|dummy|<[^>]+>|\$\{|USER:PASSWORD|user:password')"
 
 if [ -n "$HITS" ]; then
   echo "🚨 シークレットらしき文字列を検出したため書き込みをブロックしました: ${FILE:-(unknown)}" >&2

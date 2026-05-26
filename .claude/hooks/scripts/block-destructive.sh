@@ -54,9 +54,16 @@ printf '%s' "$CMD" | grep -Eq 'git[[:space:]]+push\b' \
   && printf '%s' "$CMD" | grep -Eq '(--force([[:space:]=]|$)|[[:space:]]-f([[:space:]]|$))' \
   && block "git push --force(履歴を破壊する可能性)"
 
-# git reset --hard / git clean -fd の広域実行
+# git reset --hard (コミット前の変更を失う)
 printf '%s' "$CMD" | grep -Eq 'git[[:space:]]+reset[[:space:]]+--hard' \
   && block "git reset --hard(コミット前の変更を失う可能性)"
+
+# git clean -f / --force (untracked ファイル/ディレクトリの取り返しのつかない削除)
+# -f, -fd, -df, -fdx, --force などを全て捕捉する
+if printf '%s' "$CMD" | grep -Eq 'git[[:space:]]+clean([[:space:]]|$)'; then
+  printf '%s' "$CMD" | grep -Eq '(-[[:alpha:]]*[fF][[:alpha:]]*|--force)' \
+    && block "git clean -f/--force(untracked ファイル/ディレクトリを失う)"
+fi
 
 # フォークボム
 printf '%s' "$CMD" | grep -Eq ':\(\)[[:space:]]*\{[^}]*:\|[^}]*&[^}]*\}' \
