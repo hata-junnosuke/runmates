@@ -6,9 +6,35 @@
         "hooks": [
           {
             "type": "command",
-            "command": "jq -r '.tool_input.command // \"\"' | { read -r cmd; echo \"$cmd\" | grep -qE '^git commit(\\s|$)' || exit 0; bash .claude/hooks/pre-commit-check.sh; }",
+            "command": "bash $CLAUDE_PROJECT_DIR/.claude/hooks/scripts/block-destructive.sh",
+            "timeout": 15
+          },
+          {
+            "type": "command",
+            "command": "bash $CLAUDE_PROJECT_DIR/.claude/hooks/scripts/pre-commit-check.sh",
             "timeout": 300,
             "statusMessage": "Running pre-commit checks (rspec, rubocop, lint, tsc)..."
+          }
+        ]
+      },
+      {
+        "matcher": "Write|Edit|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash $CLAUDE_PROJECT_DIR/.claude/hooks/scripts/secret-scan.sh",
+            "timeout": 15
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash $CLAUDE_PROJECT_DIR/.claude/hooks/scripts/branch-guard.sh",
+            "timeout": 15
           }
         ]
       }

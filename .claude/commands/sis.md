@@ -1,6 +1,7 @@
 ---
 name: solve-issue
 description: Issue番号を引数で受け取り、3エージェント構成（Planner→Generator→Evaluator）でIssueを自動解決する
+argument-hint: <issue-number>
 user-invocable: true
 disable-model-invocation: true
 ---
