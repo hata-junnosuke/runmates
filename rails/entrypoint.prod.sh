@@ -3,7 +3,11 @@ set -e
 
 echo "Start entrypoint.prod.sh"
 
-export WEB_CONCURRENCY=${WEB_CONCURRENCY:-1}
+# Puma を single mode（WEB_CONCURRENCY=0）で起動する。
+# cluster mode（worker >= 1）だと master プロセスに Rails/SolidQueue がロードされず、
+# config/puma.rb の `plugin :solid_queue` が fork する supervisor で
+# `uninitialized constant SolidQueue` が発生してワーカーが起動できないため。
+export WEB_CONCURRENCY=${WEB_CONCURRENCY:-0}
 export RAILS_MAX_THREADS=${RAILS_MAX_THREADS:-2}
 
 echo "rm -f /myapp/tmp/pids/server.pid"
