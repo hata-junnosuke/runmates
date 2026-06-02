@@ -1,7 +1,10 @@
 default: &default
   adapter: mysql2
   encoding: utf8mb4
-  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+  # Puma のリクエストスレッド（RAILS_MAX_THREADS）と、別プロセスで動く Solid Queue
+  # ワーカー（config/queue.yml の threads: 3）は同じ pool 値を上限に DB 接続する。
+  # Solid Queue worker の 3 スレッド + 余裕を賄えるよう RAILS_MAX_THREADS に 3 を上乗せする。
+  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 }.to_i + 3 %>
   username: root
   port: 3306
 
