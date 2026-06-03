@@ -72,6 +72,9 @@ RSpec.configure do |config|
 
   # FactoryBotの宣言を省略
   config.include FactoryBot::Syntax::Methods
+
+  # Rack::Attackテストでのみ時刻固定ヘルパー（freeze_time）を利用可能にする（復元はteardownで自動実行）
+  config.include ActiveSupport::Testing::TimeHelpers, :rack_attack
 end
 
 # Shoulda Matchersの設定
