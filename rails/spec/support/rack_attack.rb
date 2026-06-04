@@ -7,6 +7,8 @@ RSpec.configure do |config|
   config.before(:each, :rack_attack) do
     Rack::Attack.enabled = true
     Rack::Attack.cache.store = ActiveSupport::Cache::MemoryStore.new
+    # 固定時間窓（fixed window）の境界跨ぎによるflakyを防ぐため時刻を固定する
+    freeze_time
   end
 
   config.after(:each, :rack_attack) do
