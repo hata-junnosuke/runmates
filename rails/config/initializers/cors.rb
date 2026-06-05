@@ -1,6 +1,9 @@
 Rails.application.config.middleware.insert_before 0, Rack::Cors do
   allow do
-    origins Settings.front_domain
+    origins(
+      Rails.application.credentials.dig(Rails.env.to_sym, :frontend_url) ||
+        "http://localhost:8000",
+    )
 
     resource "*",
              headers: :any,
