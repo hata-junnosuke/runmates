@@ -89,14 +89,14 @@ resource "aws_ecs_cluster" "main" {
 #
 # cpu/memoryの単位:
 #   cpu = "256"  → 0.25 vCPU
-#   memory = "512" → 512 MB
+#   memory = "1024" → 1024 MB
 # -----------------------------------------------------------------------------
 resource "aws_ecs_task_definition" "backend" {
   family                   = "runmates-task-definition-backend"
   network_mode             = "awsvpc" # Fargate必須。各タスクに固有のENI（ネットワークIF）が割り当てられる
   requires_compatibilities = ["FARGATE"]
   cpu                      = "256"
-  memory                   = "512"
+  memory                   = "1024"
   execution_role_arn       = aws_iam_role.ecs_task_execution.arn # ECRからのイメージpull、CloudWatch Logsへの書き込みに使用
   task_role_arn            = aws_iam_role.ecs_task_execution.arn # コンテナ内のアプリがAWSサービスを呼ぶ際に使用
 
