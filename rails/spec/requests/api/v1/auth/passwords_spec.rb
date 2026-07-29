@@ -53,7 +53,7 @@ RSpec.describe "Api::V1::Auth::Passwords" do
         }
       end
 
-      it "パスワードを更新し、認証クッキーを設定すること" do
+      it "パスワードを更新し、認証トークンをヘッダーで返すこと" do
         put "/api/v1/auth/password", params: valid_params, as: :json
 
         expect(response).to have_http_status(:ok)
@@ -62,10 +62,10 @@ RSpec.describe "Api::V1::Auth::Passwords" do
         expect(json_response["success"]).to be true
         expect(json_response["data"]["email"]).to eq(user.email)
 
-        # 認証クッキーが設定されていることを確認
-        expect(response.cookies["access-token"]).to be_present
-        expect(response.cookies["client"]).to be_present
-        expect(response.cookies["uid"]).to be_present
+        # 認証トークンがレスポンスヘッダーで返ることを確認（クッキー発行はNext.js側の責務）
+        expect(response.headers["access-token"]).to be_present
+        expect(response.headers["client"]).to be_present
+        expect(response.headers["uid"]).to be_present
 
         # パスワードが更新されていることを確認
         user.reload
@@ -91,8 +91,8 @@ RSpec.describe "Api::V1::Auth::Passwords" do
         expect(json_response["success"]).to be false
         expect(json_response["errors"]).to include("無効なトークンです。パスワードリセットをもう一度お試しください。")
 
-        # クッキーが設定されていないことを確認
-        expect(response.cookies["access-token"]).to be_blank
+        # 認証トークンがヘッダーで返らないことを確認
+        expect(response.headers["access-token"]).to be_blank
       end
     end
 

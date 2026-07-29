@@ -1,5 +1,6 @@
 'use server';
 
+import { clearAuthCookies } from '@/features/auth/lib/cookies';
 import { serverApiCall } from '@/lib/api/server-base';
 
 export async function deleteAccount(password: string) {
@@ -16,11 +17,7 @@ export async function deleteAccount(password: string) {
   }
 
   // サーバーサイドでクッキーをクリア
-  const { cookies } = await import('next/headers');
-  const cookieStore = await cookies();
-  cookieStore.delete('access-token');
-  cookieStore.delete('client');
-  cookieStore.delete('uid');
+  await clearAuthCookies();
 
   return {
     success: true,

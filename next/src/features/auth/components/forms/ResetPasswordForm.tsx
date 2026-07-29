@@ -14,6 +14,7 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
+import { resetPasswordAction } from '@/features/auth/actions/auth-actions';
 
 import {
   labelClass,
@@ -68,37 +69,17 @@ export default function ResetPasswordForm() {
     setError('');
 
     startTransition(async () => {
-      try {
-        const response = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/auth/password`,
-          {
-            method: 'PUT',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            cache: 'no-store',
-            credentials: 'include',
-            body: JSON.stringify({
-              password: data.password,
-              password_confirmation: data.passwordConfirmation,
-              reset_password_token: token,
-            }),
-          },
-        );
+      const result = await resetPasswordAction({
+        token,
+        password: data.password,
+        passwordConfirmation: data.passwordConfirmation,
+      });
 
-        const responseData = await response.json();
-
-        if (response.ok && responseData.success) {
-          // パスワードリセット成功 - 自動的にログインされる
-          router.push('/dashboard');
-        } else {
-          setError(
-            responseData.errors?.full_messages?.join(' ') ||
-              'パスワードのリセットに失敗しました。リンクの有効期限が切れている可能性があります。',
-          );
-        }
-      } catch {
-        setError('ネットワークエラーが発生しました。');
+      if (result.success) {
+        // パスワードリセット成功 - 自動的にログインされる
+        router.push('/dashboard');
+      } else {
+        setError(result.error || 'パスワードのリセットに失敗しました。');
       }
     });
   };

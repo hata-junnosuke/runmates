@@ -39,7 +39,7 @@ Rubocopで検出されたすべての違反に対応すること。対応方法�
 
 ## 認証
 - 認証にはlocalStorageではなくHTTP-onlyクッキーを使用（XSS対策）
-- RailsがHTTP-onlyクッキーに`access-token`、`client`、`uid`を設定
+- Next.jsがHTTP-onlyクッキーに`access-token`、`client`、`uid`を設定する。**Railsは発行せず、読むだけ**（`application_controller`の`set_auth_headers_from_cookies`）
 
 ## Swaggerドキュメント
 - APIのエンドポイント追加・変更・削除を行った場合は `rails/swagger/v1/swagger.yaml` も合わせて更新する
