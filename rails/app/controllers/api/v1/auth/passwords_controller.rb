@@ -2,8 +2,6 @@ module Api
   module V1
     module Auth
       class PasswordsController < DeviseTokenAuth::PasswordsController
-        include AuthCookieHelper
-
         # パスワードリセットの更新処理をカスタマイズ
         def update
           find_resource_by_token
@@ -42,8 +40,7 @@ module Api
             @resource.allow_password_change = false
             @resource.save!
 
-            token_data = @resource.create_new_auth_token
-            apply_auth_cookies_and_headers(token_data)
+            response.headers.merge!(@resource.create_new_auth_token)
 
             render json: success_response_data
           end
@@ -53,13 +50,6 @@ module Api
               success: false,
               errors: @resource.errors.full_messages,
             }, status: :unprocessable_entity
-          end
-
-          def apply_auth_cookies_and_headers(token_data)
-            set_auth_cookie("access-token", token_data["access-token"])
-            set_auth_cookie("client", token_data["client"])
-            set_auth_cookie("uid", token_data["uid"])
-            response.headers.merge!(token_data)
           end
 
           def success_response_data

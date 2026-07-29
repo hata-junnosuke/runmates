@@ -1,7 +1,5 @@
 # 注意: これはDevise/DeviseTokenAuthの標準機能ではなく、独自実装のためV1のBaseControllerを継承
 class Api::V1::Auth::EmailConfirmationsController < Api::V1::BaseController
-  include AuthCookieHelper
-
   def show
     token = params[:confirmation_token]
 

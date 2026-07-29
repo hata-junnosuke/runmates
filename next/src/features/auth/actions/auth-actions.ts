@@ -3,6 +3,8 @@
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 
+import { clearAuthCookies, setAuthCookies } from '@/features/auth/lib/cookies';
+
 const API_BASE_URL = process.env.INTERNAL_API_URL || 'http://rails:3000/api/v1';
 
 // ログイン
@@ -28,28 +30,8 @@ export async function loginAction(formData: FormData) {
     });
 
     if (response.ok) {
-      // レスポンスヘッダーから認証トークンを取得
-      const accessToken = response.headers.get('access-token');
-      const client = response.headers.get('client');
-      const uid = response.headers.get('uid');
-
-      if (accessToken && client && uid) {
-        // クッキーに認証情報を保存
-        const cookieStore = await cookies();
-        const cookieOptions = {
-          httpOnly: true,
-          secure: process.env.NODE_ENV === 'production',
-          sameSite:
-            process.env.NODE_ENV === 'production'
-              ? ('none' as const)
-              : ('lax' as const),
-          path: '/',
-        };
-
-        cookieStore.set('access-token', accessToken, cookieOptions);
-        cookieStore.set('client', client, cookieOptions);
-        cookieStore.set('uid', uid, cookieOptions);
-      }
+      // レスポンスヘッダーの認証トークンをクッキーに保存
+      await setAuthCookies(response.headers);
 
       return { success: true };
     } else if (response.status === 429) {
@@ -156,19 +138,55 @@ export async function logoutAction() {
       });
     }
 
-    // Next.js側でもクッキーをクリア（開発環境での確実な削除のため）
-    cookieStore.delete('access-token');
-    cookieStore.delete('client');
-    cookieStore.delete('uid');
+    // 認証クッキーを削除（発行・削除はNext.jsの責務）
+    await clearAuthCookies();
   } catch (error) {
     console.error('Sign out error:', error);
     // エラーが発生してもクッキーはクリアする
-    const cookieStore = await cookies();
-    cookieStore.delete('access-token');
-    cookieStore.delete('client');
-    cookieStore.delete('uid');
+    await clearAuthCookies();
   }
 
   // LPへリダイレクト
   redirect('/');
+}
+
+// パスワードリセット（成功時はそのままログイン状態にする）
+export async function resetPasswordAction({
+  token,
+  password,
+  passwordConfirmation,
+}: {
+  token: string;
+  password: string;
+  passwordConfirmation: string;
+}) {
+  try {
+    const response = await fetch(`${API_BASE_URL}/auth/password`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      cache: 'no-store',
+      body: JSON.stringify({
+        password,
+        password_confirmation: passwordConfirmation,
+        reset_password_token: token,
+      }),
+    });
+
+    const data = await response.json();
+
+    if (response.ok && data.success) {
+      await setAuthCookies(response.headers);
+      return { success: true };
+    }
+
+    return {
+      success: false,
+      error:
+        data.errors?.[0] ||
+        'パスワードのリセットに失敗しました。リンクの有効期限が切れている可能性があります。',
+    };
+  } catch (error) {
+    console.error('Reset password error:', error);
+    return { success: false, error: 'ネットワークエラーが発生しました。' };
+  }
 }

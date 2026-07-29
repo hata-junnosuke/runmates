@@ -6,7 +6,7 @@ RSpec.describe "Api::V1::Auth::Sessions" do
       let(:user) { create(:user, password: "password123") }
 
       context "正しい認証情報の場合" do
-        it "ログインに成功し、認証クッキーを設定すること" do
+        it "ログインに成功し、認証トークンをヘッダーで返すこと" do
           post "/api/v1/auth/sign_in", params: { email: user.email, password: "password123" }, as: :json
 
           expect(response).to have_http_status(:ok)
@@ -14,10 +14,16 @@ RSpec.describe "Api::V1::Auth::Sessions" do
           json_response = response.parsed_body
           expect(json_response["data"]["email"]).to eq(user.email)
 
-          # クッキーが設定されていることを確認
-          expect(response.cookies["access-token"]).to be_present
-          expect(response.cookies["client"]).to be_present
-          expect(response.cookies["uid"]).to be_present
+          # 認証トークンがレスポンスヘッダーで返ることを確認（クッキー発行はNext.js側の責務）
+          expect(response.headers["access-token"]).to be_present
+          expect(response.headers["client"]).to be_present
+          expect(response.headers["uid"]).to be_present
+        end
+
+        it "ログイン1回につき認証トークンを1本だけ発行すること" do
+          expect {
+            post "/api/v1/auth/sign_in", params: { email: user.email, password: "password123" }, as: :json
+          }.to change { user.reload.tokens.keys.size }.from(0).to(1)
         end
       end
 
@@ -30,10 +36,10 @@ RSpec.describe "Api::V1::Auth::Sessions" do
           json_response = response.parsed_body
           expect(json_response["errors"]).to be_present
 
-          # クッキーが設定されていないことを確認
-          expect(response.cookies["access-token"]).to be_blank
-          expect(response.cookies["client"]).to be_blank
-          expect(response.cookies["uid"]).to be_blank
+          # 認証トークンがヘッダーで返らないことを確認
+          expect(response.headers["access-token"]).to be_blank
+          expect(response.headers["client"]).to be_blank
+          expect(response.headers["uid"]).to be_blank
         end
       end
 
@@ -63,10 +69,10 @@ RSpec.describe "Api::V1::Auth::Sessions" do
         expect(json_response["errors"]).to be_present
         expect(json_response["errors"].join).to include("確認")
 
-        # クッキーが設定されていないことを確認
-        expect(response.cookies["access-token"]).to be_blank
-        expect(response.cookies["client"]).to be_blank
-        expect(response.cookies["uid"]).to be_blank
+        # 認証トークンがヘッダーで返らないことを確認
+        expect(response.headers["access-token"]).to be_blank
+        expect(response.headers["client"]).to be_blank
+        expect(response.headers["uid"]).to be_blank
       end
     end
   end
@@ -76,17 +82,17 @@ RSpec.describe "Api::V1::Auth::Sessions" do
       let(:user) { create(:user) }
       let(:headers) { user.create_new_auth_token }
 
-      it "ログアウトに成功し、認証クッキーをクリアすること" do
-        delete "/api/v1/auth/sign_out", headers: headers, as: :json
+      it "ログアウトに成功し、認証トークンを失効させること" do
+        headers
+
+        expect {
+          delete "/api/v1/auth/sign_out", headers: headers, as: :json
+        }.to change { user.reload.tokens.keys.size }.from(1).to(0)
 
         expect(response).to have_http_status(:ok)
 
         json_response = response.parsed_body
         expect(json_response["success"]).to be true
-
-        # クッキーがクリアされていることを確認
-        # （実際のクッキー削除は response.cookies では確認できないため、
-        # コントローラーのテストで clear_auth_cookie が呼ばれることを確認）
       end
     end
 
