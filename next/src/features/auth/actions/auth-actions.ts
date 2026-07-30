@@ -4,8 +4,14 @@ import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 
 import { clearAuthCookies, setAuthCookies } from '@/features/auth/lib/cookies';
+import { forgotPasswordSchema } from '@/features/auth/schemas/auth-schemas';
 
 const API_BASE_URL = process.env.INTERNAL_API_URL || 'http://rails:3000/api/v1';
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:8000';
+
+// 呼び出し側でフォールバックのメッセージを書かずに済むよう、
+// 失敗時は必ずerrorを持つ判別可能ユニオンで返す
+type AuthActionResult = { success: true } | { success: false; error: string };
 
 // ログイン
 export async function loginAction(formData: FormData) {
@@ -148,6 +154,84 @@ export async function logoutAction() {
 
   // LPへリダイレクト
   redirect('/');
+}
+
+// パスワードリセットメールの送信依頼
+export async function forgotPasswordAction(
+  email: string,
+): Promise<AuthActionResult> {
+  const parsed = forgotPasswordSchema.safeParse({ email });
+  if (!parsed.success) {
+    return {
+      success: false,
+      error: '有効なメールアドレスを入力してください',
+    };
+  }
+
+  try {
+    const response = await fetch(`${API_BASE_URL}/auth/password`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      cache: 'no-store',
+      body: JSON.stringify({
+        email: parsed.data.email,
+        redirect_url: `${BASE_URL}/reset-password`,
+      }),
+    });
+
+    if (response.status === 429) {
+      return {
+        success: false,
+        error:
+          'リクエスト回数の制限に達しました。しばらくしてからお試しください。',
+      };
+    }
+
+    const data = await response.json();
+
+    if (response.ok && data.success) {
+      return { success: true };
+    }
+
+    return {
+      success: false,
+      error:
+        data.errors?.full_messages?.join(' ') ||
+        data.errors?.[0] ||
+        'メールの送信に失敗しました。',
+    };
+  } catch (error) {
+    console.error('Forgot password error:', error);
+    return { success: false, error: 'ネットワークエラーが発生しました。' };
+  }
+}
+
+// メールアドレス確認（サインアップ時の確認リンク）
+export async function confirmEmailAction(
+  token: string,
+): Promise<AuthActionResult> {
+  try {
+    const response = await fetch(
+      `${API_BASE_URL}/auth/confirmation?confirmation_token=${encodeURIComponent(token)}`,
+      { method: 'GET', cache: 'no-store' },
+    );
+
+    const data = await response.json();
+
+    if (response.ok && data.success) {
+      return { success: true };
+    }
+
+    return {
+      success: false,
+      error:
+        data.errors?.join(' ') ||
+        '確認に失敗しました。リンクの有効期限が切れている可能性があります。',
+    };
+  } catch (error) {
+    console.error('Confirm email error:', error);
+    return { success: false, error: 'ネットワークエラーが発生しました。' };
+  }
 }
 
 // パスワードリセット（成功時はそのままログイン状態にする）

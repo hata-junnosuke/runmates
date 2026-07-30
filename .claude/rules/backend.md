@@ -39,7 +39,10 @@ Rubocopで検出されたすべての違反に対応すること。対応方法�
 
 ## 認証
 - 認証にはlocalStorageではなくHTTP-onlyクッキーを使用（XSS対策）
-- Next.jsがHTTP-onlyクッキーに`access-token`、`client`、`uid`を設定する。**Railsは発行せず、読むだけ**（`application_controller`の`set_auth_headers_from_cookies`）
+- クッキーの発行・削除・運搬はNext.jsの責務。Next.jsがHTTP-onlyクッキーに`access-token`、`client`、`uid`を保存し、Rails APIへは**ヘッダー**として送る
+- **Railsはクッキーを一切読まない**。`access-token` / `client` / `uid` ヘッダーのみで認証する（検証は`DeviseTokenAuth`）
+- アプリコード上はブラウザからRails APIを直接叩かないため、CORS設定は不要（`rack-cors`は導入していない）
+- ただし**CORS削除は到達制御ではない**。CORSはブラウザがレスポンス読み取りを制限する仕組みで、curl等の非ブラウザクライアントには効かない。ALBは現状インターネット公開（`terraform/envs/prod/alb.tf` の `internal = false`）なので、Rails側の認証・レート制限・入力検証は「外部から直接叩かれる前提」で実装する
 
 ## Swaggerドキュメント
 - APIのエンドポイント追加・変更・削除を行った場合は `rails/swagger/v1/swagger.yaml` も合わせて更新する

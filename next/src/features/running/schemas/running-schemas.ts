@@ -25,6 +25,12 @@ export const planSchema = z.object({
   memo: z.string().max(500).optional(),
 });
 
+// カレンダーの表示月。Server Actionは公開エンドポイントなので実行時に検証する
+export const monthQuerySchema = z.object({
+  year: z.number().int().min(2000).max(2100),
+  month: z.number().int().min(1).max(12),
+});
+
 export const monthlyGoalSchema = z.object({
   distance_goal: z.number().min(1),
 });

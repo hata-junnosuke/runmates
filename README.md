@@ -226,7 +226,6 @@ docker compose exec rails rails console
    - `AWS_ACCESS_KEY_ID` - AWSアクセスキーID
    - `AWS_SECRET_ACCESS_KEY` - AWSシークレットアクセスキー
    - `RAILS_MASTER_KEY` - Rails master.keyの内容
-   - `NEXT_PUBLIC_API_URL` - APIのパブリックURL
    - `NEXT_PUBLIC_BASE_URL` - フロントエンドのベースURL
    - `INTERNAL_API_URL` - 内部API URL（サーバーサイド用）
 
@@ -241,7 +240,6 @@ aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 --build-arg NEXT_PUBLIC_BASE_URL=${{ secrets.NEXT_PUBLIC_BASE_URL }}
 
 # Next.js環境変数（現在はコメントアウト中）
-NEXT_PUBLIC_API_URL=${{ secrets.NEXT_PUBLIC_API_URL }}
 NEXT_PUBLIC_BASE_URL=${{ secrets.NEXT_PUBLIC_BASE_URL }}
 INTERNAL_API_URL=${{ secrets.INTERNAL_API_URL }}
 ```
