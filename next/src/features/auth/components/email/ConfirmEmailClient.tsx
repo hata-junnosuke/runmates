@@ -4,6 +4,8 @@ import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
+import { confirmEmailAction } from '@/features/auth/actions/auth-actions';
+
 export default function ConfirmEmailClient() {
   const [status, setStatus] = useState<'loading' | 'success' | 'error'>(
     'loading',
@@ -21,35 +23,18 @@ export default function ConfirmEmailClient() {
     }
 
     const confirmEmail = async () => {
-      try {
-        const response = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/auth/confirmation?confirmation_token=${token}`,
-          {
-            method: 'GET',
-            cache: 'no-store',
-            credentials: 'include',
-          },
-        );
+      const result = await confirmEmailAction(token);
 
-        const data = await response.json();
-
-        if (response.ok && data.success) {
-          setStatus('success');
-          setMessage('メールアドレスの確認が完了しました！');
-          // 3秒後にログインページへリダイレクト
-          setTimeout(() => {
-            router.push('/login');
-          }, 3000);
-        } else {
-          setStatus('error');
-          setMessage(
-            data.errors?.join(' ') ||
-              '確認に失敗しました。リンクの有効期限が切れている可能性があります。',
-          );
-        }
-      } catch {
+      if (result.success) {
+        setStatus('success');
+        setMessage('メールアドレスの確認が完了しました！');
+        // 3秒後にログインページへリダイレクト
+        setTimeout(() => {
+          router.push('/login');
+        }, 3000);
+      } else {
         setStatus('error');
-        setMessage('ネットワークエラーが発生しました。');
+        setMessage(result.error);
       }
     };
 

@@ -4,8 +4,7 @@ import { useEffect, useState } from 'react';
 
 import { LoadingSpinner } from '@/components/common/LoadingSpinner';
 
-import { clientRunningPlansAPI } from '../../api/client-running-plans';
-import { clientRunningRecordsAPI } from '../../api/client-running-records';
+import { fetchMonthData } from '../../actions/running-actions';
 import type { MonthlyGoal, RunningPlan, RunRecord } from '../../types';
 import ClientRunningCalendar from '../calendar/ClientRunningCalendar';
 import RunningChartWrapper from '../charts/RunningChartWrapper';
@@ -35,23 +34,24 @@ export default function DashboardWithCalendar({
   const [currentMonthPlans, setCurrentMonthPlans] =
     useState<RunningPlan[]>(initialPlans);
 
-  const fetchMonthData = async (date: Date) => {
-    const year = date.getFullYear();
-    const month = date.getMonth() + 1;
-    const [recordsResult, plansResult] = await Promise.all([
-      clientRunningRecordsAPI.getByMonth(year, month),
-      clientRunningPlansAPI.getByMonth(year, month),
-    ]);
-    if (recordsResult.success) {
-      setCurrentMonthRecords(recordsResult.data);
-    } else {
-      setCurrentMonthRecords([]);
+  const refreshMonthData = async (date: Date) => {
+    try {
+      const result = await fetchMonthData(
+        date.getFullYear(),
+        date.getMonth() + 1,
+      );
+      if (result.success && result.data) {
+        setCurrentMonthRecords(result.data.records);
+        setCurrentMonthPlans(result.data.plans);
+        return;
+      }
+    } catch (error) {
+      console.error('Error fetching month data:', error);
     }
-    if (plansResult.success) {
-      setCurrentMonthPlans(plansResult.data);
-    } else {
-      setCurrentMonthPlans([]);
-    }
+
+    // 結果が失敗でも例外でも、表示中の月と中身がズレないようクリアする
+    setCurrentMonthRecords([]);
+    setCurrentMonthPlans([]);
   };
 
   const handleDateClick = (payload: {
@@ -81,21 +81,9 @@ export default function DashboardWithCalendar({
     setRecordFormOpen(false);
     setSelectedDate('');
 
-    // Server Actionから返された最新データで更新
+    // 予定側の更新は revalidatePath('/dashboard') → props 同期（下部の useEffect）が担う
     if (freshMonthRecords) {
       setCurrentMonthRecords(freshMonthRecords);
-      const year = currentDate.getFullYear();
-      const month = currentDate.getMonth() + 1;
-      clientRunningPlansAPI
-        .getByMonth(year, month)
-        .then((result) => {
-          if (result.success) {
-            setCurrentMonthPlans(result.data);
-          }
-        })
-        .catch((error) =>
-          console.error('Error refreshing plans after record save', error),
-        );
     }
   };
 
@@ -104,26 +92,9 @@ export default function DashboardWithCalendar({
     setSelectedDate('');
     setPlansForSelectedDate([]);
 
+    // 記録側の更新は revalidatePath('/dashboard') → props 同期（下部の useEffect）が担う
     if (freshMonthPlans) {
       setCurrentMonthPlans(freshMonthPlans);
-      // 予定更新後も当月の記録を最新化しておく
-      const year = currentDate.getFullYear();
-      const month = currentDate.getMonth() + 1;
-      clientRunningRecordsAPI
-        .getByMonth(year, month)
-        .then((result) => {
-          if (result.success) {
-            setCurrentMonthRecords(result.data);
-          }
-        })
-        .catch((error) =>
-          console.error('Error refreshing records after plan save', error),
-        );
-    } else {
-      // フォールバックで当月データを再取得
-      fetchMonthData(currentDate).catch((error) =>
-        console.error('Error refreshing data after plan close', error),
-      );
     }
   };
 
@@ -138,36 +109,34 @@ export default function DashboardWithCalendar({
   };
 
   // 月が変更されたときにデータを取得（毎回APIを叩く）
+  // refreshMonthDataが失敗・例外の両方を内部で処理するためtry/catchは不要
   const handleMonthChange = async (date: Date) => {
     setCurrentDate(date);
 
     setIsLoading(true);
-
-    try {
-      await fetchMonthData(date);
-    } catch (error) {
-      console.error('Error fetching records:', error);
-      setCurrentMonthRecords([]);
-      setCurrentMonthPlans([]);
-    } finally {
-      setIsLoading(false);
-    }
+    await refreshMonthData(date);
+    setIsLoading(false);
   };
 
-  // router.refresh()によるServer Component再実行時にpropsの変更をstateに同期
+  // revalidatePath('/dashboard')によるServer Component再実行時にpropsの変更をstateに同期
   // initialRecords/initialPlansは常に当月分なので、当月表示中はそのまま同期し、
-  // 別の月を表示中はfetchMonthDataで表示中月のデータを再取得する
+  // 別の月を表示中はrefreshMonthDataで表示中月のデータを再取得する
   const now = new Date();
   const isInitialMonth =
     currentDate.getFullYear() === now.getFullYear() &&
     currentDate.getMonth() === now.getMonth();
 
+  // ⚠️ depsはinitialRecords/initialPlansのみ。
+  // revalidatePath('/dashboard')でServer Componentが再実行され、
+  // propsの配列インスタンスが差し替わることを「更新シグナル」として使っている。
+  // ミューテーション後にカレンダーが最新化される唯一の経路なので削除しないこと。
+  // currentDateをdepsに入れると月切り替え時にhandleMonthChangeと二重取得になるため除外。
   useEffect(() => {
     if (isInitialMonth) {
       setCurrentMonthRecords(initialRecords);
       setCurrentMonthPlans(initialPlans);
     } else {
-      fetchMonthData(currentDate).catch((error) =>
+      refreshMonthData(currentDate).catch((error) =>
         console.error('Error refreshing data after mutation:', error),
       );
     }

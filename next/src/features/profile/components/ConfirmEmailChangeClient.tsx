@@ -1,10 +1,12 @@
 'use client';
 
 import Link from 'next/link';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
 import { logoutAction } from '@/features/auth/actions/auth-actions';
+
+import { confirmEmailChange } from '../actions/confirm-email-change';
 
 export default function ConfirmEmailChangeClient() {
   const [status, setStatus] = useState<'loading' | 'success' | 'error'>(
@@ -13,7 +15,6 @@ export default function ConfirmEmailChangeClient() {
   const [message, setMessage] = useState('');
   const [newEmail, setNewEmail] = useState('');
   const searchParams = useSearchParams();
-  const router = useRouter();
   const token = searchParams.get('token');
 
   useEffect(() => {
@@ -23,43 +24,26 @@ export default function ConfirmEmailChangeClient() {
       return;
     }
 
-    const confirmEmailChange = async () => {
-      try {
-        const response = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/auth/email_confirmation?confirmation_token=${token}`,
-          {
-            method: 'GET',
-            cache: 'no-store',
-            credentials: 'include',
-          },
-        );
+    const confirmEmailChangeRequest = async () => {
+      const result = await confirmEmailChange(token);
 
-        const data = await response.json();
+      if (result.success) {
+        setStatus('success');
+        setMessage('メールアドレスが変更されました');
+        setNewEmail(result.email);
 
-        if (response.ok && data.success) {
-          setStatus('success');
-          setMessage('メールアドレスが変更されました');
-          setNewEmail(data.email || '');
-
-          // 3秒後にログアウト（Server Action経由で確実にクッキーをクリア）
-          setTimeout(() => {
-            logoutAction();
-          }, 3000);
-        } else {
-          setStatus('error');
-          setMessage(
-            data.errors?.join(' ') ||
-              'メールアドレスの変更に失敗しました。リンクの有効期限が切れている可能性があります。',
-          );
-        }
-      } catch {
+        // 3秒後にログアウト（Server Action経由で確実にクッキーをクリア）
+        setTimeout(() => {
+          logoutAction();
+        }, 3000);
+      } else {
         setStatus('error');
-        setMessage('ネットワークエラーが発生しました。');
+        setMessage(result.error);
       }
     };
 
-    confirmEmailChange();
-  }, [token, router]);
+    confirmEmailChangeRequest();
+  }, [token]);
 
   if (status === 'loading') {
     return (

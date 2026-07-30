@@ -19,9 +19,11 @@ paths:
 - 共通UIコンポーネントは `components/`（`common/`, `layout/`, `ui/`）に配置。`ui/` はshadcn/uiのコンポーネント
 - 共通ユーティリティは `lib/` に配置
 
-## API呼び出しの使い分け
-- サーバー側: `INTERNAL_API_URL` (host.docker.internal) を使用
-- クライアント側: `NEXT_PUBLIC_API_URL` (localhost) を使用
+## API呼び出し
+- API呼び出しはすべてサーバー側（Server Component / Server Action）から行う。ブラウザからRails APIを直接叩かない
+- サーバー側の共通関数は `lib/api/server-base.ts` の `serverApiCall`。接続先は `INTERNAL_API_URL`
+- クライアントから取得が必要な場合はServer Actionを追加する。`NEXT_PUBLIC_` なAPI URLは使わない
+- Server Actionはクライアント単位で直列にキューイングされるため、同時に取得したいデータは1本のServer Action内で `Promise.all` する
 
 ## Chart.jsとSSR
 - Chart.jsコンポーネントはSSR問題を避けるため動的インポートが必要

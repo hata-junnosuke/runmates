@@ -24,7 +24,6 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 
 import { createPlan, deletePlan, updatePlan } from '../../actions/plan-actions';
-import { clientRunningPlansAPI } from '../../api/client-running-plans';
 import type { RunningPlan } from '../../types';
 
 const clientPlanSchema = z.object({
@@ -83,16 +82,6 @@ export default function ClientPlanForm({
 
   const selectedPlanId = editingPlan?.id ?? null;
 
-  const refreshMonthPlans = async () => {
-    if (!date) return [];
-    const targetDate = new Date(date);
-    const result = await clientRunningPlansAPI.getByMonth(
-      targetDate.getFullYear(),
-      targetDate.getMonth() + 1,
-    );
-    return result.success ? result.data : [];
-  };
-
   const handleSubmit = (data: PlanFormData) => {
     if (!date) return;
     setError(null);
@@ -109,11 +98,7 @@ export default function ClientPlanForm({
         : await createPlan(payload);
 
       if (result.success) {
-        // サーバーアクションが月データを返す場合はそれを優先し、なければ再取得
-        const fresh =
-          (result.data && result.data.length > 0 ? result.data : null) ||
-          (await refreshMonthPlans());
-        onClose(fresh);
+        onClose(result.data ?? []);
       } else {
         setError(result.error || '予定の保存に失敗しました');
       }
@@ -127,10 +112,7 @@ export default function ClientPlanForm({
     startTransition(async () => {
       const result = await deletePlan(planId, date);
       if (result.success) {
-        const fresh =
-          (result.data && result.data.length > 0 ? result.data : null) ||
-          (await refreshMonthPlans());
-        onClose(fresh);
+        onClose(result.data ?? []);
       } else {
         setError(result.error || '予定の削除に失敗しました');
       }

@@ -4,12 +4,15 @@ import { revalidatePath } from 'next/cache';
 
 import { serverApiCall } from '@/lib/api/server-base';
 
+import { runningPlansAPI } from '../api/running-plans';
+import { runningRecordsAPI } from '../api/running-records';
 import {
   monthlyGoalSchema,
+  monthQuerySchema,
   runningRecordSchema,
   yearlyGoalSchema,
 } from '../schemas/running-schemas';
-import type { RunRecord } from '../types';
+import type { RunningPlan, RunRecord } from '../types';
 import type { ActionResponse } from '../types/api-responses';
 import type {
   MonthlyGoalInput,
@@ -79,6 +82,44 @@ export async function deleteRunningRecord(
 
   revalidatePath('/dashboard');
   return { success: true };
+}
+
+// ダッシュボードのカレンダー用: 指定月の記録と予定をまとめて取得する
+//
+// Server Action はクライアント単位で直列にキューイングされるため、
+// records / plans を別アクションに分けて Promise.all しても並列にならない。
+// 1本のアクション内で並列取得すること。
+type MonthData = {
+  records: RunRecord[];
+  plans: RunningPlan[];
+};
+
+export async function fetchMonthData(
+  year: number,
+  month: number,
+): Promise<ActionResponse<MonthData>> {
+  const parsed = monthQuerySchema.safeParse({ year, month });
+  if (!parsed.success) {
+    return { success: false, error: '対象の年月が不正です' };
+  }
+
+  const [recordsResult, plansResult] = await Promise.all([
+    runningRecordsAPI.getAll(parsed.data.year, parsed.data.month),
+    runningPlansAPI.getAll(parsed.data.year, parsed.data.month),
+  ]);
+
+  if (!recordsResult.success || !plansResult.success) {
+    console.error('月次データの取得に失敗:', {
+      records: recordsResult.success ? null : recordsResult.errors,
+      plans: plansResult.success ? null : plansResult.errors,
+    });
+    return { success: false, error: 'データの取得に失敗しました' };
+  }
+
+  return {
+    success: true,
+    data: { records: recordsResult.data, plans: plansResult.data },
+  };
 }
 
 // ========================================

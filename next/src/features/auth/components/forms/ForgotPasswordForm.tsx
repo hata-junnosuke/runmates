@@ -4,7 +4,6 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/navigation';
 import { useState, useTransition } from 'react';
 import { useForm } from 'react-hook-form';
-import * as z from 'zod';
 
 import {
   Form,
@@ -13,6 +12,11 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
+import { forgotPasswordAction } from '@/features/auth/actions/auth-actions';
+import {
+  type ForgotPasswordFormData,
+  forgotPasswordSchema,
+} from '@/features/auth/schemas/auth-schemas';
 
 import {
   EmailControl,
@@ -20,12 +24,6 @@ import {
   messageClass,
   submitButtonClass,
 } from './auth-fields';
-
-const forgotPasswordSchema = z.object({
-  email: z.string().email('有効なメールアドレスを入力してください'),
-});
-
-type ForgotPasswordFormData = z.infer<typeof forgotPasswordSchema>;
 
 export default function ForgotPasswordForm() {
   const [message, setMessage] = useState('');
@@ -45,48 +43,18 @@ export default function ForgotPasswordForm() {
     setError('');
 
     startTransition(async () => {
-      try {
-        const response = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/auth/password`,
-          {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            cache: 'no-store',
-            credentials: 'include',
-            body: JSON.stringify({
-              email: data.email,
-              redirect_url: `${process.env.NEXT_PUBLIC_BASE_URL}/reset-password`,
-            }),
-          },
+      const result = await forgotPasswordAction(data.email);
+
+      if (result.success) {
+        setMessage(
+          'パスワードリセット用のメールを送信しました。メールボックスをご確認ください。',
         );
-
-        if (response.status === 429) {
-          setError(
-            'リクエスト回数の制限に達しました。しばらくしてからお試しください。',
-          );
-          return;
-        }
-
-        const responseData = await response.json();
-
-        if (response.ok && responseData.success) {
-          setMessage(
-            'パスワードリセット用のメールを送信しました。メールボックスをご確認ください。',
-          );
-          // 3秒後にログインページへリダイレクト
-          setTimeout(() => {
-            router.push('/login');
-          }, 3000);
-        } else {
-          setError(
-            responseData.errors?.full_messages?.join(' ') ||
-              'メールの送信に失敗しました。',
-          );
-        }
-      } catch {
-        setError('ネットワークエラーが発生しました。');
+        // 3秒後にログインページへリダイレクト
+        setTimeout(() => {
+          router.push('/login');
+        }, 3000);
+      } else {
+        setError(result.error);
       }
     });
   };
