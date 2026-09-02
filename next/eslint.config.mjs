@@ -75,6 +75,29 @@ const eslintConfig = [
       "react-hooks/incompatible-library": "off",
     },
   },
+  {
+    // タイムゾーン安全ガード
+    // 本番のNext.jsはVercel上でUTC実行され、クライアントコンポーネントは
+    // SSR時＝サーバーのTZ / ハイドレーション後＝ブラウザのTZ で評価される。
+    // そのため引数なし new Date() から日付を組み立てると、JST 0:00〜8:59に
+    // 前日・前月を指してRails(JST)と食い違う。「今日」はRailsが返す値を使うこと。
+    files: ["src/**/*.{ts,tsx}"],
+    rules: {
+      "no-restricted-syntax": [
+        "error",
+        {
+          selector: 'NewExpression[callee.name="Date"][arguments.length=0]',
+          message:
+            "引数なしの new Date() は実行環境のTZに依存します。「今日」はRailsが /running_statistics の today で返すので、その値をpropsで受け取ってください。",
+        },
+        {
+          selector: 'MemberExpression[property.name="toISOString"]',
+          message:
+            "toISOString() はTZに関係なく常にUTCになります。@/lib/date の formatDateString() を使ってください。",
+        },
+      ],
+    },
+  },
 ];
 
 export default eslintConfig;

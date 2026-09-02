@@ -11,6 +11,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { deleteRunningRecord } from '@/features/running/actions/running-actions';
+import { formatJapaneseDate } from '@/lib/date';
 
 import type { RecordDetailModalProps } from '../../types';
 
@@ -51,15 +52,13 @@ export default function RecordDetailModal({
     setShowConfirmDialog(false);
   };
 
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString('ja-JP', {
+  const formatDate = (dateString: string) =>
+    formatJapaneseDate(dateString, {
       year: 'numeric',
       month: 'long',
       day: 'numeric',
       weekday: 'long',
     });
-  };
 
   return (
     <>

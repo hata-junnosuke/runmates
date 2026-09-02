@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
+import { formatDateString } from '@/lib/date';
 
 import type { ClientRunningCalendarProps } from '../../types';
 
@@ -11,21 +12,14 @@ export default function ClientRunningCalendar({
   plans,
   onDateClick,
   currentDate: initialDate,
+  todayString,
   onMonthChange,
 }: ClientRunningCalendarProps) {
-  const [currentDate, setCurrentDate] = useState(initialDate || new Date());
-  const [today, setToday] = useState<Date | null>(null);
-
-  // クライアントサイドでのみ今日の日付を設定
-  useEffect(() => {
-    setToday(new Date());
-  }, []);
+  const [currentDate, setCurrentDate] = useState(initialDate);
 
   // currentDateが外部から変更された時に内部状態を更新
   useEffect(() => {
-    if (initialDate) {
-      setCurrentDate(initialDate);
-    }
+    setCurrentDate(initialDate);
   }, [initialDate]);
 
   // 現在の年月
@@ -49,29 +43,17 @@ export default function ClientRunningCalendar({
   }
 
   // 指定された日付に記録があるかチェック
-  const hasRecord = (date: Date) => {
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const day = String(date.getDate()).padStart(2, '0');
-    const dateStr = `${year}-${month}-${day}`;
-    return records.some((record) => record.date === dateStr);
-  };
-
-  const formatDate = (date: Date) => {
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const day = String(date.getDate()).padStart(2, '0');
-    return `${year}-${month}-${day}`;
-  };
+  const hasRecord = (date: Date) =>
+    records.some((record) => record.date === formatDateString(date));
 
   // 指定された日付の記録を取得（複数対応）
   const getRecordsForDate = (date: Date) => {
-    const dateStr = formatDate(date);
+    const dateStr = formatDateString(date);
     return records.filter((record) => record.date === dateStr);
   };
 
   const getPlansForDate = (date: Date) => {
-    const dateStr = formatDate(date);
+    const dateStr = formatDateString(date);
     return plans?.filter((plan) => plan.date === dateStr) ?? [];
   };
 
@@ -117,13 +99,11 @@ export default function ClientRunningCalendar({
   const handleDateClick = (date: Date) => {
     if (!onDateClick) return;
 
-    const dateStr = formatDate(date);
+    const dateStr = formatDateString(date);
     const plansForDate = getPlansForDate(date);
     const hasPlan = plansForDate.length > 0;
-    const isFuture = today ? date > today : date > new Date();
-    const isToday = today
-      ? date.toDateString() === today.toDateString()
-      : false;
+    const isFuture = dateStr > todayString;
+    const isToday = dateStr === todayString;
     const planStatus = getPlanStatusForDate(date);
     onDateClick({
       dateString: dateStr,
@@ -195,15 +175,13 @@ export default function ClientRunningCalendar({
       {/* カレンダーグリッド */}
       <div className="grid grid-cols-7 gap-0.5 sm:gap-1">
         {calendarDays.map((date, index) => {
-          const startOfToday =
-            today &&
-            new Date(today.getFullYear(), today.getMonth(), today.getDate());
+          const dateStr = formatDateString(date);
           const isCurrentMonth = date.getMonth() === month;
-          const isToday = today && date.toDateString() === today.toDateString();
+          const isToday = dateStr === todayString;
           const hasRun = hasRecord(date);
           const totalDistance = getTotalDistanceForDate(date);
           const isWeekend = date.getDay() === 0 || date.getDay() === 6;
-          const isPast = startOfToday ? date < startOfToday : false;
+          const isPast = dateStr < todayString;
           const plansForDate = getPlansForDate(date);
           const hasPlan = plansForDate.length > 0;
           const plannedDistance = plansForDate.reduce(
@@ -252,7 +230,7 @@ export default function ClientRunningCalendar({
                 !isCurrentMonth
                   ? 'text-gray-300'
                   : 'cursor-pointer hover:bg-gray-100',
-                isToday === true ? 'bg-blue-50 ring-2 ring-blue-400' : '',
+                isToday ? 'bg-blue-50 ring-2 ring-blue-400' : '',
                 hasRun && isCurrentMonth
                   ? 'bg-gradient-to-br from-emerald-400 to-emerald-500 font-bold text-white shadow-md hover:shadow-lg'
                   : '',

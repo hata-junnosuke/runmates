@@ -26,12 +26,24 @@ RSpec.describe "Api::V1::RunningStatistics" do
         create(:running_record, :with_extreme_distance, user: other_user, date: current_date) # 100.0km
       end
 
+      # フロントエンド(Vercel)はUTCで動くため「今日」を自前で算出できない。
+      # JSTのDate.currentを持つRailsが唯一の判断基準になる。
+      it "JST基準の今日をtodayとして返すこと" do
+        travel_to(Time.zone.local(2026, 9, 1, 8, 0, 0)) do
+          get "/api/v1/running_statistics", headers: headers, as: :json
+
+          expect(response).to have_http_status(:ok)
+          expect(response.parsed_body["today"]).to eq("2026-09-01")
+        end
+      end
+
       it "統計情報を返すこと" do
         get "/api/v1/running_statistics", headers: headers, as: :json
 
         expect(response).to have_http_status(:ok)
 
         json_response = response.parsed_body
+        expect(json_response["today"]).to eq(current_date.to_s)
 
         # 今年の距離: 5.0 + 3.0 + 4.0 + 2.0 = 14.0
         expect(json_response["this_year_distance"]).to eq("14.0")

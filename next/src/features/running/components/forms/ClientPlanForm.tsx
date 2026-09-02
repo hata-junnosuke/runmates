@@ -22,6 +22,7 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
+import { splitDateString } from '@/lib/date';
 
 import { createPlan, deletePlan, updatePlan } from '../../actions/plan-actions';
 import type { RunningPlan } from '../../types';
@@ -75,9 +76,11 @@ export default function ClientPlanForm({
     }
   }, [isOpen, form]);
 
-  const parsedDate = date ? new Date(date) : null;
-  const dateLabel = parsedDate
-    ? `${parsedDate.getFullYear()}年${parsedDate.getMonth() + 1}月${parsedDate.getDate()}日`
+  const dateLabel = date
+    ? (() => {
+        const { year, month, day } = splitDateString(date);
+        return `${year}年${month}月${day}日`;
+      })()
     : '';
 
   const selectedPlanId = editingPlan?.id ?? null;

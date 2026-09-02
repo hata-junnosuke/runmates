@@ -389,13 +389,13 @@ paths:
       - name: year
         in: query
         required: false
-        description: '年でフィルタリング（例: 2024）'
+        description: '年でフィルタリング（例: 2024）。year/monthを省略した場合はサーバー(JST)の当月を返す'
         schema:
           type: integer
       - name: month
         in: query
         required: false
-        description: '月でフィルタリング（例: 12）'
+        description: '月でフィルタリング（例: 12）。year/monthを省略した場合はサーバー(JST)の当月を返す'
         schema:
           type: integer
       - name: page
@@ -591,24 +591,12 @@ paths:
       summary: Get running statistics
       tags:
       - Statistics
-      description: ログインユーザーのランニング統計情報を取得します。
+      description: ログインユーザーのランニング統計情報を取得します。対象年月はサーバー(JST)の Date.current で決まります。
       security:
       - bearer_auth: []
         client_auth: []
         uid_auth: []
-      parameters:
-      - name: year
-        in: query
-        required: false
-        description: '年を指定（例: 2024）'
-        schema:
-          type: integer
-      - name: month
-        in: query
-        required: false
-        description: '月を指定（例: 12）'
-        schema:
-          type: integer
+      parameters: []
       responses:
         '200':
           description: 取得成功
@@ -617,69 +605,27 @@ paths:
               schema:
                 type: object
                 properties:
-                  statistics:
-                    type: object
-                    properties:
-                      total_distance:
-                        type: number
-                        format: float
-                        description: 総走行距離（km）
-                      total_runs:
-                        type: integer
-                        description: 総ランニング回数
-                      average_distance:
-                        type: number
-                        format: float
-                        description: 平均走行距離（km）
-                      longest_run:
-                        type: number
-                        format: float
-                        description: 最長走行距離（km）
-                      this_month_planned_distance:
-                        type: number
-                        format: float
-                        description: 今月かつ今日以降の未完了予定（status=planned）の planned_distance 合計（km）
-                      current_month:
-                        type: object
-                        properties:
-                          total_distance:
-                            type: number
-                            format: float
-                          total_runs:
-                            type: integer
-                          goal:
-                            type: number
-                            format: float
-                          achievement_rate:
-                            type: number
-                            format: float
-                      current_year:
-                        type: object
-                        properties:
-                          total_distance:
-                            type: number
-                            format: float
-                          total_runs:
-                            type: integer
-                          goal:
-                            type: number
-                            format: float
-                          achievement_rate:
-                            type: number
-                            format: float
-                      monthly_breakdown:
-                        type: array
-                        items:
-                          type: object
-                          properties:
-                            month:
-                              type: string
-                              format: date
-                            total_distance:
-                              type: number
-                              format: float
-                            total_runs:
-                              type: integer
+                  today:
+                    type: string
+                    format: date
+                    description: サーバー(JST)基準の今日。フロントエンドはUTC実行のため「今日」を自前で算出せずこの値を使う
+                  this_year_distance:
+                    type: string
+                    description: 今年の総走行距離（km）
+                  this_month_distance:
+                    type: string
+                    description: 今月の総走行距離（km）
+                  this_month_planned_distance:
+                    type: string
+                    description: 今月かつ今日以降の未完了予定（status=planned）の planned_distance 合計（km）
+                  total_records:
+                    type: integer
+                    description: 走行記録の総件数
+                  recent_records:
+                    type: array
+                    description: 直近5件の走行記録
+                    items:
+                      "$ref": "#/components/schemas/running_record"
         '401':
           description: 認証エラー
           content:

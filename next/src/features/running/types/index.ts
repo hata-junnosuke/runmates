@@ -55,9 +55,12 @@ export interface YearlyGoal {
  * ランニング統計情報の型定義
  */
 export interface RunningStatistics {
-  this_year_distance: number;
-  this_month_distance: number;
-  this_month_planned_distance: number;
+  /** サーバー(JST)基準の今日 (YYYY-MM-DD)。フロントで「今日」を算出しないための唯一の基準 */
+  today: string;
+  /** BigDecimalのため文字列で返る（例: "14.0"）。利用側で Number() すること */
+  this_year_distance: string;
+  this_month_distance: string;
+  this_month_planned_distance: string;
   total_records: number;
   recent_records: RunRecord[];
 }
@@ -97,7 +100,10 @@ export interface RecordDetailModalProps {
 export interface RunningChartProps {
   records: RunRecord[];
   monthlyGoals: MonthlyGoal[];
-  currentDate?: Date;
+  /** 表示中の月（1日を指すDate） */
+  currentDate: Date;
+  /** JST基準の「今日」(YYYY-MM-DD)。実行環境のTZに依存させないため呼び出し側から渡す */
+  todayString: string;
   onMonthChange?: (date: Date) => void;
 }
 
@@ -117,7 +123,10 @@ export interface ClientRunningCalendarProps {
     isToday?: boolean;
     planStatus?: RunningPlan['status'] | null;
   }) => void;
-  currentDate?: Date;
+  /** 表示中の月（1日を指すDate） */
+  currentDate: Date;
+  /** JST基準の「今日」(YYYY-MM-DD)。実行環境のTZに依存させないため呼び出し側から渡す */
+  todayString: string;
   onMonthChange?: (date: Date) => void;
 }
 
