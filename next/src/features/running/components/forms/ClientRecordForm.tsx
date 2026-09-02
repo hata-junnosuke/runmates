@@ -21,6 +21,7 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
+import { splitDateString } from '@/lib/date';
 
 import { createRunningRecord } from '../../actions/running-actions';
 import {
@@ -52,6 +53,8 @@ type RunningRecordFormData = {
 
 interface ClientRecordFormProps {
   selectedDate?: string;
+  /** サーバー(JST)基準の「今日」(YYYY-MM-DD)。日付未選択時の既定値に使う */
+  todayString: string;
   isOpen: boolean;
   onClose: (freshMonthRecords?: RunRecord[]) => void;
   onSwitchToPlan?: () => void;
@@ -59,17 +62,17 @@ interface ClientRecordFormProps {
 
 export default function ClientRecordForm({
   selectedDate,
+  todayString,
   isOpen,
   onClose,
   onSwitchToPlan,
 }: ClientRecordFormProps) {
   const isSelectedDateValid =
     selectedDate && DATE_REGEX.test(selectedDate) && selectedDate >= MIN_DATE;
-  const today = new Date().toISOString().split('T')[0];
   const defaultDate = isSelectedDateValid
     ? selectedDate
-    : today >= MIN_DATE
-      ? today
+    : todayString >= MIN_DATE
+      ? todayString
       : MIN_DATE;
 
   const form = useForm<RunningRecordFormData>({
@@ -93,13 +96,8 @@ export default function ClientRecordForm({
 
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
-  const dateParts =
-    defaultDate && DATE_REGEX.test(defaultDate)
-      ? defaultDate.split('-').map((v) => Number(v))
-      : null;
-  const dateLabel = dateParts
-    ? `${dateParts[0]}年${dateParts[1]}月${dateParts[2]}日`
-    : defaultDate || '';
+  const { year, month, day } = splitDateString(defaultDate);
+  const dateLabel = `${year}年${month}月${day}日`;
 
   const handleClose = (freshMonthRecords?: RunRecord[]) => {
     form.reset({

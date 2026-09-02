@@ -3,6 +3,7 @@
 import { revalidatePath } from 'next/cache';
 
 import { serverApiCall } from '@/lib/api/server-base';
+import { splitDateString } from '@/lib/date';
 
 import { runningPlansAPI } from '../api/running-plans';
 import { runningRecordsAPI } from '../api/running-records';
@@ -47,9 +48,8 @@ export async function createRunningRecord(
   }
 
   // 記録追加後、該当月の最新データを取得して返す
-  const recordDate = new Date(date);
-  const year = recordDate.getFullYear();
-  const month = recordDate.getMonth() + 1;
+  // new Date('YYYY-MM-DD') はUTC深夜として解釈されTZ次第で月がズレるため、文字列のまま分解する
+  const { year, month } = splitDateString(date);
 
   const freshResult = await serverApiCall<RunRecord[]>(
     `/running_records?year=${year}&month=${month}`,
@@ -136,14 +136,13 @@ export async function updateMonthlyGoal(
     return { success: false, error: '有効な目標距離を入力してください' };
   }
 
-  const currentDate = new Date();
-
+  // 対象年月はRails側がDate.current(JST)で決める。
+  // ここでnew Date()から年月を送るとVercel(UTC)実行時にJST 0:00〜8:59だけ前月の目標を
+  // 書き換えてしまい、「設定したのに未設定」になる。
   const result = await serverApiCall('/current/monthly_goal', {
     method: 'POST',
     body: JSON.stringify({
       monthly_goal: {
-        year: currentDate.getFullYear(),
-        month: currentDate.getMonth() + 1,
         distance_goal: parsed.data.distance_goal,
       },
     }),
@@ -161,22 +160,14 @@ export async function updateMonthlyGoal(
 export async function markAchievementNotified(
   type: 'monthly' | 'yearly',
 ): Promise<ActionResponse> {
-  const currentDate = new Date();
   const isMonthly = type === 'monthly';
   const endpoint = isMonthly ? '/current/monthly_goal' : '/current/yearly_goal';
   const paramKey = isMonthly ? 'monthly_goal' : 'yearly_goal';
 
-  const body: Record<string, unknown> = {
-    year: currentDate.getFullYear(),
-    dismiss_notification: true,
-  };
-  if (isMonthly) {
-    body.month = currentDate.getMonth() + 1;
-  }
-
+  // 対象年月はRails側がDate.current(JST)で決める（updateMonthlyGoalと同じ理由）
   const result = await serverApiCall(endpoint, {
     method: 'POST',
-    body: JSON.stringify({ [paramKey]: body }),
+    body: JSON.stringify({ [paramKey]: { dismiss_notification: true } }),
   });
 
   if (!result.success) {
@@ -201,13 +192,11 @@ export async function updateYearlyGoal(
     return { success: false, error: '有効な目標距離を入力してください' };
   }
 
-  const currentDate = new Date();
-
+  // 対象年はRails側がDate.current(JST)で決める（updateMonthlyGoalと同じ理由）
   const result = await serverApiCall('/current/yearly_goal', {
     method: 'POST',
     body: JSON.stringify({
       yearly_goal: {
-        year: currentDate.getFullYear(),
         distance_goal: parsed.data.distance_goal,
       },
     }),

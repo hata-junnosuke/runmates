@@ -3,6 +3,7 @@
 import { revalidatePath } from 'next/cache';
 
 import { serverApiCall } from '@/lib/api/server-base';
+import { splitDateString } from '@/lib/date';
 
 import { planSchema } from '../schemas/running-schemas';
 import type { RunningPlan } from '../types';
@@ -57,9 +58,7 @@ export async function createPlan(
     return { success: false, error: '予定の保存に失敗しました' };
   }
 
-  const target = new Date(date);
-  const year = target.getFullYear();
-  const month = target.getMonth() + 1;
+  const { year, month } = splitDateString(date);
   const freshResult = await serverApiCall<RunningPlan[]>(
     `/running_plans?year=${year}&month=${month}`,
   );
@@ -105,9 +104,7 @@ export async function updatePlan(
     return { success: false, error: '予定の更新に失敗しました' };
   }
 
-  const target = new Date(date);
-  const year = target.getFullYear();
-  const month = target.getMonth() + 1;
+  const { year, month } = splitDateString(date);
   const freshResult = await serverApiCall<RunningPlan[]>(
     `/running_plans?year=${year}&month=${month}`,
   );
@@ -140,9 +137,7 @@ export async function deletePlan(
     return { success: false, error: '予定の削除に失敗しました' };
   }
 
-  const target = new Date(date);
-  const year = target.getFullYear();
-  const month = target.getMonth() + 1;
+  const { year, month } = splitDateString(date);
   const freshResult = await serverApiCall<RunningPlan[]>(
     `/running_plans?year=${year}&month=${month}`,
   );

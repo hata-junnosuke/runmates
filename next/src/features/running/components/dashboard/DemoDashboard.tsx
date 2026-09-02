@@ -4,6 +4,7 @@ import ClientRunningCalendar from '@/features/running/components/calendar/Client
 import RunningChartWrapper from '@/features/running/components/charts/RunningChartWrapper';
 import StatisticsCards from '@/features/running/components/statistics/StatisticsCards';
 import type { RunningPlan, RunRecord } from '@/features/running/types';
+import { parseDateString } from '@/lib/date';
 
 const pad2 = (value: number) => String(value).padStart(2, '0');
 
@@ -77,7 +78,10 @@ const buildMonthlyGoals = (months: { year: number; month: number }[]) =>
     distance_goal: 110 + (month - 1) * 5,
   }));
 
-const baseDate = new Date();
+// LPのデモ表示なので基準日は固定値にする。
+// 実時刻に依存させると、SSG(ビルド時)とブラウザで日付が食い違ってハイドレーション不整合になる。
+const DEMO_TODAY = '2026-06-15';
+const baseDate = parseDateString(DEMO_TODAY);
 const monthList = getMonthList(baseDate, 6);
 const demoRecords = buildDemoRecords(monthList);
 const demoPlans = buildDemoPlans(monthList);
@@ -134,11 +138,13 @@ export default function DemoDashboard() {
           records={demoRecords}
           monthlyGoals={demoMonthlyGoals}
           currentDate={new Date(currentYear, currentMonth - 1, 1)}
+          todayString={DEMO_TODAY}
         />
         <ClientRunningCalendar
           records={demoRecords}
           plans={demoPlans}
           currentDate={new Date(currentYear, currentMonth - 1, 1)}
+          todayString={DEMO_TODAY}
           onDateClick={() => {}}
         />
       </div>

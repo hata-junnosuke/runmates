@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
 import { EmptyState } from '@/components/common/EmptyState';
+import { formatJapaneseDate } from '@/lib/date';
 
 import type { RunningStatistics, RunRecord } from '../../types';
 import RecordDetailModal from './RecordDetailModal';
@@ -73,8 +74,8 @@ export default function RecentRecords({
 
   // 日付順にソート（最新順）
   const sortedDates = Array.from(groupedRecordsMap.values()).sort((a, b) => {
-    // まず日付で比較
-    const dateCompare = new Date(b.date).getTime() - new Date(a.date).getTime();
+    // まず日付で比較（YYYY-MM-DDはISO形式なので辞書順＝時系列順）
+    const dateCompare = b.date.localeCompare(a.date);
     if (dateCompare !== 0) return dateCompare;
     // 同じ日付の場合は作成時刻で比較
     return b.latestCreatedAt.localeCompare(a.latestCreatedAt);
@@ -107,15 +108,12 @@ export default function RecentRecords({
               <div key={group.date} className="space-y-2">
                 {/* 日付ヘッダー */}
                 <div className="px-2 text-sm font-semibold text-emerald-700">
-                  {new Date(`${group.date}T00:00:00`).toLocaleDateString(
-                    'ja-JP',
-                    {
-                      year: 'numeric',
-                      month: 'long',
-                      day: 'numeric',
-                      weekday: 'short',
-                    },
-                  )}
+                  {formatJapaneseDate(group.date, {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric',
+                    weekday: 'short',
+                  })}
                 </div>
 
                 {/* 同じ日の記録一覧 */}

@@ -9,6 +9,7 @@ import type {
   RunningPlan,
   RunRecord,
 } from '@/features/running/types';
+import { splitDateString } from '@/lib/date';
 
 import RecentRecords from '../statistics/RecentRecords';
 import DashboardStatistics from './DashboardStatistics';
@@ -17,11 +18,6 @@ import DashboardWithCalendar from './DashboardWithCalendar';
 // データ取得コンポーネント
 async function DashboardData() {
   try {
-    // 現在の年月を取得
-    const currentDate = new Date();
-    const currentYear = currentDate.getFullYear();
-    const currentMonth = currentDate.getMonth() + 1; // getMonth()は0-11なので+1
-
     const [
       recordsResult,
       plansResult,
@@ -30,20 +26,31 @@ async function DashboardData() {
       yearlyGoalResult,
       monthlyGoalsResult,
     ] = await Promise.all([
-      runningRecordsAPI.getAll(currentYear, currentMonth), // 現在月のデータを取得
-      runningPlansAPI.getAll(currentYear, currentMonth),
+      // 年月を渡さない。対象月はRails側がDate.current(JST)で決める。
+      // ここでNext(Vercel=UTC)が算出するとJST 0:00〜8:59に前月分を取得してしまう。
+      runningRecordsAPI.getAll(),
+      runningPlansAPI.getAll(),
       runningRecordsAPI.getStatistics(),
       monthlyGoalsAPI.getCurrent(),
       yearlyGoalsAPI.getCurrent(),
       monthlyGoalsAPI.getAll(),
     ]);
 
+    // 「今日」と表示月はstatisticsのtodayが唯一の基準になるため、
+    // これだけは欠けたらダッシュボードを描画できない
+    if (!statisticsResult.success) {
+      throw new Error('統計情報の取得に失敗しました');
+    }
+    const statistics = statisticsResult.data;
+    const todayString = statistics.today;
+    const { year: currentYear, month: currentMonth } =
+      splitDateString(todayString);
+
     // 成功したデータのみ取得
     const records: RunRecord[] = recordsResult.success
       ? recordsResult.data
       : [];
     const plans: RunningPlan[] = plansResult.success ? plansResult.data : [];
-    const statistics = statisticsResult.success ? statisticsResult.data : null;
     const monthlyGoal = monthlyGoalResult.success
       ? monthlyGoalResult.data
       : null;
@@ -52,10 +59,10 @@ async function DashboardData() {
       ? monthlyGoalsResult.data
       : [];
 
-    const thisYearDistance = Number(statistics?.this_year_distance || 0);
-    const thisMonthDistance = Number(statistics?.this_month_distance || 0);
+    const thisYearDistance = Number(statistics.this_year_distance || 0);
+    const thisMonthDistance = Number(statistics.this_month_distance || 0);
     const thisMonthPlannedDistance = Number(
-      statistics?.this_month_planned_distance || 0,
+      statistics.this_month_planned_distance || 0,
     );
 
     // 今月の目標を取得(設定してなければnull)
@@ -113,10 +120,13 @@ async function DashboardData() {
           records={records}
           plans={plans}
           monthlyGoals={monthlyGoals}
+          currentYear={currentYear}
+          currentMonth={currentMonth}
+          todayString={todayString}
         />
 
         {/* 最近の記録 - Server Component */}
-        {statistics && <RecentRecords statistics={statistics} />}
+        <RecentRecords statistics={statistics} />
       </div>
     );
   } catch (error) {

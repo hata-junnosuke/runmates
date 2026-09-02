@@ -1,6 +1,8 @@
 require "rails_helper"
 
 RSpec.describe "Api::V1::RunningPlans" do
+  include ActiveSupport::Testing::TimeHelpers
+
   let(:user) { create(:user) }
   let(:headers) { user.create_new_auth_token }
 
@@ -18,6 +20,23 @@ RSpec.describe "Api::V1::RunningPlans" do
         expect(response).to have_http_status(:ok)
         json = response.parsed_body
         expect(json.length).to eq(2)
+      end
+
+      # 回帰テスト: ダッシュボードは記録と予定を同じ月で並べるため、
+      # 月初のJST 9:00前に予定だけ前月分が返ると表示が食い違う（RunningRecordsと対）
+      it "月初のJST 9:00より前でも当月の予定を返すこと" do
+        user.running_plans.destroy_all
+
+        travel_to(Time.zone.local(2026, 9, 1, 8, 0, 0)) do
+          create(:running_plan, user:, date: Date.new(2026, 8, 31), planned_distance: 4.0)
+          create(:running_plan, user:, date: Date.new(2026, 9, 1), planned_distance: 6.0)
+
+          get "/api/v1/running_plans", headers: headers, as: :json
+
+          expect(response).to have_http_status(:ok)
+          json = response.parsed_body
+          expect(json.map {|r| r["date"] }).to eq(["2026-09-01"])
+        end
       end
 
       it "yearとmonthで指定した月の予定を返す" do

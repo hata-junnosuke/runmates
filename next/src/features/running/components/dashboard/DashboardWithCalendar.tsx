@@ -15,10 +15,19 @@ export default function DashboardWithCalendar({
   records: initialRecords,
   plans: initialPlans,
   monthlyGoals,
+  currentYear,
+  currentMonth,
+  todayString,
 }: {
   records: RunRecord[];
   plans: RunningPlan[];
   monthlyGoals: MonthlyGoal[];
+  /** サーバーがJST基準で取得した年 */
+  currentYear: number;
+  /** サーバーがJST基準で取得した月（1-12） */
+  currentMonth: number;
+  /** JST基準の「今日」(YYYY-MM-DD) */
+  todayString: string;
 }) {
   const [selectedDate, setSelectedDate] = useState<string>('');
   const [recordFormOpen, setRecordFormOpen] = useState(false);
@@ -26,7 +35,12 @@ export default function DashboardWithCalendar({
   const [plansForSelectedDate, setPlansForSelectedDate] = useState<
     RunningPlan[]
   >([]);
-  const [currentDate, setCurrentDate] = useState(new Date());
+  // initialRecords/initialPlansがどの月のものかはサーバーが決めている。
+  // ここでnew Date()を使うとSSR(UTC)とハイドレーション後(ブラウザTZ)で月が食い違い、
+  // 「表示月とデータの月がズレる」「ハイドレーション不整合」が起きる。
+  const [currentDate, setCurrentDate] = useState(
+    () => new Date(currentYear, currentMonth - 1, 1),
+  );
   const [isLoading, setIsLoading] = useState(false);
   // 現在表示中の月のレコード
   const [currentMonthRecords, setCurrentMonthRecords] =
@@ -121,10 +135,9 @@ export default function DashboardWithCalendar({
   // revalidatePath('/dashboard')によるServer Component再実行時にpropsの変更をstateに同期
   // initialRecords/initialPlansは常に当月分なので、当月表示中はそのまま同期し、
   // 別の月を表示中はrefreshMonthDataで表示中月のデータを再取得する
-  const now = new Date();
   const isInitialMonth =
-    currentDate.getFullYear() === now.getFullYear() &&
-    currentDate.getMonth() === now.getMonth();
+    currentDate.getFullYear() === currentYear &&
+    currentDate.getMonth() === currentMonth - 1;
 
   // ⚠️ depsはinitialRecords/initialPlansのみ。
   // revalidatePath('/dashboard')でServer Componentが再実行され、
@@ -157,6 +170,7 @@ export default function DashboardWithCalendar({
           plans={currentMonthPlans}
           onDateClick={handleDateClick}
           currentDate={currentDate}
+          todayString={todayString}
           onMonthChange={handleMonthChange}
         />
       </div>
@@ -166,12 +180,14 @@ export default function DashboardWithCalendar({
         records={currentMonthRecords}
         monthlyGoals={monthlyGoals}
         currentDate={currentDate}
+        todayString={todayString}
         onMonthChange={handleMonthChange}
       />
 
       {/* 記録フォーム */}
       <ClientRecordForm
         selectedDate={selectedDate}
+        todayString={todayString}
         isOpen={recordFormOpen}
         onClose={handleRecordFormClose}
         onSwitchToPlan={openPlanForm}

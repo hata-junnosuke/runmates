@@ -1,6 +1,8 @@
 require "rails_helper"
 
 RSpec.describe "Api::V1::RunningRecords" do
+  include ActiveSupport::Testing::TimeHelpers
+
   let(:user) { create(:user) }
   let(:headers) { user.create_new_auth_token }
 
@@ -36,6 +38,26 @@ RSpec.describe "Api::V1::RunningRecords" do
         expect(response).to have_http_status(:ok)
         json = response.parsed_body
         expect(json.length).to eq(2) # 今月の2件のみ
+      end
+
+      # 回帰テスト: フロントエンド(Vercel)はUTCで動くため、JST 9:00より前は
+      # UTC日付が前日=前月になる。対象月をRails(JST)が決めることで月初の朝でも当月を返す。
+      it "月初のJST 9:00より前でも当月のデータを返すこと" do
+        user.running_records.destroy_all
+
+        travel_to(Time.zone.local(2026, 9, 1, 8, 0, 0)) do
+          # UTCでは 2026-08-31 23:00。UTC基準だと8月分を取得してしまう状況
+          expect(Time.current.utc.to_date).to eq(Date.new(2026, 8, 31))
+
+          create(:running_record, user: user, date: Date.new(2026, 8, 31), distance: 4.0)
+          create(:running_record, user: user, date: Date.new(2026, 9, 1), distance: 6.0)
+
+          get "/api/v1/running_records", headers: headers, as: :json
+
+          expect(response).to have_http_status(:ok)
+          json = response.parsed_body
+          expect(json.map {|r| r["date"] }).to eq(["2026-09-01"])
+        end
       end
 
       it "yearとmonthパラメータで特定月のデータを取得" do

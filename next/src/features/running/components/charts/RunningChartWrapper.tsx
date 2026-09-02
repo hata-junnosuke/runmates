@@ -33,6 +33,7 @@ export default function RunningChartWrapper({
   records,
   monthlyGoals,
   currentDate,
+  todayString,
   onMonthChange,
 }: RunningChartProps) {
   return (
@@ -47,6 +48,7 @@ export default function RunningChartWrapper({
         records={records}
         monthlyGoals={monthlyGoals}
         currentDate={currentDate}
+        todayString={todayString}
         onMonthChange={onMonthChange}
       />
     </Suspense>

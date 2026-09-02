@@ -20,6 +20,8 @@ import {
 import { useEffect, useState } from 'react';
 import { Line } from 'react-chartjs-2';
 
+import { formatDateString, splitDateString } from '@/lib/date';
+
 import type { RunningChartProps } from '../../types';
 
 ChartJS.register(
@@ -40,18 +42,15 @@ export default function RunningChart({
   records,
   monthlyGoals,
   currentDate,
+  todayString,
   onMonthChange,
 }: RunningChartProps) {
   // カレンダーと同期した日付を使用
-  const [currentViewDate, setCurrentViewDate] = useState(
-    currentDate || new Date(),
-  );
+  const [currentViewDate, setCurrentViewDate] = useState(currentDate);
 
   // currentDateが変更されたら同期
   useEffect(() => {
-    if (currentDate) {
-      setCurrentViewDate(currentDate);
-    }
+    setCurrentViewDate(currentDate);
   }, [currentDate]);
 
   // 表示中の月の1日と最終日を取得
@@ -60,8 +59,12 @@ export default function RunningChart({
   const firstDayOfViewMonth = new Date(viewYear, viewMonth, 1);
   const lastDayOfViewMonth = new Date(viewYear, viewMonth + 1, 0);
 
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
+  // 「今日」はJST基準の文字列から取り出す（ブラウザTZに依存させない）
+  const {
+    year: todayYear,
+    month: todayMonth,
+    day: todayDay,
+  } = splitDateString(todayString);
 
   // 月移動の関数（カレンダーと同期）
   const goToPreviousMonth = () => {
@@ -76,14 +79,6 @@ export default function RunningChart({
     onMonthChange?.(newDate);
   };
 
-  // タイムゾーン安全な日付文字列フォーマット関数
-  const formatDateString = (date: Date): string => {
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const day = String(date.getDate()).padStart(2, '0');
-    return `${year}-${month}-${day}`;
-  };
-
   // 指定された日付の月間目標を取得するヘルパー関数
   const getMonthlyGoalForDate = (date: Date): number | null => {
     const year = date.getFullYear();
@@ -95,8 +90,8 @@ export default function RunningChart({
 
   // 月の表示名を取得するヘルパー関数
   const getMonthDisplayName = (date: Date): string => {
-    const currentYear = today.getFullYear();
-    const currentMonth = today.getMonth();
+    const currentYear = todayYear;
+    const currentMonth = todayMonth - 1;
     const targetYear = date.getFullYear();
     const targetMonth = date.getMonth();
 
@@ -123,12 +118,11 @@ export default function RunningChart({
   const daysInViewMonth = lastDayOfViewMonth.getDate();
 
   // 今月かどうかを判定
-  const isCurrentMonth =
-    viewYear === today.getFullYear() && viewMonth === today.getMonth();
+  const isCurrentMonth = viewYear === todayYear && viewMonth === todayMonth - 1;
 
   // 表示する最終日を決定（今月の場合は今日まで、それ以外は月末まで）
   const displayEndDay = isCurrentMonth
-    ? Math.min(today.getDate(), daysInViewMonth)
+    ? Math.min(todayDay, daysInViewMonth)
     : daysInViewMonth;
 
   // 表示月の目標を取得
