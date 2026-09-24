@@ -76,32 +76,45 @@ RSpec.describe RunningRecord do
 
   describe "スコープ" do
     let(:user) { create(:user) }
-    let!(:old_record) { create(:running_record, user: user, date: Date.new(2025, 1, 15)) }
-    let!(:jan_record) { create(:running_record, user: user, date: Date.new(2026, 1, 10)) }
-    let!(:feb_record) { create(:running_record, user: user, date: Date.new(2026, 2, 20)) }
-    let!(:latest_record) { create(:running_record, user: user, date: Date.new(2026, 12, 31)) }
+    let!(:records) do
+      {
+        old: Date.new(2025, 1, 15),
+        prev_year_end: Date.new(2025, 12, 31),
+        new_year: Date.new(2026, 1, 1),
+        jan: Date.new(2026, 1, 10),
+        jan_end: Date.new(2026, 1, 31),
+        feb_start: Date.new(2026, 2, 1),
+        feb_end: Date.new(2026, 2, 28),
+        year_end: Date.new(2026, 12, 31),
+        next_year: Date.new(2027, 1, 1),
+      }.transform_values {|date| create(:running_record, user:, date:) }
+    end
 
     describe ".for_year" do
-      it "指定された年のレコードのみを返す" do
-        current_year_records = RunningRecord.for_year(2026)
-        expect(current_year_records).to include(jan_record, feb_record)
-        expect(current_year_records).not_to include(old_record)
+      it "指定された年のレコードのみを返す（1/1と12/31を含む）" do
+        expect(RunningRecord.for_year(2026)).to match_array(records.values_at(:new_year, :jan, :jan_end, :feb_start, :feb_end, :year_end))
       end
     end
 
     describe ".for_month" do
-      it "指定された年月のレコードのみを返す" do
-        jan_records = RunningRecord.for_month(2026, 1)
-        expect(jan_records).to include(jan_record)
-        expect(jan_records).not_to include(feb_record, old_record)
+      it "指定された年月のレコードのみを返す（月初と月末を含む）" do
+        expect(RunningRecord.for_month(2026, 1)).to match_array(records.values_at(:new_year, :jan, :jan_end))
+      end
+
+      it "2月は月末（28日）までを含む" do
+        expect(RunningRecord.for_month(2026, 2)).to match_array(records.values_at(:feb_start, :feb_end))
+      end
+
+      it "12月は翌年1月1日を含まない" do
+        expect(RunningRecord.for_month(2026, 12)).to contain_exactly(records[:year_end])
       end
     end
 
     describe ".recent" do
       it "日付の降順でソートされたレコードを返す" do
         recent_records = RunningRecord.recent
-        expect(recent_records.first).to eq(latest_record)
-        expect(recent_records.last).to eq(old_record)
+        expect(recent_records.first).to eq(records[:next_year])
+        expect(recent_records.last).to eq(records[:old])
       end
     end
   end

@@ -24,8 +24,9 @@ class RunningRecord < ApplicationRecord
   validates :distance, presence: true,
                        numericality: { greater_than: 0 }
 
-  scope :for_year, ->(year) { where("YEAR(date) = ?", year) }
-  scope :for_month, ->(year, month) { where("YEAR(date) = ? AND MONTH(date) = ?", year, month) }
+  # YEAR()/MONTH()をカラムに適用すると[user_id, date]インデックスのdate部分が効かないため範囲検索にする
+  scope :for_year, ->(year) { where(date: Date.new(year).all_year) }
+  scope :for_month, ->(year, month) { where(date: Date.new(year, month).all_month) }
   scope :recent, -> { order(date: :desc) }
 
   after_commit :update_running_plan_statuses
